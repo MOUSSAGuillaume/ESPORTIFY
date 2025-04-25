@@ -1,0 +1,234 @@
+body {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    background-color: #000;
+    color: #0f0;
+  }
+
+.status-green { color: green; }
+.status-red { color: red; }
+.status-yellow { color: orange; }
+
+  .console-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: black;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .console-text {
+    color: #0f0;
+    font-size: 1.2rem;
+    white-space: pre-wrap;
+  }
+
+  .screen-flash {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 9999;
+    animation: flash 0.2s linear;
+  }
+
+  @keyframes flash {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .dashboard {
+    padding: 2rem;
+    background-color: #111;
+    color: white;
+    min-height: 100vh;
+  }
+
+  .dashboard h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dashboard-links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    background-color: #0f0;
+    color: #000;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+
+  .btn:hover {
+    background-color: #8f8;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 0.6em 1.2em;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+  
+
+  nav.custom-navbar {
+    background-color: #0f0;
+    padding: 1rem;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+/* Changer la couleur du bouton lorsqu'on passe la souris dessus */
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+    /* Popup */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #5a1717;
+      margin: 5% auto;
+      padding: 30px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .modal-content label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .modal-content button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .message-popup {
+      margin-top: 10px;
+    }
+
+    .event-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    
+    .event-table th, .event-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+    
+    .event-table th {
+      background-color: #0066cc;
+      color: white;
+    }
+    
+    .event-table tr:hover {
+      background-color: #f2f2f2;
+    }
+    
+    .news-feed {
+      margin-top: 40px;
+    }
+    
+    .news-item {
+      background: #f4f4f4;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .news-item h3 {
+      margin: 0 0 10px 0;
+    }
+    
+    .commentaire {
+      margin-top: 10px;
+      background-color: #fff;
+      padding: 8px;
+      border-left: 3px solid #007bff;
+      border-radius: 4px;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+    }
+    
+  footer nav {
+    display: flex;
+    justify-content: space-between;
+    background-color: #222;
+    padding: 1rem;
+    color: white;
+  }
+
+  footer img {
+    height: 20px;
+    margin: 0 10px;
+  }

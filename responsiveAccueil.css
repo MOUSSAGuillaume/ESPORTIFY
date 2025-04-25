@@ -1,0 +1,197 @@
+/* Base Styles for Mobile First (small screens) */
+
+/* On les petits écrans comme l'iPhone SE */
+body {
+    font-family: 'Freckle Face', 'cursive', sans-serif;
+    background: url('img/image ecf/futuriste2.jpg') no-repeat center/cover;
+    background-size: cover;
+    margin: 0;
+    padding-top: 50px;
+}
+
+.custom-navbar {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.logo-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column; /* Pas d'espacement horizontal sur petits écrans */
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    position: relative;
+}
+
+/* Media Query pour les petits écrans (ex. iPhone SE) */
+@media only screen and (max-width: 600px) {
+    /* Navbar */
+    .custom-navbar {
+        top: 0;
+        left: 5px;
+    }
+
+    /* Logo et Demi-Cercle */
+    .logo-container {
+        width: 80px;
+        height: 80px;
+    }
+
+    .logo {
+        width: 60px;
+    }
+
+    .semi-circle-outline {
+        width: 100px;
+        height: 50px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .link {
+        font-size: 12px;
+        padding: 8px 16px;
+    }
+
+    /* Slideshow */
+    .slideshow-container {
+        width: 90%;
+        height: 200px;
+    }
+
+    .slides img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* Présentation */
+    .presentation {
+        margin: 0;
+        padding: 15px;
+        width: 100%;
+    }
+
+    /* Texte */
+    .textePresentation {
+        font-size: 12px;
+    }
+
+    /* Section Newsletter */
+    .newsletters-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .newsletter1, .newsletter2 {
+        max-width: 100%;
+    }
+
+    /* Footer */
+    footer {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    footer nav {
+        flex-direction: column;
+    }
+
+    footer ul {
+        justify-content: flex-start;
+    }
+}
+
+/* Media Query pour les écrans moyens (ex. iPhone 8, Google Pixel) */
+@media only screen and (max-width: 768px) {
+    .logo-container {
+        width: 100px;
+        height: 100px;
+    }
+
+    .logo {
+        width: 80px;
+    }
+
+    .nav-links {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .link {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+
+    .slideshow-container {
+        width: 80%;
+        height: 250px;
+    }
+
+    .slides img {
+        height: 250px;
+    }
+
+    .presentation {
+        margin: 0;
+        padding: 20px;
+    }
+
+    .textePresentation {
+        font-size: 16px;
+    }
+
+    .newsletters-container {
+        flex-direction: row;
+        gap: 30px;
+    }
+
+    .footer {
+        padding: 20px;
+    }
+}
+
+/* Media Query pour les grands écrans (tablettes, petits PC, etc.) */
+@media only screen and (min-width: 1024px) {
+    .nav-links {
+        gap: 50px;
+    }
+
+    .slideshow-container {
+        width: 70%;
+    }
+
+    .presentation {
+        padding: 40px;
+    }
+
+    .newsletters-container {
+        flex-direction: row;
+        gap: 50px;
+    }
+
+    footer {
+        padding: 40px;
+    }
+
+    .footer nav {
+        justify-content: space-between;
+    }
+}
+

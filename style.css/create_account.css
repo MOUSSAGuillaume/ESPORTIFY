@@ -1,0 +1,351 @@
+/* Mise en page principale */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    margin-top:5px;
+    font-family: 'cursive', sans-serif;
+    font-size:14px;
+    background: url('../img/image_ecf/foudre.jpg') no-repeat center/cover;
+  }
+  
+  /* NAVBAR */
+  .custom-navbar {
+    position: relative;
+    top: 0;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 10px;
+}
+  
+/* Conteneur du logo */
+.logo-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; /* Prend toute la largeur du parent */
+    height: 100%; /* Prend toute la hauteur du parent */
+}
+  
+  .logo-container {
+    position: relative; /* Assure un bon positionnement */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    background: black;
+    border-radius: 50%;
+    z-index: 2;
+}
+  
+  .logo {
+    width: 100px;
+    height: auto;
+  }
+  
+/* Demi-cercle en contour */
+.semi-circle-outline {
+    width: 140px;
+    height: 70px;
+    border: 2px solid blue;
+    border-top: none;
+    border-radius: 0 0 70px 70px;
+    position: absolute;
+    bottom: -5px;
+    background: transparent;
+}
+  
+  /* FORMULAIRE + IMAGE */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .image-form {
+    position: relative;
+    width: 100%;
+  }
+  
+  .background-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 15px;
+  }
+  
+  /* Formulaire superposé */
+  .form-overlay {
+    position: absolute;
+    top: 20.5%;
+    left: 22.5%;
+    width: 54.5%;
+    height: 50%;
+    background-color: rgb(241, 237, 243);
+    padding: 5px;
+
+  }
+  
+  .form-overlay label {
+    display: block;
+    margin-top: 2.5px;
+    margin-left: 10px;
+    font-weight: bold;
+  }
+  
+  .form-overlay input {
+    width: 90%;
+    padding: 8px;
+    margin-left: 17px;
+    margin-bottom: 5px;
+    border: 1.5px solid #333;
+    border-radius: 5px;
+  }
+  
+  .form-overlay button {
+    width: 80%;
+    height: 10%;
+    margin-left:10%;
+    background-color: rgb(84,136,194,56%);
+    color:rgb(189,131,234,100%);
+    border:1.5px solid black;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+
+  }
+  
+      /* Fade-in du formulaire */
+      #signup-form {
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+      }
+      #signup-form.show {
+        opacity: 1;
+      }
+  
+      /* Console animation */
+      .console-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        color: green;
+        font-family: monospace;
+        font-size: 1.2rem;
+        padding: 20px;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+  .form-overlay button:hover {
+    background-color: #2c4061;
+  }
+  
+  .password-rules {
+    font-size: 12px;
+    color: #444;
+    margin-top: -5px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+  }
+  
+  .confirmation-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .popup-content {
+    background: #fff;
+    padding: 25px 35px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .popup-content p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .popup-content button {
+    padding: 10px 20px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .popup-content button:hover {
+    background-color: #2563eb;
+  }
+  
+
+  /* === Écran console futuriste (effet tapement) === */
+/*
+.console-type-effect {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  color: #00ffcc;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.console-text {
+  white-space: nowrap;
+  border-right: 3px solid #00ffcc;
+  animation: blinkCursor 0.8s steps(2, start) infinite;
+}
+  @keyframes blinkCursor {
+  from { border-right-color: #00ffcc; }
+  to { border-right-color: transparent; }
+}
+*/
+
+.console-type-effect {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: black;
+  color: #00ffcc;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.console-text {
+  white-space: pre-wrap; /* Permet le retour à la ligne */
+  border-right: 3px solid #00ffcc;
+  animation: blinkCursor 0.8s steps(2, start) infinite;
+}
+@keyframes blinkCursor {
+  from { border-right-color: #00ffcc; }
+  to { border-right-color: transparent; }
+}
+
+      /* Effet flash */
+      .screen-flash {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: white;
+        z-index: 9998;
+        opacity: 1;
+        animation: flashOut 0.6s ease-out forwards;
+      }
+      @keyframes flashOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      /* Fin de l'effet flash */
+
+/* Footer */
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Espacement entre les éléments */
+  background-color: rgba(121, 129, 156, 90); /* Fond coloré uniquement pour la boîte texte */
+  width: 100%;
+  opacity: 0.9;
+  padding: 0px 0px; /* Réduit la hauteur du footer */
+  position: relative; /* Utilise un positionnement relatif pour éviter le décalage */
+}
+
+/* Contenu du nav dans le footer */
+footer nav {
+  display: flex;
+  justify-content: space-between; /* Espacement entre les éléments */
+  width: 100%; /* Utilise toute la largeur disponible */
+  align-items: center;
+}
+
+/* Le texte dans le footer */
+footer span {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  margin-left: 10px;
+  display: flex; /* Utilise flex pour aligner l'image et le texte */
+  align-items: center;
+}
+
+/* L'icône dans le footer */
+footer img {
+  width: auto; /* Réduit la taille de l'icône */
+  height: auto;
+  margin-left: 5px; /* Ajoute un léger espacement entre le texte et l'icône */
+}
+
+/* Liste de liens dans le footer */
+footer ul {
+  display: flex;
+  justify-content: flex-end; /* Aligne les liens à droite */
+  list-style: none;
+  padding: 0;
+  margin-left: auto; /* Pousse l'ul à droite */
+}
+
+/* Élément de liste dans le footer */
+footer li {
+  display: flex;
+  align-items: center;
+  margin-left: 10px; /* Espacement entre les liens */
+  margin-right: 10px; /* Espacement entre les liens */
+}
+
+/* Liens dans le footer */
+footer li a {
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: black;
+  background-color: rgba(226, 219, 3, 0.2); /* Fond avec 20% d’opacité */
+  border: 2px solid rgba(255, 197, 254, 0.5); /* Bordure avec 50% d’opacité */
+  border-radius: 10px;
+  padding: 5px 10px; /* Espacement interne des liens */
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Pour le survol des liens */
+footer li a:hover {
+  background-color: rgba(255, 197, 254, 0.5); /* Changer la couleur au survol */
+}

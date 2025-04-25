@@ -1,0 +1,254 @@
+/* Fonts*/
+@import url('https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Long+Cang&display=swap');
+
+body {
+    display: flex;
+    flex-direction: column; /* Force les éléments à s'empiler */
+    align-items: center; /* Centre les sections horizontalement */
+    justify-content:flex-start; /* Alignement en haut */
+    height: auto; /* Éviter que tout prenne la hauteur complète de l'écran */
+    min-height: 100vh; /* Minimum pour couvrir l'écran */
+    background: url('../img/image_ecf/futuriste.jpg') no-repeat center/cover;
+    margin: 0;
+    padding-top: 5px;
+}
+
+/* Navbar */
+.custom-navbar {
+    position: center;
+    top: 0;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 10px;
+}
+
+/* Conteneur du logo + demi-cercle */
+.logo-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    background: black;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+/* Demi-cercle en contour */
+.semi-circle-outline {
+    width: 140px;
+    height: 70px;
+    border: 2px solid blue;
+    border-top: none;
+    border-radius: 0 0 70px 70px;
+    position: absolute;
+    bottom: -5px; /* Ajustement pour coller au logo */
+    background: transparent;
+}
+
+/* Conteneur des liens */
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-top: 20px; /* Ajustement */
+    position: relative;
+}
+
+/* Container des boutons avec connecteurs */
+.link-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Style des boutons */
+.link {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(45deg, purple, blue);
+    border-radius: 15px;
+    text-decoration: none;
+    position: relative;
+    margin-top: 5px; /* Ajustement pour coller au trait */
+}
+
+/* Effet au survol */
+.link:hover {
+    transform: scale(1.1);
+    background: linear-gradient(45deg, blue, purple);
+}
+
+h1 {
+    font-family: 'Freckle Face', 'cursive' , 'sans serif';
+    font-size: 150px;
+    color: rgba(87,104,219, 40);
+    text-align: center;
+    display: flex;
+    text-shadow:
+    1px 1px 0px black,
+    -1px -1px 0px black,
+    1px -1px 0px black,
+    -1px 1px 0px black;
+    opacity: 0.7;
+    margin-bottom: -60px;
+    justify-content: center;
+    
+
+}
+
+.boxrdv {
+    font-family:'cursive' ,'sans-serif';
+    font-size: 17px;  
+    background-color: rgba(121, 129, 156, 80%);
+    padding: 20px;
+    margin-left: 125px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    width: 60%; /* Ajuste la largeur */
+    display: flex; /* Met en ligne le formulaire et l'agenda */
+    justify-content: center; /* Espacement entre les deux */
+    align-items: flex-start; /* Aligne en haut */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.25);
+    border:2.5px black solid;
+}
+
+.formulaire {
+    width: 100%; /* Largeur du formulaire */
+    display: flex;
+    flex-direction: column;
+}
+
+.formulaire form {
+    display: flex;
+    flex-direction: column;
+}
+
+.formulaire input, .formulaire textarea {
+    width: 100%; /* Prend toute la largeur disponible */
+    max-width: 390px; /* Limite la largeur des champs */
+    padding: 8px;
+    margin-top: 5px;
+    border: 1.5px solid black;
+    border-radius: 20px;
+    font-size: 16px;
+    background-color:rgba(121, 129, 156, 80%);
+}
+
+.formulaire textarea {
+    height: 120px; /* Augmente la hauteur du textarea */
+    resize: vertical; /* Permet de redimensionner seulement en hauteur */
+}
+
+.formulaire button {
+    margin-top: 20px; /* Séparation du reste des champs */
+    margin-left:150px;
+    padding: 10px 5px;
+    justify-content: center;
+    border-radius: 83px 0px 83px 0px ; /* Bouton avec bords arrondis */
+    max-width: 120px;
+    background-color: rgba(84, 136, 194, 80%);
+    color: rgba(151, 41, 124, 100%);
+    border: black 1.5px solid;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.formulaire button:hover {
+    background-color: #E06C4D; /* Orange saumon plus foncé */
+    transform: scale(1.05); /* Léger agrandissement au survol */
+}
+
+
+
+/* Footer */
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Espacement entre les éléments */
+    background-color: rgba(121, 129, 156, 90); /* Fond coloré uniquement pour la boîte texte */
+    width: 100%;
+    opacity: 0.9;
+    padding: 0px 0px; /* Réduit la hauteur du footer */
+    position: relative; /* Utilise un positionnement relatif pour éviter le décalage */
+    bottom: 0;
+}
+
+/* Contenu du nav dans le footer */
+footer nav {
+    display: flex;
+    justify-content: space-between; /* Espacement entre les éléments */
+    width: 100%; /* Utilise toute la largeur disponible */
+    align-items: center;
+}
+
+/* Le texte dans le footer */
+footer span {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    margin-left: 10px;
+    display: flex; /* Utilise flex pour aligner l'image et le texte */
+    align-items: center;
+}
+
+/* L'icône dans le footer */
+footer img {
+    width: auto; /* Réduit la taille de l'icône */
+    height: auto;
+    margin-left: 5px; /* Ajoute un léger espacement entre le texte et l'icône */
+}
+
+/* Liste de liens dans le footer */
+footer ul {
+    display: flex;
+    justify-content: flex-end; /* Aligne les liens à droite */
+    list-style: none;
+    padding: 0;
+    margin-left: auto; /* Pousse l'ul à droite */
+}
+
+/* Élément de liste dans le footer */
+footer li {
+    display: flex;
+    align-items: center;
+    margin-left: 10px; /* Espacement entre les liens */
+    margin-right: 10px; /* Espacement entre les liens */
+}
+
+/* Liens dans le footer */
+footer li a {
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: black;
+    background-color: rgba(226, 219, 3, 0.2); /* Fond avec 20% d’opacité */
+    border: 2px solid rgba(255, 197, 254, 0.5); /* Bordure avec 50% d’opacité */
+    border-radius: 10px;
+    padding: 5px 10px; /* Espacement interne des liens */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Pour le survol des liens */
+footer li a:hover {
+    background-color: rgba(255, 197, 254, 0.5); /* Changer la couleur au survol */
+}

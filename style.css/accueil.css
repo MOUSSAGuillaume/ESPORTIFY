@@ -1,0 +1,539 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amarante&family=Long+Cang&display=swap');
+
+body {
+    display: flex;
+    flex-direction: column; /* Force les éléments à s'empiler */
+    align-items: center; /* Centre les sections horizontalement */
+    justify-content:flex-start; /* Alignement en haut */
+    height: auto; /* Éviter que tout prenne la hauteur complète de l'écran */
+    min-height: 100vh; /* Minimum pour couvrir l'écran */
+    background: url('../img/image_ecf/foudre.jpg') no-repeat center center fixed; /* Image de fond */
+    padding-top: 50px;
+}
+
+/*Navbar*/
+.custom-navbar {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 10px;
+    padding-top: 7px; /* Ajustement pour le logo */
+}
+/*Conteneur du logo + demi-cercle */
+.logo-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/*Logo*/
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    background: black;
+    border-radius: 50%;
+    z-index: 2;
+}
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+/*Demi-cercle en contour */
+.semi-circle-outline {
+    width: 140px;
+    height: 70px;
+    border: 2px solid blue;
+    border-top: none;
+    border-radius: 0 0 70px 70px;
+    position: absolute;
+    bottom: -5px; /* Ajustement pour coller au logo */
+    background: transparent;
+}
+/*Conteneur des liens */
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-top: 20px; /* Ajustement */
+    position: relative;
+}
+
+/* Container des boutons avec connecteurs */
+.link-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Style des boutons */
+.link {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(45deg, purple, blue);
+    border-radius: 15px;
+    text-decoration: none;
+    position: relative;
+    margin-top: 5px; /* Ajustement pour coller au trait */
+}
+/* Effet au survol */
+.link:hover {
+    transform: scale(1.1);
+    background: linear-gradient(45deg, blue, purple);
+}
+
+.success-message {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 5px;
+    width: 80%;
+    margin: 20px auto;
+    font-weight: bold;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Calendier & Compte à rebours */
+.calendar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    height: 120px;
+    padding: 15px;
+    margin: 0 auto;
+    background: rgba(87,104,219,100);
+    border-radius: 10px;
+    text-align: flex-start;
+    max-width: 800px;
+    max-height: 300px;
+    overflow-y: auto; /* permet le scroll si contenu dépasse */
+}
+.calendar .event {
+    background-color: #2b2b3d;
+    border-radius: 8px;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.1;
+    overflow-wrap: break-word;
+}
+.calendar .event-row { 
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.calendar .event-row strong {
+    color: white;
+    font-size: 13px;
+}
+
+.calendar .flipclock {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 8px;
+}
+
+.calendar .countdown-section {
+    background-color: #111;
+    color: #fff;
+    border-radius: 5px;
+    width: 60px;
+    text-align: center;
+    padding: 6px 4px;
+    font-size: 14px;
+}
+.calendar .countdown-amount {
+    font-weight: bold;
+    font-size: 18px;
+}
+.calendar .countdown-period {
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+
+.ctaContainer {
+    display: flex;
+    align-items: center; 
+    margin: 0 ; /* Ajustez la valeur selon l'espacement souhaité */
+
+}
+
+.titrePrincipal {
+    text-decoration: underline;
+    text-align: center; /* Centre le texte */
+    margin-top: 125px; /* Décale le titre vers le bas */
+    font-size: 90px; /* Ajuste la taille du titre */
+    font-family: 'Freckle Face', 'cursive', sans-serif; /* Ajoute une police stylisée si besoin */
+    color: rgb(85, 102, 211); /* Ajuste la couleur si nécessaire */
+}
+
+h1 {
+    font-family: 'Freckle Face', 'cursive' , 'sans serif';
+    font-size: 48px;
+    color: rgba(151,41,124,100);
+}
+
+/*sectionPresentation*/
+.presentation {
+    background-color: rgba(121,129,156,90%); /* Fond coloré uniquement pour la boîte texte */
+    font-size: 20px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    margin-left: 5px;
+    gap: 20px;
+    position: relative;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 70%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0,0,0,50%);
+    margin-bottom: 15px; /* Ajoute une marge en bas */
+}
+.textPresentation {
+    display: flex;
+    flex-direction: column;
+    font-family:'amarante', 'cursive' , 'sans serif';
+    font-size:18px;
+}
+
+/*Image Diapo*/
+.slideshow-container {
+    position: relative;
+    width: 75%;
+    max-width: 800px;
+    margin: auto; /* Centre horizontalement */
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    margin-top: 15px; /* Ajoute une marge en haut */
+    margin-bottom: 15px; /* Ajoute une marge en bas */
+}
+
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slides img {
+    width: 100%;
+    height: 400px; /* Ajuste selon la hauteur souhaitée */
+    object-fit: cover; /* Évite la déformation */
+    border-radius: 60%; /* Rend l'image ovale */
+
+}
+
+
+.btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 10; /* Assure que les boutons sont au-dessus des images */
+    border-radius: 50%; /* Boutons arrondis */
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
+}
+
+/* Conteneur des newsletters */
+.newsletters-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+/* Section 1 (Newsletter) */
+.newsletter1 {
+    background-color: rgba(121, 129, 156, 90%);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 50%;
+    width: 485px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
+    margin-bottom: 15px;
+}
+
+/* Section 2 (Newsletter) */
+.newsletter2 {
+    background-color: rgba(121, 129, 156, 90%);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 50%;
+    width: 485px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
+    margin-bottom: 15px;
+}
+
+/* Box dans chaque newsletter */
+.boxNewsletter1,
+.boxNewsletter2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Pour les titres */
+h3 {
+    text-align: center;
+    font-size: 18px;
+}
+
+/* Le séparateur */
+.separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-grow: 1;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.line {
+    height: 2px;
+    background-color: black;
+    width: 100%;
+}
+
+.diamond {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid black;
+    position: absolute;
+}
+
+.diamond:first-child {
+    left: -15px; /* Position le premier losange à gauche */
+}
+
+.diamond:last-child {
+    right: -15px; /* Position le deuxième losange à droite */
+}
+
+/* Style pour les flèches de navigation */
+.prev-newsletter, .next-newsletter {
+    position: absolute;
+    top: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.prev-newsletter {
+    left: 10px;
+}
+
+.next-newsletter {
+    right: 10px;
+}
+
+.prev-newsletter:hover, .next-newsletter:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* Compte à rebours */
+#countdown2 {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .flipclock {
+    display: flex;
+    flex-direction: row;
+    font-family:'amarante',sans-serif;
+  }
+  
+  .countdown-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 10px;
+    background-color: #222;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #000;
+    width: 100px;
+    height: 120px;
+    font-size: 2em;
+      justify-content: center;
+  }
+  
+  .countdown-amount {
+    margin: 10px 0;
+  }
+  
+  .countdown-period {
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+/* Footer */
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Espacement entre les éléments */
+    background-color: rgba(121, 129, 156, 90); /* Fond coloré uniquement pour la boîte texte */
+    width: 100%;
+    opacity: 0.9;
+    padding: 0px 0px; /* Réduit la hauteur du footer */
+    position: relative; /* Utilise un positionnement relatif pour éviter le décalage */
+    bottom: 0;
+}
+
+/* Contenu du nav dans le footer */
+footer nav {
+    display: flex;
+    justify-content: space-between; /* Espacement entre les éléments */
+    width: 100%; /* Utilise toute la largeur disponible */
+    align-items: center;
+}
+
+/* Le texte dans le footer */
+footer span {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    margin-left: 10px;
+    display: flex; /* Utilise flex pour aligner l'image et le texte */
+    align-items: center;
+}
+
+/* L'icône dans le footer */
+footer img {
+    width: auto; /* Réduit la taille de l'icône */
+    height: auto;
+    margin-left: 5px; /* Ajoute un léger espacement entre le texte et l'icône */
+}
+
+/* Liste de liens dans le footer */
+footer ul {
+    display: flex;
+    justify-content: flex-end; /* Aligne les liens à droite */
+    list-style: none;
+    padding: 0;
+    margin-left: auto; /* Pousse l'ul à droite */
+}
+
+/* Élément de liste dans le footer */
+footer li {
+    display: flex;
+    align-items: center;
+    margin-left: 10px; /* Espacement entre les liens */
+    margin-right: 10px; /* Espacement entre les liens */
+}
+
+/* Liens dans le footer */
+footer li a {
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: black;
+    background-color: rgba(226, 219, 3, 0.2); /* Fond avec 20% d’opacité */
+    border: 2px solid rgba(255, 197, 254, 0.5); /* Bordure avec 50% d’opacité */
+    border-radius: 10px;
+    padding: 5px 10px; /* Espacement interne des liens */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Pour le survol des liens */
+footer li a:hover {
+    background-color: rgba(255, 197, 254, 0.5); /* Changer la couleur au survol */
+}
+
+
+/*responsive*/
+@media (max-width: 768px) {
+    .nav-links {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .newsletters-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .newsletter1, .newsletter2 {
+      width: 90%;
+    }
+  
+    .titrePrincipal {
+      font-size: 50px;
+    }
+  }
+  
+
+  /* Scrollbar personnalisée pour le calendrier (Webkit: Chrome, Edge, Safari) */
+.calendar::-webkit-scrollbar {
+    width: 8px; /* largeur de la barre */
+}
+
+.calendar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1); /* couleur de fond du track */
+    border-radius: 10px;
+}
+
+.calendar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5); /* couleur du "pouce" */
+    border-radius: 10px;
+}
+
+.calendar::-webkit-scrollbar-thumb:hover {
+    background: rgba(79, 1, 153, 0.7); /* plus foncé au hover */
+}
