@@ -1,0 +1,8 @@
+# Fichiers à ignorer par git
+backend/send_contact.php
+backend/signup.php
+
+# Ignorer les dossier spécifiques
+/vendor/
+/PHPMAILER/
+/db.php/
