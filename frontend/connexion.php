@@ -92,63 +92,80 @@ if (isset($_SESSION['user_id'])) {
     </footer>
 
     <script>
-       document.addEventListener("DOMContentLoaded", function () {
-    // Sélection des éléments
-    const modal = document.getElementById("resetPasswordModal");
-    const forgotPasswordLink = document.querySelector(".forgot-password");
-    const closeModal = document.querySelector(".close");
-    const resetEmail = document.getElementById("resetEmail");
-    const resetBtn = document.querySelector(".reset-btn");
-    const resetMessage = document.getElementById("resetMessage");
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sélection des éléments
+        const modal = document.getElementById("resetPasswordModal");
+        const forgotPasswordLink = document.querySelector(".forgot-password");
+        const closeModal = document.querySelector(".close");
+        const resetEmail = document.getElementById("resetEmail");
+        const resetBtn = document.querySelector(".reset-btn");
+        const resetMessage = document.getElementById("resetMessage");
 
-    // Masquer le popup au chargement
-    modal.style.display = "none";
-
-    // Fonction pour valider l'email
-    function validateEmail(email) {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailPattern.test(email);
-    }
-
-    // Quand on clique sur "Mot de passe oublié ?", on affiche la popup
-    forgotPasswordLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        modal.style.display = "flex";
-        resetMessage.style.display = "none"; // Cacher le message à chaque ouverture
-        resetEmail.value = ""; // Réinitialiser le champ email
-    });
-
-    // Quand on clique sur la croix, on ferme la popup
-    closeModal.addEventListener("click", function () {
+        // Masquer le popup au chargement
         modal.style.display = "none";
-    });
 
-    // Fermer la popup en cliquant en dehors
-    window.addEventListener("click", function (event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
+        // Fonction pour valider l'email
+        function validateEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
         }
-    });
 
-    // Gestion du clic sur "Envoyer"
-    resetBtn.addEventListener("click", function () {
-        const email = resetEmail.value.trim();
+        // Quand on clique sur "Mot de passe oublié ?", on affiche la popup
+        forgotPasswordLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            modal.style.display = "flex";
+            resetMessage.style.display = "none"; // Cacher le message à chaque ouverture
+            resetEmail.value = ""; // Réinitialiser le champ email
+        });
 
-        if (email === "") {
-            resetMessage.textContent = "Veuillez entrer votre email.";
-            resetMessage.className = "message error";
-            resetMessage.style.display = "block";
-        } else if (!validateEmail(email)) {
-            resetMessage.textContent = "Veuillez entrer un email valide.";
-            resetMessage.className = "message error";
-            resetMessage.style.display = "block";
-        } else {
-            resetMessage.textContent = "Un email de réinitialisation vous a été envoyé.";
-            resetMessage.className = "message success";
-            resetMessage.style.display = "block";
+        // Quand on clique sur la croix, on ferme la popup
+        closeModal.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+        // Fermer la popup en cliquant en dehors
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+
+        // Gestion du clic sur "Envoyer"
+        resetBtn.addEventListener("click", function () {
+            const email = resetEmail.value.trim();
+
+            if (email === "") {
+                resetMessage.textContent = "Veuillez entrer votre email.";
+                resetMessage.className = "message error";
+                resetMessage.style.display = "block";
+            } else if (!validateEmail(email)) {
+                resetMessage.textContent = "Veuillez entrer un email valide.";
+                resetMessage.className = "message error";
+                resetMessage.style.display = "block";
+            } else {
+        // Envoi de la requête AJAX pour envoyer l'email de réinitialisation
+             const formData = new FormData();
+            formData.append("email", email);
+
+            fetch("../backend/reset_pass_request.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                resetMessage.textContent = data;
+                resetMessage.className = "message success";
+                resetMessage.style.display = "block";
+            })
+            .catch(error => {
+                resetMessage.textContent = "Une erreur s'est produite. Veuillez réessayer.";
+                resetMessage.className = "message error";
+                resetMessage.style.display = "block";
+            });
         }
     });
 });
+
 
     </script>
 <?php

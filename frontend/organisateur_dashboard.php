@@ -2,11 +2,7 @@
 include_once("../db.php");
 session_start();
 
-$_SESSION['user'] = [// à retirer lors de la mise en prod
-    'id' => 2, // ID de l'utilisateur connecté
-    'pseudo' => 'organisateur', // Pseudo de l'utilisateur connecté
-    'role' => 2 // Organisateur
-];
+
 
 // Vérifie si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
@@ -35,14 +31,17 @@ while ($row = mysqli_fetch_assoc($newsQuery)) {
     $news[] = $row;
 }
 
-// Vérifie si la requête pour récupérer les événements a bien été exécutée
 $eventsQuery = mysqli_query($conn, "SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC");
 
 if (!$eventsQuery) {
-    // Si la requête échoue, afficher une erreur
-    die("Erreur lors de la récupération des données.");
+    die("Erreur lors de la récupération des événements: " . mysqli_error($conn));
 }
 
+if (mysqli_num_rows($eventsQuery) > 0) {
+    // Traitement des événements
+} else {
+    echo "<p>Aucun événement à venir pour le moment.</p>";
+}
 // Vérifier si des événements ont été récupérés
 if (mysqli_num_rows($eventsQuery) > 0) {
     // Affichage des événements
@@ -95,12 +94,18 @@ if (isset($_POST['action'], $_POST['inscription_id'], $_POST['csrf_token'])) {
         $messageByInscription[$_POST['inscription_id']] = "<span style='color:red;'>❌ Token CSRF invalide.</span>";
     }
 }
+if (isset($inscrit['statut'])) {
+    $statut = htmlspecialchars($inscrit['statut']);
+    $statusClass = match ($statut) {
+        'accepte' => 'status-green',
+        'refuse' => 'status-red',
+        default => 'status-yellow',
+    };
+} else {
+    $statut = 'non défini';
+    $statusClass = 'status-unknown';  // Classe CSS pour un statut inconnu
+}
 
-$statusClass = match ($statut) {
-    'accepte' => 'status-green',
-    'refuse' => 'status-red',
-    default => 'status-yellow',
-};
 
 ?>
 

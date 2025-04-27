@@ -1,2 +1,0 @@
-# ESPORTIFY
-Projet ECF
