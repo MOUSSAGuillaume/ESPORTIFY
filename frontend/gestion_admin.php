@@ -1,31 +1,35 @@
 <?php
+
 include_once("../db.php");
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'Admin') {
-    header("Location: /ESPORTIFY/frontend/connexion.php");
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
+    header("Location: ../frontend/connexion.php");
     exit;
 }
 
 $userId = $_SESSION['user']['id'];
-mysqli_query($conn, "UPDATE utilisateurs SET last_activity = NOW() WHERE id = $userId");
+mysqli_query($conn, "UPDATE users SET last_activity = NOW() WHERE id = $userId");
 
 // Ajout / modification d'un tournoi
-if (isset($_POST['save_tournoi'])) {
-    $id = isset($_POST['tournoi_id']) ? intval($_POST['tournoi_id']) : null;
-    $nom = mysqli_real_escape_string($conn, $_POST['nom']);
+if (isset($_POST['save_tournoi'])) {  // ici c'était save_event => corrigé
+    $id = isset($_POST['tournoi_id']) ? intval($_POST['tournoi_id']) : null; // pas event_id
+    $nom = mysqli_real_escape_string($conn, $_POST['titre']); // pas title
+    $jeu = mysqli_real_escape_string($conn, $_POST['jeu']); // ajouté jeu
     $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $jeu = mysqli_real_escape_string($conn, $_POST['jeu']);
-    $date = $_POST['date_tournoi'];
+    $date = $_POST['date_event'];
     $nb_max = intval($_POST['nb_max_participants']);
     $statut = 'en attente';
 
     if ($id) {
-        $sql = "UPDATE tournois SET nom='$nom', description='$description', jeu='$jeu', date_tournoi='$date', nb_max_participants=$nb_max, updated_at=NOW() WHERE id = $id";
+        $sql = "UPDATE events SET title='$nom', jeu='$jeu', description='$description', event_date='$date', nb_max_participants=$nb_max, updated_at=NOW() WHERE id = $id";
         $msg = "Tournoi modifié avec succès.";
     } else {
-        $sql = "INSERT INTO tournois (nom, description, jeu, date_tournoi, statut, nb_max_participants, created_by) 
-                VALUES ('$nom', '$description', '$jeu', '$date', '$statut', $nb_max, $userId)";
+        $sql = "INSERT INTO events (title, jeu, description, event_date, status, nb_max_participants, created_by)
+                VALUES ('$nom', '$jeu', '$description', '$date', '$statut', $nb_max, $userId)";
         $msg = "Tournoi ajouté avec succès.";
     }
 
@@ -34,43 +38,44 @@ if (isset($_POST['save_tournoi'])) {
     exit;
 }
 
+
 // Suppression d'un tournoi
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
-    mysqli_query($conn, "DELETE FROM tournois WHERE id = $id");
+    mysqli_query($conn, "DELETE FROM events WHERE id = $id");
     header("Location: ../frontend/gestion_admin.php?success=Tournoi supprimé avec succès.");
     exit;
 }
 
 // Validation / Refus d'un tournoi
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['tournoi_id'])) {
-    $tournoiId = intval($_POST['tournoi_id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['event_id'])) {
+    $eventId = intval($_POST['event_id']);
     $action = $_POST['action'];
 
     if ($action === 'valider') {
-        mysqli_query($conn, "UPDATE tournois SET statut='validé' WHERE id = $tournoiId");
+        mysqli_query($conn, "UPDATE events SET status='validé' WHERE id = $eventId");
         header("Location: /frontend/gestion_admin.php?success=Tournoi validé.");
         exit;
     } elseif ($action === 'refuser') {
-        mysqli_query($conn, "UPDATE tournois SET statut='refusé' WHERE id = $tournoiId");
+        mysqli_query($conn, "UPDATE events SET status='refusé' WHERE id = $eventId");
         header("Location: ../frontend/gestion_admin.php?success=Tournoi refusé.");
         exit;
     }
 }
 
 // Récupérations des tournois
-$tournois = mysqli_query($conn, "SELECT * FROM tournois ORDER BY date_tournoi DESC");
+$tournois = mysqli_query($conn, "SELECT * FROM events ORDER BY event_date DESC");
 
 // Récupération des événements en attente
-$evenements_en_attente = mysqli_query($conn, "SELECT * FROM events WHERE statut = 'en attente' ORDER BY date_soumission DESC");
+$evenements_en_attente = mysqli_query($conn, "SELECT * FROM events WHERE status = 'en attente' ORDER BY created_at DESC");
 
 // Récupérer les newsletters
-$newsletters = mysqli_query($conn, "SELECT * FROM newsletters ORDER BY date_publication DESC");
+$newsletters = mysqli_query($conn, "SELECT * FROM newsletters ORDER BY created_at DESC");
 
 $editTournoi = null;
 if (isset($_GET['edit'])) {
     $editId = intval($_GET['edit']);
-    $res = mysqli_query($conn, "SELECT * FROM tournois WHERE id = $editId");
+    $res = mysqli_query($conn, "SELECT * FROM events WHERE id = $editId");
     $editTournoi = mysqli_fetch_assoc($res);
 }
 ?>
@@ -109,19 +114,19 @@ if (isset($_GET['edit'])) {
 
         <!-- Gestion des Tournois -->
         <div class="form-wrapper">
-            <h2><?= $editTournoi ? 'Modifier le tournoi' : 'Ajouter un tournoi' ?></h2>
-            <form method="POST" action="/ESPORTIFY/frontend/gestion_admin.php">
+            <h2><?= $editTournoi ? 'Modifier event': 'Ajouter un tournoi' ?></h2>
+            <form method="POST" action="/ESPORTIFY/backend/gestion_evenements.php">
                 <?php if ($editTournoi): ?>
                     <input type="hidden" name="tournoi_id" value="<?= $editTournoi['id'] ?>">
                 <?php endif; ?>
-                <input type="text" name="nom" placeholder="Nom du tournoi" required value="<?= $editTournoi['nom'] ?? '' ?>">
-                <textarea name="description" placeholder="Description"><?= $editTournoi['description'] ?? '' ?></textarea>
-                <input type="text" name="jeu" placeholder="Jeu concerné" required value="<?= $editTournoi['jeu'] ?? '' ?>">
-                <input type="date" name="date_tournoi" required value="<?= $editTournoi['date_tournoi'] ?? '' ?>">
-                <input type="number" name="nb_max_participants" placeholder="Nb max de joueurs" required min="2" value="<?= $editTournoi['nb_max_participants'] ?? 8 ?>">
+                <input type="text" name="titre" placeholder="Nom du tournoi" required value="<?= htmlspecialchars($editTournoi['title'] ?? '') ?>">
+                <input type="text" name="jeu" placeholder="Nom du jeu" required value="<?= htmlspecialchars($editTournoi['jeu'] ?? '') ?>">
+                <textarea name="description" placeholder="Description"><?= htmlspecialchars($editTournoi['description'] ?? '') ?></textarea>
+                <input type="date" name="date_event" required value="<?= htmlspecialchars($editTournoi['event_date'] ?? '') ?>">
+                <input type="number" name="nb_max_participants" placeholder="Nb max de joueurs" required min="2" value="<?= intval($editTournoi['nb_max_participants'] ?? 8) ?>">
                 <button type="submit" name="save_tournoi" class="button"><?= $editTournoi ? 'Modifier' : 'Ajouter' ?></button>
             </form>
-        </div>
+        </div>ss
 
         <!-- Table des Tournois -->
         <h3>Tournois</h3>
@@ -139,26 +144,35 @@ if (isset($_GET['edit'])) {
             <tbody>
             <?php while ($t = mysqli_fetch_assoc($tournois)): ?>
                 <tr>
-                    <td><?= htmlspecialchars($t['nom']) ?></td>
-                    <td><?= htmlspecialchars($t['jeu']) ?></td>
-                    <td><?= htmlspecialchars($t['date_tournoi']) ?></td>
-                    <td><?= htmlspecialchars($t['statut']) ?></td>
+                    <td><?= htmlspecialchars($t['title']) ?></td>
+                    <td><?= htmlspecialchars($t['description']) ?></td>
+                    <td><?= htmlspecialchars(date('Y/m/d', strtotime($t['event_date']))) ?></td>
+                    <td><?= htmlspecialchars($t['status']) ?></td>
                     <td><?= intval($t['nb_max_participants']) ?></td>
                     <td>
                         <a href="/ESPORTIFY/frontend/gestion_admin.php?edit=<?= $t['id'] ?>" class="button">Modifier</a>
+                        <a href="/ESPORTIFY/frontend/gestion_admin.php?view=<?= $t['id'] ?>" class="button">Ajouter</a>
                         <a href="/ESPORTIFY/frontend/gestion_admin.php?delete=<?= $t['id'] ?>" class="button delete" onclick="return confirm('Supprimer ce tournoi ?')">Supprimer</a>
 
-                        <?php if ($t['statut'] === 'en attente'): ?>
+                        <?php if ($t['status'] === 'en attente'): ?>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="valider">
-                                <input type="hidden" name="tournoi_id" value="<?= $t['id'] ?>">
+                                <input type="hidden" name="event_id" value="<?= $t['id'] ?>">
                                 <button type="submit" class="button">Valider</button>
                             </form>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="refuser">
-                                <input type="hidden" name="tournoi_id" value="<?= $t['id'] ?>">
+                                <input type="hidden" name="event_id" value="<?= $t['id'] ?>">
                                 <button type="submit" class="button delete">Refuser</button>
                             </form>
+
+                            <?php
+                            // Débogage - Vérification des données envoyées via POST
+                            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                                error_log("Données POST reçues: " . print_r($_POST, true)); // Affiche les données envoyées en POST
+                            }
+                            ?>
+
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -167,7 +181,7 @@ if (isset($_GET['edit'])) {
         </table>
 
         <!-- Gestion des Événements -->
-        <h3><a href="/ESPORTIFY/frontend/gestion_evenements.php" class="btn">Gérer les Événements en Attente de Validation</a></h3>
+        <h3><a href="/ESPORTIFY/backend/gestion_evenements.php" class="btn">Gérer les Événements en Attente de Validation</a></h3>
 
         <!-- Gestion des Newsletters -->
         <h3>Newsletters publiées</h3>
@@ -183,9 +197,9 @@ if (isset($_GET['edit'])) {
             <tbody>
             <?php while ($news = mysqli_fetch_assoc($newsletters)): ?>
                 <tr>
-                    <td><?= htmlspecialchars($news['titre']) ?></td>
-                    <td><?= htmlspecialchars($news['date_publication']) ?></td>
-                    <td><?= substr(htmlspecialchars($news['contenu']), 0, 80) . '...' ?></td>
+                    <td><?= htmlspecialchars($news['title']) ?></td>
+                    <td><?= htmlspecialchars($news['created_at']) ?></td>
+                    <td><?= substr(htmlspecialchars($news['subject']), 0, 80) . '...' ?></td>
                     <td>
                         <button class="button toggle-news" data-id="<?= $news['id'] ?>">Voir</button>
                         <a href="/ESPORTIFY/frontend/gestion_newsletters.php?edit=<?= $news['id'] ?>" class="button">Modifier</a>

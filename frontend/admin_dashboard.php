@@ -1,5 +1,6 @@
 <?php
 include_once("../db.php");
+
 session_start();
 
 // Vérifie si l'utilisateur est connecté
@@ -10,7 +11,7 @@ if (!isset($_SESSION['user'])) {
 
 // Vérifie que l'utilisateur a le bon rôle
 if ($_SESSION['user']['role'] !== 1) { // Par exemple, 1 pour Admin
-    header("Location: ../frontend/accueil.php");
+    header("Location: ../frontend/accueil.php");// Redirige vers la page d'accueil si l'utilisateur n'est pas admin
     exit;
 }
 
@@ -22,14 +23,14 @@ if (empty($_SESSION['csrf_token'])) {
 $username = $_SESSION['user']['pseudo'];
 
 // Récupérer les actualités
-$newsQuery = mysqli_query($conn, "SELECT sujet AS subject, contenu AS message, created_at FROM newsletters ORDER BY created_at DESC LIMIT 5");
+$newsQuery = mysqli_query($conn, "SELECT subject AS subject, message AS message, created_at FROM newsletters ORDER BY created_at DESC LIMIT 5");
 $news = [];
 while ($row = mysqli_fetch_assoc($newsQuery)) {
     $news[] = $row;
 }
 
 // Récupérer les tournois en cours ou à venir
-$tournoisQuery = mysqli_query($conn, "SELECT * FROM tournois WHERE date_tournoi >= CURDATE() ORDER BY date_tournoi ASC");
+$tournoisQuery = mysqli_query($conn, "SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC");
 $tournois = [];
 while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     $tournois[] = $row;
@@ -53,13 +54,12 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     <header>
         <nav class="custom-navbar">
             <div class="logo-wrapper">
-                <a href="/frontend/dashboard_admin.php">
+                <a href="/ESPORTIFY/frontend/dashboard_admin.php">
                     <div class="logo-container">
                         <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
                     </div>
                 </a>
                 <div class="semi-circle-outline"></div>
-                <a href="/ESPORTIFY/frontend/gestions_utilisateurs.php" class="btn">👥 Gérer les utilisateurs</a>
             </div>
         </nav>
     </header>
@@ -68,6 +68,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
         <h1>Bienvenue Admin, <?php echo htmlspecialchars($username); ?> 🛡️</h1>
         <div class="dashboard-links">
             <a href="/ESPORTIFY/frontend/gestion_admin.php" class="btn">Gestion admin</a>
+            <a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">👥 Gérer les utilisateurs</a>
             <a href="/ESPORTIFY/backend/logout.php" class="btn btn-danger">Déconnexion</a>
         </div>
     </section>
@@ -91,11 +92,11 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
 
     <section class="tournois-section">
         <h2>🏆 Tournois en cours / à venir</h2>
-        <?php if (!empty($tournois)) : ?>
+        <?php if (!empty($events)) : ?>
             <ul class="tournois-list">
-                <?php foreach ($tournois as $t) : ?>
+                <?php foreach ($events as $t) : ?>
                     <li class="tournoi-item">
-                        <strong><?= htmlspecialchars($t['titre']) ?></strong> - <?= date("d/m/Y", strtotime($t['date_tournoi'])) ?><br>
+                        <strong><?= htmlspecialchars($t['titre']) ?></strong> - <?= date("d/m/Y", strtotime($t['event_date'])) ?><br>
                         <em><?= htmlspecialchars($t['description']) ?></em>
                     </li>
                 <?php endforeach; ?>

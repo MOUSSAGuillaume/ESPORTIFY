@@ -24,9 +24,14 @@ if (isset($_POST['submit'])) {
     $titre = mysqli_real_escape_string($conn, $_POST['titre']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $date_event = $_POST['date_event'];
+    $nb_joueurs = (int) $_POST['nb_joueurs'];
 
-    $sql = "INSERT INTO events (title, description, event_date)
-            VALUES ('$titre', '$description', '$date_event')";
+
+    $sql = "INSERT INTO events (title, description, event_date, status, nb_max_participants)
+        VALUES ('$titre', '$description', '$date_event', 'en attente', $nb_joueurs)";
+
+
+
 
     if (mysqli_query($conn, $sql)) {
         $message = "<p style='color:green;'>✅ Événement ajouté avec succès !</p>";
@@ -40,18 +45,59 @@ if (isset($_POST['inscription_event'])) {
   $event_id = (int) $_POST['event_id'];
   $user_id = $_SESSION['user']['id'];
 
+// Traitement de la désinscription
+if (isset($_POST['desinscription_event'])) {
+  $event_id = (int) $_POST['event_id'];
+  $user_id = $_SESSION['user']['id'];
+
+  // Vérifie si le nombre max de joueurs est atteint
+$eventInfo = mysqli_query($conn, "SELECT nb_joueurs FROM events WHERE id = $event_id");
+if ($eventInfo && mysqli_num_rows($eventInfo) > 0) {
+    $max = (int) mysqli_fetch_assoc($eventInfo)['nb_joueurs'];
+
+    $resCount = mysqli_query($conn, "SELECT COUNT(*) as total FROM inscriptions WHERE event_id = $event_id");
+    $nbInscrits = (int) mysqli_fetch_assoc($resCount)['total'];
+
+    if ($nbInscrits >= $max) {
+        $message = "<p style='color:red;'>❌ Nombre maximum de participants atteint.</p>";
+        return;
+    }
+}
+
+  $stmt = $conn->prepare("DELETE FROM inscriptions WHERE user_id = ? AND event_id = ?");
+  if ($stmt) {
+      $stmt->bind_param("ii", $user_id, $event_id);
+      if ($stmt->execute()) {
+          $message = "<p style='color:orange;'>🚫 Désinscription réussie.</p>";
+      } else {
+          $message = "<p style='color:red;'>❌ Erreur lors de la désinscription : " . $stmt->error . "</p>";
+      }
+      $stmt->close();
+  } else {
+      $message = "<p style='color:red;'>❌ Erreur de préparation de la requête pour la désinscription.</p>";
+  }
+}
+
+
   // Vérifie si déjà inscrit
   $checkInscription = mysqli_query($conn, "SELECT * FROM inscriptions WHERE user_id = $user_id AND event_id = $event_id");
   if (mysqli_num_rows($checkInscription) == 0) {
       $date_inscription = date('Y-m-d H:i:s');
       $statut = 'en_attente';
 
-      $insert = mysqli_query($conn, "INSERT INTO inscriptions (user_id, event_id, date_inscription, statut)
-                                     VALUES ($user_id, $event_id, '$date_inscription', '$statut')");
-      if ($insert) {
-          $message = "<p style='color:green;'>✅ Inscription envoyée !</p>";
-      } else {
-          $message = "<p style='color:red;'>❌ Erreur lors de l’inscription : " . mysqli_error($conn) . "</p>";
+      $stmt = $conn->prepare("INSERT INTO inscriptions (user_id, event_id, date_inscription, statut) VALUES (?, ?, ?, ?)");
+if ($stmt) {
+    $stmt->bind_param("iiss", $user_id, $event_id, $date_inscription, $statut);
+    if ($stmt->execute()) {
+        $message = "<p style='color:green;'>✅ Inscription envoyée !</p>";
+    } else {
+        $message = "<p style='color:red;'>❌ Erreur lors de l’inscription : " . $stmt->error . "</p>";
+    }
+    $stmt->close();
+} else {
+    $message = "<p style='color:red;'>❌ Erreur de préparation de la requête.</p>";
+
+
       }
   } else {
       $message = "<p style='color:orange;'>⚠️ Vous êtes déjà inscrit à cet événement.</p>";
@@ -72,7 +118,7 @@ if (isset($_POST['poster_commentaire'])) {
 
 // Récupération des événements
 $evenements = [];
-$resultEvents = mysqli_query($conn, "SELECT * FROM events ORDER BY event_date DESC");
+$resultEvents = mysqli_query($conn, "SELECT * FROM events WHERE status = 'accepté' ORDER BY event_date DESC");
 if ($resultEvents) {
     while ($event = mysqli_fetch_assoc($resultEvents)) {
         $evenements[] = $event;
@@ -135,10 +181,10 @@ if (isset($_POST['poster_reponse'])) {
     <section class="dashboard">
       <h1>Bienvenue, <?php echo htmlspecialchars($username); ?> 🎮</h1>
       <div class="dashboard-links">
-        <a href="/ESPORTIFY/frontend/events.php" class="btn">Voir les tournois</a>
         <a href="/ESPORTIFY/frontend/mon_profil.php" class="btn">Mon profil</a>
-        <a href="/ESPORTIFY/backend/logout.php" class="btn btn-danger">Se déconnecter</a>
         <button id="eventButton" class="btn">Proposer un événement</button>
+        <a href="/ESPORTIFY/backend/logout.php" class="btn btn-danger">Se déconnecter</a>
+
       </div>
     </section>
 
@@ -151,24 +197,57 @@ if (isset($_POST['poster_reponse'])) {
         <table class="event-table">
           <thead>
             <tr>
-              <th>Titre</th>
-              <th>Description</th>
+              <th>Titre du jeu</th>
+              <th>Nombre de joueurs</th>
               <th>Date</th>
+              <th>Nombre d'inscrits</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <?php foreach ($evenements as $event) : ?>
               <tr>
-                <td><?= htmlspecialchars($event['titre']) ?></td>
-                <td><?= nl2br(htmlspecialchars($event['description'])) ?></td>
+                <td><?= htmlspecialchars($event['title']) ?></td>
+                <!-- Affiche le nb de joueurs requis -->
+                <td><?= (int)$event['nb_max_participants'] ?> joueur(s)</td>
                 <td><?= htmlspecialchars(date('d/m/Y', strtotime($event['event_date']))) ?></td>
                 <td>
-                  <form method="POST">
+                  <?php
+                  // Récupérer le nombre d'inscriptions pour l'événement
+                    $id_event = $event['id'];
+                    $resCount = mysqli_query($conn, "SELECT COUNT(*) as total FROM inscriptions WHERE event_id = $id_event");
+                    $count = mysqli_fetch_assoc($resCount)['total'];
+                      echo $count . " joueur(s)";
+                  ?>
+                </td>
+                <td>
+                  <?php
+                  // Vérifie si l'utilisateur est déjà inscrit
+                  $check = mysqli_query($conn, "SELECT * FROM inscriptions WHERE event_id = $id_event AND user_id = $id_joueur");
+                  $est_inscrit = mysqli_num_rows($check) > 0;
+                  ?>
+  
+                  <?php if ($est_inscrit): ?>
+                  <form method="POST" style="display:inline;">
+                    <input type="hidden" name="event_id" value="<?= $event['id'] ?>">
+                    <button type="submit" name="desinscription_event">Se désinscrire</button>
+                  </form>
+                  <?php else: ?>
+                  <form method="POST" style="display:inline;">
                     <input type="hidden" name="event_id" value="<?= $event['id'] ?>">
                     <button type="submit" name="inscription_event">S’inscrire</button>
                   </form>
+                  <?php endif; ?>
+
+                  <button type="button" onclick="showDescription(<?= htmlspecialchars(json_encode($event['id'])) ?>)">Voir la description</button>
+                  <?php
+                  // Ajoute la description dans un attribut data pour l'utiliser plus tard
+                  echo "<div id='desc-" . $event['id'] . "' style='display:none;'>"
+                  . htmlspecialchars($event['description']) .
+                  "</div>";
+                  ?>
                 </td>
+
               </tr>
             <?php endforeach; ?>
           </tbody>
@@ -255,7 +334,7 @@ if (isset($_POST['poster_reponse'])) {
       ?>
     </section>
 
-    <!-- Modal popup -->
+    <!-- Modal pour proposer un événement -->
     <div id="eventModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
@@ -334,5 +413,33 @@ if (isset($_POST['poster_reponse'])) {
       }
     }
   </script>
+<!-- Description Modal -->
+<div id="descPopup" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeDesc">&times;</span>
+    <h2>Description de l'événement</h2>
+    <p id="eventDescriptionText"></p>
+  </div>
+</div>
+
+<script>
+  function showDescription(eventId) {
+    const desc = document.getElementById("desc-" + eventId).innerText;
+    document.getElementById("eventDescriptionText").textContent = desc;
+    document.getElementById("descPopup").style.display = "block";
+  }
+
+  document.getElementById("closeDesc").onclick = () => {
+    document.getElementById("descPopup").style.display = "none";
+  };
+
+  window.onclick = function(event) {
+    const modal = document.getElementById("descPopup");
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
+
 </body>
 </html>

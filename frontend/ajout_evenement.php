@@ -37,7 +37,7 @@
 
     <form method="POST">
         <label>Titre :</label>
-        <input type="text" name="titre" required>
+        <input type="text" name="titre du jeu" required>
 
         <label>Description :</label>
         <textarea name="description" required></textarea>
@@ -58,8 +58,9 @@ if (isset($_POST['submit'])) {
     $date_event = $_POST['date_event'];
 
     // Insertion des données dans la base
-    $sql = "INSERT INTO evenements (titre, description, date_event)
-            VALUES ('$titre', '$description', '$date_event')";
+    $sql = "INSERT INTO events (title, description, event_date, status)
+        VALUES ('$titre', '$description', '$date_event', 'en attente')";
+
 
     if (mysqli_query($conn, $sql)) {
         echo "<p style='color: green;'>✅ Événement ajouté avec succès !</p>";

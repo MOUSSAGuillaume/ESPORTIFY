@@ -2,6 +2,8 @@
 // Sécurisation des cookies de session avant de commencer
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1); // Si vous utilisez HTTPS
+ini_set('session.cookie_samesite', 'Strict'); // Empêche les cookies d'être envoyés lors de requêtes cross-site
+
 
 session_start();  // Démarrer la session après avoir configuré les paramètres
 
@@ -18,7 +20,7 @@ if (empty($_POST['email']) || empty($_POST['password'])) {
 }
 
 $email = $_POST['email'];
-$password = $_POST['password']; // Pas _hash !
+$password = $_POST['password'];
 
 // Préparer et exécuter la requête
 $sql = "SELECT * FROM users WHERE email = ?";

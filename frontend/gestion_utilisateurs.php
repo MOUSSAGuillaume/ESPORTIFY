@@ -3,7 +3,7 @@ include_once("../db.php");
 session_start();
 
 // Vérification des privilèges admin
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'Admin') {
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
     header("Location: /ESPORTIFY/frontend/connexion.php");
     exit;
 }
@@ -58,7 +58,7 @@ if (isset($_POST['update_user']) && isset($_POST['user_id'])) {
         $msg = "❌ Erreur lors de la mise à jour de l'utilisateur.";
     }
 
-    header("Location: /ESPORTIFY/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
+    header("Location: ../frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
     exit;
 }
 
