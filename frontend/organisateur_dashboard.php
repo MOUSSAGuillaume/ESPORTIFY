@@ -118,6 +118,7 @@ if (isset($inscrit['statut'])) {
 </head>
 <body>
 
+<!-- Effet de console -->
 <div class="console-overlay" id="console-overlay">
     <div class="console-text" id="console-text"></div>
 </div>

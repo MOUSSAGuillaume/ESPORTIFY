@@ -2,6 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Long+Cang&display=swap');
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 body {
     display: flex;
     flex-direction: column; /* Force les éléments à s'empiler */
@@ -182,6 +187,7 @@ h1 {
 
 /* Footer */
 footer {
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between; /* Espacement entre les éléments */

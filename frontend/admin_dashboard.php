@@ -67,8 +67,9 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     <section class="dashboard">
         <h1>Bienvenue Admin, <?php echo htmlspecialchars($username); ?> 🛡️</h1>
         <div class="dashboard-links">
-            <a href="/ESPORTIFY/frontend/gestion_admin.php" class="btn">Gestion admin</a>
-            <a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">👥 Gérer les utilisateurs</a>
+            <a href="/ESPORTIFY/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
+            <a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
+            <a href="/ESPORTIFY/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
             <a href="/ESPORTIFY/backend/logout.php" class="btn btn-danger">Déconnexion</a>
         </div>
     </section>
@@ -127,6 +128,8 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
         "Connexion au panneau administrateur...",
         "Chargement des actualités...",
         "Chargement des tournois...",
+        "Vérification des permissions...",
+        "Chargement des utilisateurs...",
         "Bienvenue sur Esportify 🛡️"
     ];
 
