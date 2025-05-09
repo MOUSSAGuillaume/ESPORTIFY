@@ -1,8 +1,14 @@
 # Fichiers à ignorer par git
-backend/send_contact.php
-backend/signup.php
+../backend/send_contact.php
+../backend/signup.php
+../backend/reset_pass_request.php
 
-# Ignorer les dossier spécifiques
-/vendor/
-/PHPMAILER/
-/db.php/
+../composer.json
+../composer.lock
+../db.php/
+../dbmongo.php
+
+# fichiers spécifiques
+../vendor/
+../PHPMAILER/
+../uploads_avatars
