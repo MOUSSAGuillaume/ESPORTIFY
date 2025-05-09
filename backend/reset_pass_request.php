@@ -2,10 +2,13 @@
 // Connexion à la base de données
 require ('../db.php');
 
-require_once '../../ESPORTIFY/vendor/autoload.php'; // Autoload de PHPMailer
+require_once '../../ESPORTIFY/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../ESPORTIFY');
+$dotenv->load();
 
 // Vérification que l'email a été soumis
 if (isset($_POST['email'])) {
@@ -41,13 +44,14 @@ if (isset($_POST['email'])) {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com'; // Serveur SMTP de Gmail
             $mail->SMTPAuth = true;
-            $mail->Username = 'monmailtest.dev@gmail.com'; // Remplace par ton adresse Gmail
-            $mail->Password = 'wycqaahovznznhba'; // Remplace par ton mot de passe Gmail ou mot de passe d'application
+            $mail->Username = $_ENV['SMTP_USER_2']; // utilisation d'un email d'expéditeur
+            $mail->Password = $_ENV['SMTP_PASS_2']; // mot de passe ou mot de passe d'application
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
             // Destinataire et expéditeur
-            $mail->setFrom('monmailtest.dev@gmail.com', 'Esportify');
+            $mail->setFrom($_ENV['SMTP_USER_2'], 'Esportify');
+            // Adresse de l'expéditeur
             $mail->addAddress($email);
 
             $mail->Subject = 'Réinitialisation de votre mot de passe';

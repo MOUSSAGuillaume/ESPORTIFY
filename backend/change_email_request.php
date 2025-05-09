@@ -8,9 +8,13 @@ require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/Exception.php';
 require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/PHPMailer.php';
 require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/SMTP.php';
 require_once '../../ESPORTIFY/vendor/autoload.php'; // Autoload de PHPMailer
+require_once '../../ESPORTIFY/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../ESPORTIFY');
+$dotenv->load();
 
 // Si le formulaire a été soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -42,13 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com'; // Serveur SMTP de Gmail
             $mail->SMTPAuth = true; // Authentification SMTP
-            $mail->Username = 'monmailtest.dev@gmail.com'; // Utilisation d'un email d'expéditeur
-            $mail->Password = 'wycqaahovznznhba'; // Mot de passe d'email (protégé idéalement par des variables d'environnement)
+            $mail->Username = $_ENV['SMTP_USER_2']; // Utilisation d'un email d'expéditeur
+            $mail->Password = $_ENV['SMTP_PASS_2']; // // mot de passe ou mot de passe d'application
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587; // Port SMTP pour TLS
 
             // Configurer l'email
-            $mail->setFrom('monmailtest.dev@gmail.com', 'Esportify');
+            $mail->setFrom($_ENV['SMTP_USER_2'], 'Esportify'); // Adresse email de l'expéditeur
             $mail->addAddress($new_email); // Adresse email du destinataire
             $mail->isHTML(true);
             $mail->Subject = 'Confirmation de modification de votre email';

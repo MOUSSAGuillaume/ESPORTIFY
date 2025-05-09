@@ -3,9 +3,15 @@ include_once("../db.php");
 require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/Exception.php';
 require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/PHPMailer.php';
 require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/SMTP.php';
+require_once '../../ESPORTIFY/vendor/autoload.php'; //
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+// Charger les variables d'environnement
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../ESPORTIFY');
+$dotenv->load();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Récupérer les données du formulaire
@@ -32,14 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';  // Exemple : utiliser Gmail comme SMTP
         $mail->SMTPAuth = true;
-        $mail->Username = 'moussaguillaume.dev@gmail.com';  // Ton adresse email pour l'envoi
-        $mail->Password = 'wjsixwqbvyyqshnu';  // Mot de passe d'application Gmail
+        $mail->Username = $_ENV['SMTP_USER'];  // Ton adresse email pour l'envoi
+        $mail->Password = $_ENV['SMTP_PASS'];  // Mot de passe d'application Gmail
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
         // Configurer l'email
         $mail->setFrom($email);  // L'email de l'utilisateur est utilisé comme expéditeur
-        $mail->addAddress('moussaguillaume.dev@gmail.com');  // L'adresse email où tu veux recevoir les messages
+        $mail->addAddress($_ENV['MAIL_RECEIVER']); // L'adresse email où tu veux recevoir les messages
         //repondre au message du formulaire
         $mail->addReplyTo($email);  // Répondre à l'email de l'utilisateur
         
@@ -56,4 +62,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "❌ L'email n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
     }
 }
-?>
+
