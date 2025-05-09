@@ -3,8 +3,7 @@
 ../composer.lock
 ../db.php/
 ../dbmongo.php
-../ESPORTIFY.env
-
+../.env
 # fichiers spécifiques
 ../vendor/
 ../PHPMAILER/
