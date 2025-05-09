@@ -7,11 +7,11 @@ if (isset($_POST['submit'])) {
     $titre = mysqli_real_escape_string($conn, $_POST['titre']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $date_event = $_POST['date_event'];
-    $nb_joueurs = (int) $_POST['nb_joueurs'];
+   // $nb_joueurs = (int) $_POST['nb_joueurs'];//
 
-    $stmt = $conn->prepare("INSERT INTO events (title, description, event_date, status, nb_max_participants) VALUES (?, ?, ?, 'en attente', ?)");
+    $stmt = $conn->prepare("INSERT INTO events (title, description, event_date, status, nb_max_participants, created_by) VALUES (?, ?, ?, 'en attente', ?, ?)");
     if ($stmt) {
-        $stmt->bind_param("sssi", $titre, $description, $date_event, $nb_joueurs);
+        $stmt->bind_param("sssii", $titre, $description, $date_event, $nb_joueurs, $created_by);
         if ($stmt->execute()) {
             $message = "<p style='color:green;'>✅ Événement ajouté avec succès !</p>";
         } else {
@@ -72,9 +72,9 @@ if (isset($_POST['desinscription_event']) || isset($_POST['inscription_event']))
                     $message = "<p style='color:red;'>❌ Nombre maximum de participants atteint.</p>";
                 } else {
                     $date_inscription = date('Y-m-d H:i:s');
-                    $statut = 'en_attente';
+                    $statut = 'en attente';
 
-                    $stmt = $conn->prepare("INSERT INTO inscriptions (user_id, event_id, date_inscription, statut) VALUES (?, ?, ?, ?)");
+                    $stmt = $conn->prepare("INSERT INTO inscriptions (user_id, event_id, date_inscription, status) VALUES (?, ?, ?, ?)");
                     if ($stmt) {
                         $stmt->bind_param("iiss", $user_id, $event_id, $date_inscription, $statut);
                         if ($stmt->execute()) {

@@ -1,35 +1,71 @@
 <?php
-include_once("../db.php");
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
+include_once("../db.php");
 session_start();
 
-// Vérifie si l'utilisateur est connecté
+// Authentification
 if (!isset($_SESSION['user'])) {
     header("Location: ../frontend/connexion.php");
     exit;
 }
-
-// Vérifie que l'utilisateur a le bon rôle
-if ($_SESSION['user']['role'] !== 1) { // Par exemple, 1 pour Admin
-    header("Location: ../frontend/accueil.php");// Redirige vers la page d'accueil si l'utilisateur n'est pas admin
+if ($_SESSION['user']['role'] !== 1) {
+    header("Location: ../frontend/accueil.php");
     exit;
 }
 
-
+// CSRF
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 $username = $_SESSION['user']['pseudo'];
+$id_admin = $_SESSION['user']['id'];
 
-// Récupérer les actualités
-$newsQuery = mysqli_query($conn, "SELECT subject AS subject, message AS message, created_at FROM newsletters ORDER BY created_at DESC LIMIT 5");
+// Traitement du formulaire de commentaire
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['poster_commentaire']) && isset($_POST['commentaire'], $_POST['id_newsletter'])) {
+    $commentaire = mysqli_real_escape_string($conn, $_POST['commentaire']);
+    $id_newsletter = (int)$_POST['id_newsletter'];
+    $now = date("Y-m-d H:i:s");
+
+    // Insertion du commentaire
+    $stmt = $conn->prepare("INSERT INTO commentaires_newsletters (id_newsletter, id_user, commentaire, date_commentaire) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iiss", $id_newsletter, $id_admin, $commentaire, $now);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Traitement du formulaire de réponse
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['reponse']) && isset($_POST['id_commentaire'])) {
+    $reponse = mysqli_real_escape_string($conn, $_POST['reponse']);
+    $id_commentaire = (int)$_POST['id_commentaire'];
+    $now = date("Y-m-d H:i:s");
+
+    $stmt = $conn->prepare("INSERT INTO reponses_commentaires (id_commentaire, id_joueur, reponse, date_reponse) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iiss", $id_commentaire, $id_admin, $reponse, $now);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Récupérer les newsletters
+$newsQuery = mysqli_query($conn, "
+    SELECT n.id, n.subject, n.message, n.created_at, u.username AS author_name, u.role_id
+    FROM newsletters n
+    JOIN users u ON n.created_by = u.id
+    ORDER BY n.created_at DESC
+    LIMIT 5
+");
+
+if (!$newsQuery) {
+    die("Erreur SQL : " . mysqli_error($conn));
+}
 $news = [];
 while ($row = mysqli_fetch_assoc($newsQuery)) {
     $news[] = $row;
 }
 
-// Récupérer les tournois en cours ou à venir
+// Events
 $tournoisQuery = mysqli_query($conn, "SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC");
 $tournois = [];
 while ($row = mysqli_fetch_assoc($tournoisQuery)) {
@@ -46,11 +82,12 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
 </head>
 <body>
 
-<div class="console-overlay" id="console-overlay">
+ <!-- Effet console -->
+    <div class="console-overlay" id="console-overlay">
     <div class="console-text" id="console-text"></div>
-</div>
+    </div>
 
-<main class="hidden" id="dashboard-content">
+<main id="dashboard-content">
     <header>
         <nav class="custom-navbar">
             <div class="logo-wrapper">
@@ -65,7 +102,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     </header>
 
     <section class="dashboard">
-        <h1>Bienvenue Admin, <?php echo htmlspecialchars($username); ?> 🛡️</h1>
+        <h1>Bienvenue Admin, <?= htmlspecialchars($username) ?> 🛡️</h1>
         <div class="dashboard-links">
             <a href="/ESPORTIFY/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
             <a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
@@ -82,7 +119,72 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
                     <li class="news-item">
                         <strong><?= htmlspecialchars($n['subject']) ?></strong><br>
                         <span><?= nl2br(htmlspecialchars($n['message'])) ?></span><br>
-                        <em>Publié le <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?></em>
+                        <em>
+                            Publié le <?= date("d/m/Y H:i", strtotime($n['created_at'])) ?>
+                            par <?= htmlspecialchars($n['author_name']) ?>
+                            (<?= $n['role_id'] == 1 ? 'Admin' : 'Organisateur' ?>)
+                        </em>
+
+
+                        <!-- Commentaires -->
+                        <?php
+                        $id_news = (int)$n['id'];
+                        $resCom = mysqli_query($conn,  "SELECT cn.*, u.username
+                                                        FROM commentaires_newsletters cn
+                                                        JOIN users u ON cn.id_user = u.id
+                                                        WHERE cn.id_newsletter = $id_news
+                                                        ORDER BY cn.date_commentaire DESC");?>
+
+                        <div class="commentaires-section">
+                            <h4>💬 Commentaires :</h4>
+                            <!-- Formulaire pour poster un nouveau commentaire -->
+                            <form method="post" style="margin-top:10px;">
+                                <input type="hidden" name="id_newsletter" value="<?= $n['id'] ?>">
+                                <textarea name="commentaire" rows="2" required placeholder="Laissez un commentaire..."></textarea>
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" name="poster_commentaire" class="btn btn-sm">Commenter</button>
+                            </form>
+                            <?php if (mysqli_num_rows($resCom) > 0): ?>
+                                <?php while ($com = mysqli_fetch_assoc($resCom)) : ?>
+                                    <div class="commentaire">
+                                        <strong><?= htmlspecialchars($com['username']) ?> :</strong>
+                                        <p><?= nl2br(htmlspecialchars($com['commentaire'])) ?></p>
+                                        <small>🕒 <?= date("d/m/Y H:i", strtotime($com['date_commentaire'])) ?></small>
+
+                                        <!-- Réponses -->
+                                        <?php
+                                        $id_commentaire = $com['id'];
+                                        $repQuery = mysqli_query($conn,"SELECT rc.reponse, rc.date_reponse, u.username
+                                                                        FROM reponses_commentaires rc
+                                                                        LEFT JOIN users u ON rc.id_joueur = u.id
+                                                                        WHERE rc.id_commentaire = $id_commentaire
+                                                                        ORDER BY rc.date_reponse ASC"); ?>
+                                        <div class="reponses">
+                                            <?php if (mysqli_num_rows($repQuery) > 0): ?>
+                                                <h5>↪️ Réponses :</h5>
+                                                <?php while ($rep = mysqli_fetch_assoc($repQuery)) : ?>
+                                                    <div class="reponse">
+                                                        <strong><?= htmlspecialchars($rep['username'] ?? 'Utilisateur supprimé') ?> :</strong>
+                                                        <p><?= nl2br(htmlspecialchars($rep['reponse'])) ?></p>
+                                                        <small>🕒 <?= date("d/m/Y H:i", strtotime($rep['date_reponse'])) ?></small>
+                                                    </div>
+                                                <?php endwhile; ?>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <!-- Formulaire de réponse -->
+                                        <form method="post" style="margin-top:10px;">
+                                            <input type="hidden" name="id_commentaire" value="<?= $com['id'] ?>">
+                                            <textarea name="reponse" rows="2" required placeholder="Votre réponse admin..."></textarea>
+                                            <button type="submit" class="btn btn-sm">Répondre</button>
+                                        </form>
+                                    </div>
+                                    <hr>
+                                <?php endwhile; ?>
+                            <?php else : ?>
+                                <p>Aucun commentaire pour cette actualité.</p>
+                            <?php endif; ?>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -93,11 +195,11 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
 
     <section class="tournois-section">
         <h2>🏆 Tournois en cours / à venir</h2>
-        <?php if (!empty($events)) : ?>
+        <?php if (!empty($tournois)) : ?>
             <ul class="tournois-list">
-                <?php foreach ($events as $t) : ?>
+                <?php foreach ($tournois as $t) : ?>
                     <li class="tournoi-item">
-                        <strong><?= htmlspecialchars($t['titre']) ?></strong> - <?= date("d/m/Y", strtotime($t['event_date'])) ?><br>
+                        <strong><?= htmlspecialchars($t['title']) ?></strong> - <?= date("d/m/Y", strtotime($t['event_date'])) ?><br>
                         <em><?= htmlspecialchars($t['description']) ?></em>
                     </li>
                 <?php endforeach; ?>
@@ -118,6 +220,9 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
         </nav>
     </footer>
 </main>
+
+</body>
+</html>
 
 <script>
     const consoleText = document.getElementById("console-text");

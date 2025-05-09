@@ -3,7 +3,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// session_start();
 session_start();
 set_exception_handler(function($e) {
   echo "<pre>Erreur critique : " . $e->getMessage() . "</pre>";
@@ -106,7 +105,9 @@ if ($resultEvents) {
                 <td>
                   <?php
                   // Vérifie si l'utilisateur est déjà inscrit
-                  $check = mysqli_query($conn, "SELECT * FROM inscriptions WHERE event_id = $id_event AND user_id = $id_joueur");
+                  $stmt = mysqli_prepare($conn, "SELECT * FROM inscriptions WHERE event_id = ? AND user_id = ?");
+                  mysqli_stmt_bind_param($stmt, "ii", $id_event, $id_joueur);
+                  mysqli_stmt_execute($stmt);$check = mysqli_stmt_get_result($stmt); // récupération du résultat icis
                   $est_inscrit = mysqli_num_rows($check) > 0;
                   ?>
   
@@ -141,16 +142,19 @@ if ($resultEvents) {
     <section class="news-feed">
       <h2>📰 Fil d’actualités</h2>
       <?php
-      $sql = "SELECT id, subject, message, created_at FROM newsletters ORDER BY created_at DESC";
+      // Affichage des newsletters
+      $sql = "SELECT n.id, n.subject, n.message, n.created_at, u.username AS author
+      FROM newsletters n
+      JOIN users u ON n.created_by = u.id
+      ORDER BY n.created_at DESC";
       $result = mysqli_query($conn, $sql);
       while ($row = mysqli_fetch_assoc($result)) {
           $id_actu = $row['id'];
           echo "<div class='news-item'>";
           echo "<h3>" . htmlspecialchars($row['subject']) . "</h3>";
           echo "<p>" . nl2br(htmlspecialchars($row['message'])) . "</p>";
-          echo "<small>Publié le " . date('d/m/Y H:i', strtotime($row['created_at'])) . "</small>";
+          echo "<small>Publié par " . htmlspecialchars($row['author']) . " le " . date('d/m/Y H:i', strtotime($row['created_at'])) . "</small>";  // Affichage de l'auteur et de la dates
       }
-      
           // Formulaire commentaire
           echo "<form method='POST' action=''>";
           echo "<input type='hidden' name='id_newsletter' value='" . $id_actu . "' />";
@@ -178,13 +182,7 @@ if ($resultEvents) {
               echo "<span>" . nl2br(htmlspecialchars($com['commentaire'])) . "</span>";
               echo "<small> — " . date('d/m/Y H:i', strtotime($com['date_commentaire'])) . "</small>";
 
-              // Formulaire de réponse
-              echo "<form method='POST'>";
-              echo "<input type='hidden' name='id_commentaire' value='" . $com['id'] . "' />";
-              echo "<textarea name='reponse' placeholder='Répondre à ce commentaire...' required></textarea>";
-              echo "<button type='submit' name='poster_reponse'>Répondre</button>";
-              echo "</form>";
-
+              
               // Réponses
               $id_commentaire = $com['id'];
               $repQuery = "SELECT rc.*, u.username FROM reponses_commentaires rc
@@ -193,6 +191,7 @@ if ($resultEvents) {
                            ORDER BY date_reponse DESC";
               $reponses = mysqli_query($conn, $repQuery);
 
+
               while ($rep = mysqli_fetch_assoc($reponses)) {
                   echo "<div class='reponse'>";
                   echo "<strong>" . htmlspecialchars($rep['username']) . " (réponse) :</strong> ";
@@ -200,6 +199,13 @@ if ($resultEvents) {
                   echo "<small> — " . date('d/m/Y H:i', strtotime($rep['date_reponse'])) . "</small>";
                   echo "</div>";
               }
+              
+              // Formulaire de réponse
+              echo "<form method='POST'>";
+              echo "<input type='hidden' name='id_commentaire' value='" . $com['id'] . "' />";
+              echo "<textarea name='reponse' placeholder='Répondre à ce commentaire...' required></textarea>";
+              echo "<button type='submit' name='poster_reponse'>Répondre</button>";
+              echo "</form>";
               echo "</div>"; // fin commentaire
           }
 
@@ -230,7 +236,7 @@ if ($resultEvents) {
         <span class="close">&times;</span>
         <h2>Proposer un événement</h2>
         <form method="POST">
-            <label for="titre">Titre :</label>
+            <label for="titre">Titre du jeu :</label>
             <input type="text" name="titre" id="titre" required>
 
             <label for="description">Description :</label>

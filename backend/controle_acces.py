@@ -1,7 +1,9 @@
 from flask import Flask, session, redirect, url_for
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # Utilisé pour sécuriser les sessions
+import os
+
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'defaultsecretkey')  # Utilisé pour sécuriser les sessions
 
 @app.route('/')
 def home():

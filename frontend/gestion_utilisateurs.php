@@ -85,11 +85,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
 </head>
 <body>
 
-<div class="console-overlay" id="console-overlay">
-  <div class="console-text" id="console-text"></div>
-</div>
-
-<main class="hidden" id="dashboard-content">
+<main id="dashboard-content">
   <header>
     <nav class="custom-navbar">
       <div class="logo-wrapper">
@@ -168,39 +164,6 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
     </nav>
   </footer>
 </main>
-
-<script>
-  const consoleText = document.getElementById("console-text");
-  const overlay = document.getElementById("console-overlay");
-  const dashboard = document.getElementById("dashboard-content");
-
-  const lines = [
-    "Chargement de la gestion des utilisateurs...",
-    "Vérification des privilèges...",
-    "Interface Admin prête !"
-  ];
-
-  let index = 0;
-  function typeLine() {
-    if (index < lines.length) {
-      consoleText.textContent += lines[index] + "\n";
-      index++;
-      setTimeout(typeLine, 600);
-    } else {
-      setTimeout(() => {
-        overlay.remove();
-        const flash = document.createElement("div");
-        flash.classList.add("screen-flash");
-        document.body.appendChild(flash);
-        setTimeout(() => {
-          flash.remove();
-          dashboard.classList.remove("hidden");
-        }, 600);
-      }, 1000);
-    }
-  }
-  typeLine();
-</script>
 
 </body>
 </html>

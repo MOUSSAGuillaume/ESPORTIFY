@@ -1,11 +1,8 @@
 <?php
-
 include_once("../db.php");
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
+// Vérifier que l'utilisateur est un administrateur
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
     header("Location: ../frontend/connexion.php");
     exit;
@@ -17,12 +14,12 @@ $stmt->bind_param("i", $userId);
 $stmt->execute();
 
 // Traitement du formulaire de modification + validation
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_and_validate') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_event') {
     $tournoiId = intval($_POST['tournoi_id']);
     $nbMax = intval($_POST['nb_max_participants']);
     $date = $_POST['date_event'];
 
-    $stmt = $conn->prepare("UPDATE events SET nb_max_participants = ?, event_date = ?, status = 'validé', updated_at = NOW() WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE events SET nb_max_participants = ?, event_date = ?, updated_at = NOW() WHERE id = ?");
     $stmt->bind_param("isi", $nbMax, $date, $tournoiId);
     if ($stmt->execute()) {
         header("Location: ../frontend/gestion_admin.php?success=Tournoi mis à jour et validé.");
@@ -48,13 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['eve
     $action = $_POST['action'];
 
     if ($action === 'valider') {
-        $stmt = $conn->prepare("UPDATE events SET status = 'Accepté' WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE events SET status = 'accepté' WHERE id = ?");
         $stmt->bind_param("i", $eventId);
         $stmt->execute();
         header("Location: ../frontend/gestion_admin.php?success=Tournoi validé.");
         exit;
     } elseif ($action === 'refuser') {
-        $stmt = $conn->prepare("UPDATE events SET status = 'Refusé' WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE events SET status = 'refusé' WHERE id = ?");
         $stmt->bind_param("i", $eventId);
         $stmt->execute();
         header("Location: ../frontend/gestion_admin.php?success=Tournoi refusé.");
@@ -62,30 +59,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['eve
     }
 }
 
+// Changement de statut (en cours / terminé)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status_action'], $_POST['event_id'])) {
+    $eventId = intval($_POST['event_id']);
+    $statusAction = $_POST['status_action'];
+
+    $stmt = $conn->prepare("UPDATE events SET status = ? WHERE id = ?");
+    $stmt->bind_param("si", $statusAction, $eventId);
+    $stmt->execute();
+
+    header("Location: ../frontend/gestion_admin.php?success=Statut du tournoi mis à jour.");
+    exit;
+}
 
 // Récupération des tournois avec le nombre d'inscrits
-$tournois = $conn->query("SELECT e.*,
-    (SELECT COUNT(*) FROM inscriptions i WHERE i.event_id = e.id) AS inscrits 
+$events = $conn->query("SELECT e.*,
+    (SELECT COUNT(*) FROM inscriptions i WHERE i.event_id = e.id) AS inscrits
     FROM events e
     ORDER BY e.event_date DESC
 ");
-
-// Tournoi à éditer
-$editTournoi = null;
-if (isset($_GET['edit'])) {
-    $editId = intval($_GET['edit']);
-    $stmt = $conn->prepare("SELECT * FROM events WHERE id = ?");
-    $stmt->bind_param("i", $editId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $editTournoi = $result->fetch_assoc();
-}
-
-// Événements en attente
-$evenements_en_attente = $conn->query("SELECT * FROM events WHERE status = 'en attente' ORDER BY created_at DESC");
-
-// Newsletters
-$newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC");
 
 ?>
 <!DOCTYPE html>
@@ -97,11 +89,7 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
 </head>
 <body>
 
-<div class="console-overlay" id="console-overlay">
-  <div class="console-text" id="console-text"></div>
-</div>
-
-<main class="hidden" id="dashboard-content">
+<main id="dashboard-content">
     <header>
         <nav class="custom-navbar">
             <div class="logo-wrapper">
@@ -120,7 +108,7 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
 
         <?= isset($_GET['success']) ? "<div class='msg success'>" . htmlspecialchars($_GET['success']) . "</div>" : '' ?>
 
-        <h3>Tournois</h3>
+        <h3>Events</h3>
         <table>
             <thead>
                 <tr>
@@ -134,7 +122,7 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
                 </tr>
             </thead>
             <tbody>
-                <?php while ($t = mysqli_fetch_assoc($tournois)): ?>
+                <?php while ($t = mysqli_fetch_assoc($events)): ?>
                 <tr>
                     <td><?= htmlspecialchars($t['title']) ?></td>
                     <td><?= htmlspecialchars($t['description']) ?></td>
@@ -142,11 +130,11 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
                     <td><?= htmlspecialchars($t['status']) ?></td>
                     <td><?= intval($t['nb_max_participants']) ?></td>
                     <td class="actions-cell">
-                        <?php if ($t['status'] !== 'Accepté' && $t['status'] !== 'Refusé'): ?>
+                        <?php if (strtolower(trim($t['status'])) !== 'accepté' && strtolower(trim($t['status'])) !== 'refusé'): ?>
                             <button class="button modify-btn" data-id="<?= $t['id'] ?>">Modifier</button>
                         <?php endif; ?>
                         <a href="/ESPORTIFY/frontend/gestion_admin.php?delete=<?= $t['id'] ?>" class="button delete" onclick="return confirm('Supprimer ce tournoi ?')">Supprimer</a>
-                        <?php if ($t['status'] === 'en attente'): ?>
+                        <?php if (in_array(strtolower($t['status']), ['à confirmer', 'à refuser'])): ?>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="valider">
                                 <input type="hidden" name="event_id" value="<?= $t['id'] ?>">
@@ -158,6 +146,15 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
                                 <button type="submit" class="button delete">Refuser</button>
                             </form>
                         <?php endif; ?>
+                        
+                        <!-- Nouveau menu déroulant pour changer le statut -->
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="event_id" value="<?= $t['id'] ?>">
+                            <select name="status_action" onchange="this.form.submit()">
+                                <option value="en cours" <?= $t['status'] === 'en cours' ? 'selected' : '' ?>>En cours</option>
+                                <option value="terminé" <?= $t['status'] === 'terminé' ? 'selected' : '' ?>>Terminé</option>
+                            </select>
+                        </form>
                     </td>
                     <td>
                         <button class="button inscriptions-btn" data-id="<?= $t['id'] ?>">Voir (<?= $t['inscrits'] ?? 0 ?>)</button>
@@ -165,41 +162,7 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
                 </tr>
             <?php endwhile; ?>
             </tbody>
-
         </table>
-        <h3>Newsletters publiées</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Date</th>
-                    <th>Extrait</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php while ($news = mysqli_fetch_assoc($newsletters)): ?>
-                <tr>
-                    <td><?= htmlspecialchars($news['title']) ?></td>
-                    <td><?= htmlspecialchars($news['created_at']) ?></td>
-                    <td><?= substr(htmlspecialchars($news['subject']), 0, 80) . '...' ?></td>
-                    <td>
-                        <button class="button toggle-news" data-id="<?= $news['id'] ?>">Voir</button>
-                        <a href="/ESPORTIFY/frontend/gestion_newsletters.php?edit=<?= $news['id'] ?>" class="button">Modifier</a>
-                    </td>
-                </tr>
-                <tr class="news-content-row" id="news-<?= $news['id'] ?>" style="display: none;">
-                    <td colspan="4">
-                        <div class="newsletter-full">
-                            <?= nl2br(htmlspecialchars($news['message'])) ?>
-                        </div>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
-            </tbody>
-        </table>
-    </section>
-
     <footer>
         <nav>
             <span>Moussa Mehdi-Guillaume</span>
@@ -216,14 +179,14 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
 <div id="editPopup" class="modal" style="display:none;">
     <div class="modal-content">
         <span class="close-button">&times;</span>
-        <h2>Modifier le tournoi</h2>
+        <h2>Modifier l'event</h2>
         <form id="editForm" method="POST">
             <input type="hidden" name="tournoi_id" id="editTournoiId">
             <label for="nb_max">Nombre de joueurs :</label>
             <input type="number" name="nb_max_participants" id="editNbMax" required>
             <label for="date">Date du tournoi :</label>
             <input type="date" name="date_event" id="editDate" required>
-            <input type="hidden" name="action" value="update_and_validate">
+            <input type="hidden" name="action" value="update_event">
             <button type="submit">Valider les changements</button>
         </form>
     </div>
@@ -238,30 +201,6 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
 </div>
 
 <script>
-const consoleText = document.getElementById("console-text");
-const overlay = document.getElementById("console-overlay");
-const dashboard = document.getElementById("dashboard-content");
-const lines = ["Chargement du gestionnaire admin...", "Vérification des privilèges...", "Connexion validée ✔", "Interface admin prête !"];
-let index = 0;
-function typeLine() {
-    if (index < lines.length) {
-        consoleText.textContent += lines[index++] + "\n";
-        setTimeout(typeLine, 600);
-    } else {
-        setTimeout(() => {
-            overlay.remove();
-            const flash = document.createElement("div");
-            flash.classList.add("screen-flash");
-            document.body.appendChild(flash);
-            setTimeout(() => {
-                flash.remove();
-                dashboard.classList.remove("hidden");
-            }, 600);
-        }, 1000);
-    }
-}
-typeLine();
-
 document.querySelectorAll('.toggle-news').forEach(btn => {
     btn.addEventListener('click', () => {
         const id = btn.dataset.id;
@@ -353,10 +292,7 @@ document.querySelectorAll('.inscriptions-btn').forEach(btn => {
 });
 
 document.querySelector('.close-inscriptions').onclick = () => document.getElementById('inscriptionsPopup').style.display = 'none';
-
-
 </script>
 
 </body>
 </html>
-

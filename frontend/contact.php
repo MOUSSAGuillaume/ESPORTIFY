@@ -45,8 +45,6 @@
     <div class="boxrdv" id="formulaire">
         <div class="formulaire">
             <form method="POST" action="/ESPORTIFY/backend/send_contact.php" id="contact-form">
-                <label for="nom">Pseudo:</label>
-                <input type="text" id="pseudo" name="pseudo" required />
     
                 <label for="email">Email :</label>
                 <input type="email" id="email" name="email" required />

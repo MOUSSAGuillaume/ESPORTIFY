@@ -2,7 +2,7 @@
 include_once("../db.php");
 session_start();
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
+if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 1 && $_SESSION['user']['role'] !== 2)) {
     header("Location: ../frontend/connexion.php");
     exit;
 }
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $message = mysqli_real_escape_string($conn, $_POST['message']);
 
     // Insertion de la newsletter dans la base de données
-    $stmt = $conn->prepare("INSERT INTO newsletters (title, subject, message, created_at) VALUES (?, ?, ?, NOW())");
+    $stmt = $conn->prepare("INSERT INTO newsletters (title, subject, message, created_at, created_by) VALUES (?, ?, ?, NOW(), ?)");
     $stmt->bind_param("sss", $title, $subject, $message);
 
     if ($stmt->execute()) {
@@ -31,7 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 }
 
 // Récupération des newsletters
-$newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC");
+$newsletters = $conn->query("
+    SELECT n.*, u.username AS author_name, u.role_id AS role
+    FROM newsletters n
+    JOIN users u ON n.created_by = u.id
+    ORDER BY n.created_at DESC
+");
+
+
 ?>
 
 
@@ -47,7 +54,16 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
 <header>
     <nav class="custom-navbar">
         <div class="logo-wrapper">
-            <a href="/ESPORTIFY/frontend/admin_dashboard.php">
+        <a href="
+                <?php
+                if ($_SESSION['user']['role'] == 1) {
+                    echo "/ESPORTIFY/frontend/admin_dashboard.php"; // Admin
+                } elseif ($_SESSION['user']['role'] == 2) {
+                    echo "/ESPORTIFY/frontend/organisateur_dashboard.php"; // Organisateur
+                } else {
+                    echo "../frontend/connexion.php"; // Connexion si aucun rôle défini
+                }
+                ?> ">
                 <div class="logo-container">
                     <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
                 </div>
@@ -84,6 +100,7 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
                     <th>Titre</th>
                     <th>Date</th>
                     <th>Extrait</th>
+                    <th>Publié par</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -93,6 +110,7 @@ $newsletters = $conn->query("SELECT * FROM newsletters ORDER BY created_at DESC"
                         <td><?= htmlspecialchars($news['title']) ?></td>
                         <td><?= htmlspecialchars($news['created_at']) ?></td>
                         <td><?= substr(htmlspecialchars($news['subject']), 0, 80) . '...' ?></td>
+                        <td><?= htmlspecialchars($news['author_name']) ?> (<?= $news['role'] == 1 ? 'Admin' : 'Organisateur' ?>)</td>
                         <td>
                             <a href="newsletter_details.php?id=<?= $news['id'] ?>" class="button">Voir</a>
                         </td>
