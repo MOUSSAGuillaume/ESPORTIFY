@@ -27,14 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['eve
         exit;
     } elseif ($action === 'refuser') {
         mysqli_query($conn, "UPDATE events SET status='refusé' WHERE id = $eventId");
-        header("Location: ../frontend/gestion_admin.php?success=Tournoi refusé.");
+        header("Location: /frontend/gestion_admin.php?success=Tournoi refusé.");
         exit;
     } else {
         echo json_encode(['error' => 'Action invalide']);
         exit;
     }
 }
-
 
 // En-tête JSON
 header('Content-Type: application/json');
@@ -58,6 +57,7 @@ function validateEventData($title, $description, $event_date) {
 
 // Gestion des actions
 $action = $_POST['action'] ?? $_GET['action'] ?? null;
+
 // Déboguer l'action pour vérifier sa valeur
 if (!isset($_GET['action']) && !isset($_POST['action'])) {
     echo json_encode(['error' => 'Aucune action spécifiée']);
@@ -65,8 +65,6 @@ if (!isset($_GET['action']) && !isset($_POST['action'])) {
 } else {
     echo json_encode(['info' => 'Action: ' . ($_GET['action'] ?? $_POST['action']) ]);
 }
-
-
 
 switch ($action) {
     case 'add':
@@ -84,7 +82,7 @@ switch ($action) {
                 exit;
             }
 
-            $sql = "INSERT INTO evenements (title, description, event_date, status, created_by, created_at)
+            $sql = "INSERT INTO events (title, description, event_date, status, created_by, created_at)
                     VALUES ('$title', '$description', '$event_date', '$status', '$created_by', NOW())";
 
             if (mysqli_query($conn, $sql)) {
@@ -124,14 +122,14 @@ switch ($action) {
                 }
 
                 // Vérifier que l'événement est encore en attente de validation
-                if ($event['status'] !== 'en attente') {
+                if ($event['status'] !== 'En attente') {
                     echo json_encode(['error' => 'Cet événement ne peut pas être modifié']);
                     exit;
                 }
             }
 
             // Mise à jour de l'événement
-            $sql = "UPDATE evenements SET
+            $sql = "UPDATE events SET
                         title = '$title',
                         description = '$description',
                         event_date = '$event_date',
@@ -157,7 +155,7 @@ switch ($action) {
             // Vérifier que l'événement est en attente
             $res = mysqli_query($conn, "SELECT status FROM events WHERE id = $id");
             $event = mysqli_fetch_assoc($res);
-            if ($event['status'] !== 'en attente') {
+            if ($event['status'] !== 'En attente') {
                 echo json_encode(['error' => 'L\'événement ne peut pas être validé']);
                 exit;
             }
@@ -197,7 +195,7 @@ switch ($action) {
             }
 
             // Confirmation de la validation par l'admin
-            $sql = "UPDATE events SET status = 'validé' WHERE id = $id";
+            $sql = "UPDATE events SET status = 'Validé' WHERE id = $id";
             if (mysqli_query($conn, $sql)) {
                 echo json_encode(['success' => 'Événement validé par l\'admin']);
             } else {

@@ -5,7 +5,7 @@ if (!$conn) {
 }
 
 if (isset($_POST['poster_commentaire'])) {
-    $id_newsletter = (int) $_POST['id_newsletter']; // <-- nom correct maintenant
+    $id_newsletter = (int) $_POST['id_newsletter'];
     $commentaire = mysqli_real_escape_string($conn, $_POST['commentaire']);
 
     // Assure-toi que l'utilisateur est connecté
@@ -25,7 +25,7 @@ if (isset($_POST['poster_commentaire'])) {
     }
 }
 
-// Exemple de gestion des réponses aux commentaires si tu veux la garder
+// gestion des réponses aux commentaires si tu veux la garder
 if (isset($_POST['poster_reponse'])) {
     $id_commentaire = (int) $_POST['id_commentaire'];
     $reponse = mysqli_real_escape_string($conn, $_POST['reponse']);
