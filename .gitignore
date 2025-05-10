@@ -1,7 +1,6 @@
 # Fichiers à ignorer par git
 ../composer.json
 ../composer.lock
-../db.php/
 ../dbmongo.php
 ../.env
 # fichiers spécifiques

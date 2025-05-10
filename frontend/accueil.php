@@ -1,3 +1,23 @@
+<?php
+// Authentification basique
+$valid_username = 'admin';  // Utilisateur autorisé
+$valid_password = getenv('PROD_PASSWORD');  // Mot de passe stocké dans l'environnement
+
+if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
+    $_SERVER['PHP_AUTH_USER'] !== $valid_username ||
+    $_SERVER['PHP_AUTH_PW'] !== $valid_password) {
+    
+    // Si l'utilisateur n'est pas authentifié, on lui demande de se connecter
+    header('WWW-Authenticate: Basic realm="Espace sécurisé"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo 'Accès refusé';
+    exit;
+}
+
+// Inclure la connexion à la base de données
+include_once("../db.php");
+?>
+
 <?php include_once("../db.php");?>
 <!DOCTYPE html>
 <html lang="fr">

@@ -6,6 +6,11 @@ require_once __DIR__ . '../../ESPORTIFY/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+// Vérifier si les variables d'environnement existent
+if (!isset($_ENV['DB_HOST'], $_ENV['DB_PORT'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME'])) {
+    die("Erreur : Les variables d'environnement sont manquantes.");
+}
+
 // Récupérer les variables d'environnement
 $host = $_ENV['DB_HOST'];
 $port = $_ENV['DB_PORT'];
@@ -26,6 +31,12 @@ if ($conn->connect_error) {
 // Forcer l’utilisation de l’UTF-8 pour la connexion
 mysqli_set_charset($conn, "utf8");
 
+// Exemple : exécuter une requête
+// $result = $conn->query("SELECT * FROM ma_table");
+// while ($row = $result->fetch_assoc()) {
+//    echo $row['colonne'] . '<br>';
+// }
+
 // N'oubliez pas de fermer la connexion à la base de données si vous n'en avez plus besoin
- $conn->close();
+$conn->close(); // Utilise cette ligne si tu as terminé avec la connexion
 
