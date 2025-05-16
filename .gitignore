@@ -1,6 +1,5 @@
 # Fichiers sensibles
 .env
-dbmongo.php
 
 # Dépendances et librairies
 /vendor/
