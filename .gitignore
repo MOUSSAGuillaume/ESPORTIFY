@@ -5,7 +5,5 @@
 /vendor/
 composer.lock
 
-# Librairies externes
-/PHPMAILER/
-
+# fichiers a protéger
 /uploads_avatars/
