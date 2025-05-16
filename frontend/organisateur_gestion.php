@@ -240,6 +240,38 @@ $events = $conn->query("SELECT e.*,
     });
 
     document.querySelector('.close-inscriptions').onclick = () => document.getElementById('inscriptionsPopup').style.display = 'none';
+
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('valider-inscription') || e.target.classList.contains('refuser-inscription')) {
+            const id = e.target.dataset.id;
+            const action = e.target.classList.contains('valider-inscription') ? 'confirmé' : 'refusé';
+
+            fetch('https://esportify.alwaysdata.net/backend/update_inscription_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `inscription_id=${id}&action=${action}`
+            })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg);
+
+            // Recharge la liste des inscrits sans recharger la page
+            const popup = document.getElementById('inscriptionsPopup');
+            const currentEventId = document.querySelector('.inscriptions-btn.opened')?.dataset.id;
+
+            if (popup && currentEventId) {
+                fetch(`https://esportify.alwaysdata.net/backend/get_inscriptions.php?event_id=${currentEventId}`)
+                    .then(res => res.text())
+                    .then(html => {
+                        document.getElementById('inscriptionsList').innerHTML = html;
+                    });
+            }
+        })
+        .catch(error => alert("Erreur AJAX : " + error));
+    }
+});
 </script>
 
 </body>
