@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 set_exception_handler(function($e) {
   echo "<pre>Erreur critique : " . $e->getMessage() . "</pre>";
@@ -34,7 +30,7 @@ if ($resultEvents) {
 <head>
   <meta charset="UTF-8">
   <title>Esportify - Espace Joueur</title>
-  <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css" />
+  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css" />
 </head>
 <body>
   <!-- Effet console -->
@@ -47,7 +43,7 @@ if ($resultEvents) {
     <header>
       <nav class="custom-navbar">
         <div class="logo-wrapper">
-          <a href="/ESPORTIFY/frontend/joueur_dashboard.php">
+          <a href="https://esportify.alwaysdata.net/frontend/joueur_dashboard.php">
             <div class="logo-container">
               <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
             </div>
@@ -60,9 +56,9 @@ if ($resultEvents) {
     <section class="dashboard">
       <h1>Bienvenue, <?php echo htmlspecialchars($username); ?> 🎮</h1>
       <div class="dashboard-links">
-        <a href="http://localhost/ESPORTIFY/frontend/profile.php" class="btn">Mon profil</a>
+        <a href="https://esportify.alwaysdata.net/frontend/profile.php" class="btn">Mon profil</a>
         <button id="eventButton" class="btn">Proposer un événement</button>
-        <a href="/ESPORTIFY/backend/logout.php" class="btn btn-danger">Se déconnecter</a>
+        <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Se déconnecter</a>
 
       </div>
     </section>

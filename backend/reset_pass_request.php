@@ -1,83 +1,83 @@
 <?php
-// Connexion à la base de données
-require ('../db.php');
+session_start(); // Démarre la session
 
-require_once '../../ESPORTIFY/vendor/autoload.php';
-
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\PHPMailer;
-
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../ESPORTIFY');
+// Autoload & environnement
+require_once '../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-// Vérification que l'email a été soumis
-if (isset($_POST['email'])) {
-    $email = $_POST['email'];
+// Connexion à la base de données
+require_once('../db.php');
 
-    // Vérifier si l'email existe dans la base de données
-    $query = "SELECT * FROM users WHERE email = ?";
-    $stmt = $conn->prepare($query);
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Vérifie si l'utilisateur est connecté
+if (!isset($_SESSION['user'])) {
+    echo "❌ Vous devez être connecté pour réinitialiser votre mot de passe.";
+    exit();
+}
+
+$email = $_SESSION['user']['email'];
+
+    // Vérification de l'email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "❌ Adresse email invalide.";
+        exit;
+    }
+
+    // Rechercher l'utilisateur
+    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        // Générer un token unique
-        $token = bin2hex(random_bytes(50)); // Token de 100 caractères
-        $expires = date("U") + 1800; // Le lien expirera dans 30 minutes
+    if ($result->num_rows === 1) {
+        // Génération du token
+        $token = bin2hex(random_bytes(50));
+        $expires = time() + 1800; // 30 min
 
-        // Enregistrer le token et son expiration dans la base de données
-        $query = "UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("sis", $token, $expires, $email);
-        $stmt->execute();
+        // Mise à jour en base
+        $expiresFormatted = date('Y-m-d H:i:s', $expires);
+        $update = $conn->prepare("UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?");
+        $update->bind_param("sss", $token, $expiresFormatted, $email);
+        $update->execute();
 
-        // Lien de réinitialisation
-        $server = $_SERVER['HTTP_HOST'];
-        $resetLink = "http://localhost/ESPORTIFY/frontend/reset_pass.php?token=" . urlencode($token);
+        // URL dynamique
+        $baseUrl = $_ENV['BASE_URL'] ?? 'http://localhost/ESPORTIFY';
+        $resetLink = $baseUrl . '/frontend/reset_pass.php?token=' . urlencode($token);
 
-
-        // Créer l'objet PHPMailers
+        // Envoi de l'email
         $mail = new PHPMailer(true);
         try {
-            // Configuration SMTP
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com'; // Serveur SMTP de Gmail
+            $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = $_ENV['SMTP_USER_2']; // utilisation d'un email d'expéditeur
-            $mail->Password = $_ENV['SMTP_PASS_2']; // mot de passe ou mot de passe d'application
+            $mail->Username = $_ENV['SMTP_USER_2'];
+            $mail->Password = $_ENV['SMTP_PASS_2'];
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
-            // Destinataire et expéditeur
             $mail->setFrom($_ENV['SMTP_USER_2'], 'Esportify');
-            // Adresse de l'expéditeur
             $mail->addAddress($email);
-
-            $mail->Subject = 'Réinitialisation de votre mot de passe';
             $mail->isHTML(true);
+            $mail->Subject = '🔐 Réinitialisation de votre mot de passe';
+            $emailSafe = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
             $mail->Body = "
                 <p>Bonjour,</p>
-                <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez ci-dessous :</p>
-                <p><a href='$resetLink'>$resetLink</a></p>
-                <p>Ce lien expirera dans 30 minutes.</p>
-            ";
-
-            // Envoyer l'email
-            echo "Envoi de l'email...";
+                <p>Vous avez demandé à réinitialiser le mot de passe pour : <strong>$emailSafe</strong></p>
+                <p><a href='$resetLink'>Cliquez ici pour réinitialiser votre mot de passe</a></p>
+                <p>Ce lien expirera dans <strong>30 minutes</strong>.</p>
+                ";
 
             $mail->send();
-            echo "Un lien de réinitialisation a été envoyé à votre email.";
         } catch (Exception $e) {
-            echo "<pre>";
-            echo "Erreur d'envoi : " . $mail->ErrorInfo . "\n";
-            echo "Exception : " . $e->getMessage() . "\n";
-            print_r(error_get_last());
-            echo "</pre>";
-            return false;
+            // On ignore volontairement l'erreur ici
         }
+
+        // Message toujours affiché, succès ou non
+        echo "✅ Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.";
+
     } else {
-        echo "Cet email n'est pas associé à un compte.";
+        echo "✅ Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.";
     }
-}
-?>

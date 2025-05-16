@@ -18,7 +18,7 @@ if (isset($_POST['poster_commentaire'])) {
         mysqli_stmt_bind_param($stmt, "iis", $id_newsletter, $id_user, $commentaire);
         mysqli_stmt_execute($stmt);
 
-        header("Location: ..//frontend/joueur_dashboard.php?id_newsletter=$id_newsletter#commentaires");
+        header("Location: https://esportify.alwaysdata.net/frontend/joueur_dashboard.php?id_newsletter=$id_newsletter#commentaires");
         exit;
     } else {
         echo "Erreur : utilisateur non connecté.";

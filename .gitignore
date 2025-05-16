@@ -1,9 +1,12 @@
-# Fichiers à ignorer par git
-../composer.json
-../composer.lock
-../dbmongo.php
-../.env
-# fichiers spécifiques
-../vendor/
-../PHPMAILER/
-../uploads_avatars
+# Fichiers sensibles
+.env
+dbmongo.php
+
+# Dépendances et librairies
+/vendor/
+composer.lock
+
+# Librairies externes
+/PHPMAILER/
+
+/uploads_avatars/

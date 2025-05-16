@@ -39,4 +39,3 @@ if (isset($_GET['token'])) {
 } else {
     echo '❌ Aucun token fourni. Le lien est peut-être incomplet.';
 }
-?>

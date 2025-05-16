@@ -31,6 +31,6 @@ if (isset($_GET['id'])) {
     <div>
         <?= nl2br(htmlspecialchars($newsletter['message'])) ?>
     </div>
-    <a href="gestion_newsletters.php" class="button">Retour</a>
+    <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="button">Retour</a>
 </body>
 </html>

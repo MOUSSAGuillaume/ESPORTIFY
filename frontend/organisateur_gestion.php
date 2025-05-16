@@ -4,7 +4,7 @@ session_start();
 
 // Vérifier que l'utilisateur est un organisateur
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 2) {
-    header("Location: /ESPORTIFY/frontend/connexion.php");
+    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
     exit;
 }
 
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt = $conn->prepare("UPDATE events SET nb_max_participants = ?, event_date = ?, updated_at = NOW() WHERE id = ?");
     $stmt->bind_param("isi", $nbMax, $date, $event_id);
     if ($stmt->execute()) {
-        header("Location: ../frontend/organisateur_gestion.php?success=Tournoi mis à jour et validé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/organisateur_gestion.php?success=Tournoi mis à jour et validé.");
         exit;
     } else {
         echo "Erreur : " . $conn->error;
@@ -62,13 +62,13 @@ if (isset($_POST['action']) && isset($_POST['event_id'])) {
         $stmt = $conn->prepare("UPDATE events SET status = 'à confirmer' WHERE id = ?");
         $stmt->bind_param("i", $event_id);
         $stmt->execute();
-        header("Location: ../frontend/organisateur_gestion.php?success=Tournoi validé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/organisateur_gestion.php?success=Tournoi validé.");
         exit;
     } elseif ($action === 'refusé') {
         $stmt = $conn->prepare("UPDATE events SET status = 'à refuser' WHERE id = ?");
         $stmt->bind_param("i", $event_id);
         $stmt->execute();
-        header("Location: ../frontend/organisateur_gestion.php?success=Tournoi refusé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/organisateur_gestion.php?success=Tournoi refusé.");
         exit;
     }
 }
@@ -85,7 +85,7 @@ $events = $conn->query("SELECT e.*,
 <head>
     <meta charset="UTF-8">
     <title>Gestion Organisateur - Esportify</title>
-    <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css">
 </head>
 <body>
 
@@ -93,7 +93,7 @@ $events = $conn->query("SELECT e.*,
     <header>
         <nav class="custom-navbar">
             <div class="logo-wrapper">
-                <a href="/ESPORTIFY/frontend/organisateur_dashboard.php">
+                <a href="https://esportify.alwaysdata.net/frontend/organisateur_dashboard.php">
                     <div class="logo-container">
                         <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
                     </div>
@@ -107,7 +107,13 @@ $events = $conn->query("SELECT e.*,
     <section id="evenements" class="tab-content active">
         <h1>Gestion Organisateur</h1>
         <?= isset($_GET['success']) ? "<div class='msg success'>" . htmlspecialchars($_GET['success']) . "</div>" : '' ?>
-        
+        <div class="dashboard-links">
+            <a href="https://esportify.alwaysdata.net/frontend/organisateur_gestion.php" class="btn">Gestion des Events</a>
+            <!--<a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>-->
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
+            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+        </div>
+    </section>
         <h3>Événements</h3>
         <!-- Table des événements -->
         <table>
@@ -226,7 +232,7 @@ $events = $conn->query("SELECT e.*,
             const popup = document.getElementById('inscriptionsPopup');
             const listDiv = document.getElementById('inscriptionsList');
             listDiv.innerHTML = "Chargement...";
-            fetch(`/ESPORTIFY/backend/get_inscriptions.php?event_id=${eventId}`)
+            fetch(`https://esportify.alwaysdata.net/backend/get_inscriptions.php?event_id=${eventId}`)
                 .then(res => res.text())
                 .then(html => listDiv.innerHTML = html);
             popup.style.display = 'flex';

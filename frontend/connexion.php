@@ -1,7 +1,7 @@
 <?php include_once("../db.php"); 
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: ../frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
+    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
     exit();
 }
 ?>
@@ -13,7 +13,7 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Page de connexion à Esportify - Connectez-vous ou créez un compte.">
     <title>ESPORTI</title>
-    <link rel="stylesheet" href="../style.css/connexion.css"/>
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/connexion.css"/>
 </head>
 <body>
 
@@ -21,7 +21,7 @@ if (isset($_SESSION['user_id'])) {
         <nav class="custom-navbar">
             <!-- Conteneur du logo + demi-cercle -->
             <div class="logo-wrapper">
-                <a href="../frontend/accueil.php">  <!-- Lien vers la page d'accueil -->
+                <a href="https://esportify.alwaysdata.net/frontend/accueil.php">  <!-- Lien vers la page d'accueil -->
                     <div class="logo-container">
                         <img src="../img/logo.png" alt="Esportify Logo" class="logo">
                     </div>
@@ -36,7 +36,7 @@ if (isset($_SESSION['user_id'])) {
             <!-- IMAGE + BOUTON DEDANS -->
             <div class="imageCompte">
                 <img src="../img/image_ecf/img2.jpg" alt="Imagedecompte">
-                <button onclick="location.href='../frontend/create_account.php'" class="create-account-btn">Create-account</button>
+                <button onclick="location.href='https://esportify.alwaysdata.net/frontend/create_account.php'" class="create-account-btn">Create-account</button>
                 
             </div>
 
@@ -147,7 +147,7 @@ if (isset($_SESSION['user_id'])) {
              const formData = new FormData();
             formData.append("email", email);
 
-            fetch("../backend/reset_pass_request.php", {
+            fetch("https://esportify.alwaysdata.net/backend/reset_pass_request.php", {
                 method: "POST",
                 body: formData
             })

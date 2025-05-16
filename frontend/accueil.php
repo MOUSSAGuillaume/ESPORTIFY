@@ -1,5 +1,6 @@
 <?php
-// Authentification basique
+// Authentification basique 
+/*
 $valid_username = 'admin';  // Utilisateur autorisé
 $valid_password = getenv('PROD_PASSWORD');  // Mot de passe stocké dans l'environnement
 
@@ -12,20 +13,22 @@ if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
     header('HTTP/1.0 401 Unauthorized');
     echo 'Accès refusé';
     exit;
-}
+}*/
 
 // Inclure la connexion à la base de données
-include_once("../db.php");
 ?>
+<?php
 
-<?php include_once("../db.php");?>
+//connexion à la base de données
+include_once(__DIR__ . '/../db.php');?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESPORTI</title>
-    <link rel="stylesheet" href="/ESPORTIFY/style.css/accueil.css">
+    <title>ESPORTIFY</title>
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/accueil.css">
+
 </head>
 <body>
 
@@ -33,9 +36,9 @@ include_once("../db.php");
     <nav class="custom-navbar">
         <!-- Logo -->
         <div class="logo-wrapper">
-            <a href="/ESPORTIFY/frontend/accueil.php">
+            <a href="https://esportify.alwaysdata.net/frontend/accueil.php">
                 <div class="logo-container">
-                    <img src="../img/logo.png" alt="Esportify Logo" class="logo">
+                    <img src="/img/logo.png" alt="Esportify Logo" class="logo">
                 </div>
             </a>
             <div class="semi-circle-outline"></div>
@@ -44,20 +47,20 @@ include_once("../db.php");
         <!-- Navbar Links -->
             <div class="nav-links">
                 <div class="link-container left">
-                    <a href="/ESPORTIFY/frontend/accueil.php" class="link">Accueil</a>
+                    <a href="https://esportify.alwaysdata.net/frontend/accueil.php" class="link">Accueil</a>
                     <div class="connector"></div>
                 </div>
                 <div class="link-container center">
-                    <a href="/ESPORTIFY/frontend/connexion.php" class="link">Connexion</a>
+                    <a href="https://esportify.alwaysdata.net/frontend/connexion.php" class="link">Connexion</a>
                     <div class="connector vertical"></div>
                 </div>
                 <div class="link-container right">
-                    <a href="/ESPORTIFY/frontend/contact.php" class="link">Contact</a>
+                    <a href="https://esportify.alwaysdata.net/frontend/contact.php" class="link">Contact</a>
                     <div class="connector"></div>
                 </div>
             </div>
     </nav>
-
+</header>
     <!-- Section Calendrier -->
     <div class="calendar">
         <h3>📆 Calendrier des événements</h3>
@@ -78,8 +81,8 @@ include_once("../db.php");
             echo "<p>Aucun événement trouvé.</p>";
         }
         ?>
+    </div>
 
-    </header>
 
 <section class="ctaContainer">
     <h1 class="titrePrincipal">Esportify</h1>
@@ -144,7 +147,7 @@ if (isset($_GET['logout'])) {
         </div>
         
         <div class="newsletter-item" id="newsletter2">
-            <h3>📰 Autre Newsletter</h3>
+            <h3>📰 Newsletter</h3>
 
             <?php
             // Exemple pour une autre newsletter, ici je duplique la requête pour afficher une autre newsletter
@@ -167,41 +170,6 @@ if (isset($_GET['logout'])) {
 
     <button class="prev-newsletter" onclick="changeNewsletter(-1)">&#10094;</button>
     <button class="next-newsletter" onclick="changeNewsletter(1)">&#10095;</button>
-</section>
-
-
-    <div class="separator">
-        <span class="diamond"></span>
-        <div class="line"></div>
-        <span class="diamond"></span>
-    </div>
-
-    <section class="newsletter2">
-        <div class="boxNewsletter2">
-            <h3>🎮 Événements à venir</h3>
-
-            <?php
-
-            $today = date("Y-m-d");
-            $queryEvents = "SELECT title, description, event_date FROM events WHERE event_date >= '$today' ORDER BY event_date ASC LIMIT 3";
-            echo $queryEvents;
-            $resultEvents = mysqli_query($conn, $queryEvents);
-
-            if ($resultEvents && mysqli_num_rows($resultEvents) > 0) {
-                while ($event = mysqli_fetch_assoc($resultEvents)) {
-                    echo "<div class='event-item'>";
-                    echo "<h4>" . htmlspecialchars($event['title']) . "</h4>";
-                    echo "<p>" . htmlspecialchars($event['description']) . "</p>";
-                    echo "<small>📅 Le " . date("d/m/Y", strtotime($event['event_date'])) . "</small>";
-                    echo "</div><hr>";
-                }
-            } else {
-                echo "<p>Pas d'événements à venir pour le moment.</p>";
-            }
-
-            ?>
-        </div>
-    </section>
 </section>
 
 <footer>

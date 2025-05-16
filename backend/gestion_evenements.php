@@ -1,9 +1,6 @@
 <?php
 include_once("../db.php");
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 // Vérification des droits
 if (!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], [1, 2])) { // 1 pour Admin, 2 pour Organisateur
@@ -23,11 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['eve
 
     if ($action === 'valider') {
         mysqli_query($conn, "UPDATE events SET status='validé' WHERE id = $eventId");
-        header("Location: /frontend/gestion_admin.php?success=Tournoi validé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi validé.");
         exit;
     } elseif ($action === 'refuser') {
         mysqli_query($conn, "UPDATE events SET status='refusé' WHERE id = $eventId");
-        header("Location: /frontend/gestion_admin.php?success=Tournoi refusé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi refusé.");
         exit;
     } else {
         echo json_encode(['error' => 'Action invalide']);

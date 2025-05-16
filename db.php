@@ -1,6 +1,6 @@
 <?php
 // Inclure Composer autoload pour charger les dépendances, y compris phpdotenv
-require_once __DIR__ . '../../ESPORTIFY/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Charger le fichier .env
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -17,6 +17,8 @@ $port = $_ENV['DB_PORT'];
 $user = $_ENV['DB_USER'];
 $password = $_ENV['DB_PASS'];
 $dbname = $_ENV['DB_NAME'];
+
+$charset = 'utf8mb4'; // Charset à utiliser pour la connexion
 
 // Créer une connexion à la base de données avec mysqli
 $conn = new mysqli($host, $user, $password, $dbname, $port);

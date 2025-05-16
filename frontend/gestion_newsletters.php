@@ -3,7 +3,7 @@ include_once("../db.php");
 session_start();
 
 if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 1 && $_SESSION['user']['role'] !== 2)) {
-    header("Location: ../frontend/connexion.php");
+    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
     exit;
 }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt->bind_param("sss", $title, $subject, $message);
 
     if ($stmt->execute()) {
-        header("Location: gestion_newsletters.php?success=Newsletter publiée avec succès.");
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_newsletters.php?success=Newsletter publiée avec succès.");
         exit;
     } else {
         echo "Erreur : " . $conn->error;
@@ -47,7 +47,7 @@ $newsletters = $conn->query("
 <head>
     <meta charset="UTF-8">
     <title>Gestion des Newsletters</title>
-    <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css">
 </head>
 <body>
 
@@ -57,11 +57,11 @@ $newsletters = $conn->query("
         <a href="
                 <?php
                 if ($_SESSION['user']['role'] == 1) {
-                    echo "/ESPORTIFY/frontend/admin_dashboard.php"; // Admin
+                    echo "https://esportify.alwaysdata.net/frontend/admin_dashboard.php"; // Admin
                 } elseif ($_SESSION['user']['role'] == 2) {
-                    echo "/ESPORTIFY/frontend/organisateur_dashboard.php"; // Organisateur
+                    echo "https://esportify.alwaysdata.net/frontend/organisateur_dashboard.php"; // Organisateur
                 } else {
-                    echo "../frontend/connexion.php"; // Connexion si aucun rôle défini
+                    echo "https://esportify.alwaysdata.net/frontend/connexion.php"; // Connexion si aucun rôle défini
                 }
                 ?> ">
                 <div class="logo-container">
@@ -76,6 +76,7 @@ $newsletters = $conn->query("
 <main>
     <section class="dashboard">
         <h1>Gestion des Newsletters</h1>
+
 
         <!-- Formulaire de création de newsletter -->
         <h3>Créer une nouvelle Newsletter</h3>
@@ -112,7 +113,7 @@ $newsletters = $conn->query("
                         <td><?= substr(htmlspecialchars($news['subject']), 0, 80) . '...' ?></td>
                         <td><?= htmlspecialchars($news['author_name']) ?> (<?= $news['role'] == 1 ? 'Admin' : 'Organisateur' ?>)</td>
                         <td>
-                            <a href="newsletter_details.php?id=<?= $news['id'] ?>" class="button">Voir</a>
+                            <a href="https://esportify.alwaysdata.net/frontend/newsletter_details.php?id=<?= $news['id'] ?>" class="button">Voir</a>
                         </td>
                     </tr>
                 <?php endwhile; ?>

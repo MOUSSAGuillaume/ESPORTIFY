@@ -1,54 +1,64 @@
 <?php
 require('../db.php');
+require_once __DIR__ . '/../vendor/autoload.php';
 
-require_once '../../ESPORTIFY/vendor/autoload.php'; // Autoload de PHPMailer
-
-use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
-if (isset($_GET['token'])) {
-    $token = $_GET['token'];
+function afficherMessage($message, $type = "info") {
+    $styles = [
+        "success" => "color: green;",
+        "error"   => "color: red;",
+        "info"    => "color: #333;"
+    ];
+    echo "<p style='{$styles[$type]}'>$message</p>";
+}
 
-    // Vérifier que le token est valide et pas expiré
-    $query = "SELECT * FROM users WHERE reset_token = ? AND reset_token_expires > ?";
-    $stmt = $conn->prepare($query);
+$token = $_GET['token'] ?? null;
 
-    $timeNow = time();
-    $stmt->bind_param("si", $token, $timeNow);
-    $stmt->execute();
-    $result = $stmt->get_result();
+if (!$token) {
+    afficherMessage("❌ Aucun token fourni.", "error");
+    exit;
+}
 
-    if ($result->num_rows > 0) {
-        // Le token est valide
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Vérifier si les champs sont remplis
-            if (!empty($_POST['newPassword']) && !empty($_POST['confirmPassword'])) {
-                $newPassword = $_POST['newPassword'];
-                $confirmPassword = $_POST['confirmPassword'];
+afficherMessage("Token reçu : <strong>" . htmlspecialchars($token) . "</strong>", "info");
 
-                if ($newPassword === $confirmPassword) {
-                    // Hacher et mettre à jour le mot de passe
-                    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+// Récupérer l'heure actuelle via MySQL
+$resultTime = $conn->query("SELECT NOW() AS now");
+$timeNow = $resultTime->fetch_assoc()['now'];
+afficherMessage("Heure serveur MySQL : <strong>$timeNow</strong>", "info");
 
-                    $updateQuery = "UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?";
-                    $updateStmt = $conn->prepare($updateQuery);
-                    $updateStmt->bind_param("si", $hashedPassword, $token);
-                    $updateStmt->execute();
+// Vérifier que le token est valide et non expiré
+$query = "SELECT * FROM users WHERE reset_token = ? AND reset_token_expires > ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ss", $token, $timeNow);
+$stmt->execute();
+$result = $stmt->get_result();
 
-                    echo "<p>✅ Votre mot de passe a été réinitialisé avec succès.</p>";
-                } else {
-                    echo "<p>❌ Les mots de passe ne correspondent pas.</p>";
-                }
-            } else {
-                echo "<p>❌ Veuillez remplir tous les champs.</p>";
-            }
-        }
+if ($result->num_rows === 0) {
+    afficherMessage("❌ Ce lien de réinitialisation est invalide ou a expiré.", "error");
+    exit;
+}
+
+// Si le formulaire est soumis
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $newPassword = $_POST['newPassword'] ?? '';
+    $confirmPassword = $_POST['confirmPassword'] ?? '';
+
+    if (empty($newPassword) || empty($confirmPassword)) {
+        afficherMessage("❌ Veuillez remplir tous les champs.", "error");
+    } elseif ($newPassword !== $confirmPassword) {
+        afficherMessage("❌ Les mots de passe ne correspondent pas.", "error");
     } else {
-        echo "<p>❌ Ce lien de réinitialisation est invalide ou a expiré.</p>";
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        $updateQuery = "UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?";
+        $updateStmt = $conn->prepare($updateQuery);
+        $updateStmt->bind_param("ss", $hashedPassword, $token);
+        $updateStmt->execute();
+
+        afficherMessage("✅ Votre mot de passe a été réinitialisé avec succès.", "success");
     }
-} else {
-    echo "<p>❌ Aucun token fourni.</p>";
 }
 ?>
 
@@ -57,9 +67,8 @@ if (isset($_GET['token'])) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réinitialisation du mot de passe</title>
-    <link rel="stylesheet" href="../style.css"> <!-- Assurez-vous que le chemin est correct -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,25 +79,28 @@ if (isset($_GET['token'])) {
             background: #fff;
             padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         input[type="password"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 4px;
         }
         button {
             background-color: #28a745;
             color: white;
             padding: 10px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
+            width: 100%;
             cursor: pointer;
         }
         button:hover {
@@ -97,14 +109,16 @@ if (isset($_GET['token'])) {
     </style>
 </head>
 <body>
-    <form method="POST">
-        <label for="newPassword">Nouveau mot de passe :</label>
-        <input type="password" name="newPassword" required>
 
-        <label for="confirmPassword">Confirmer le mot de passe :</label>
-        <input type="password" name="confirmPassword" required>
+<form method="POST">
+    <label for="newPassword">Nouveau mot de passe :</label>
+    <input type="password" name="newPassword" id="newPassword" required>
 
-        <button type="submit">Réinitialiser le mot de passe</button>
-    </form>
+    <label for="confirmPassword">Confirmer le mot de passe :</label>
+    <input type="password" name="confirmPassword" id="confirmPassword" required>
+
+    <button type="submit">Réinitialiser le mot de passe</button>
+</form>
+
 </body>
 </html>

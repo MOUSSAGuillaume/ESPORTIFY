@@ -4,7 +4,7 @@ session_start();
 
 // Vérification des privilèges admin
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
-    header("Location: /ESPORTIFY/frontend/connexion.php");
+    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
     exit;
 }
 
@@ -40,7 +40,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         mysqli_query($conn, $sql);
     }
 
-    header("Location: /ESPORTIFY/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
     exit;
 }
 
@@ -58,7 +58,7 @@ if (isset($_POST['update_user']) && isset($_POST['user_id'])) {
         $msg = "❌ Erreur lors de la mise à jour de l'utilisateur.";
     }
 
-    header("Location: ../frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
     exit;
 }
 
@@ -81,7 +81,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
 <head>
   <meta charset="UTF-8">
   <title>Gestion des Utilisateurs</title>
-  <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css" />
+  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css" />
 </head>
 <body>
 
@@ -89,7 +89,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
   <header>
     <nav class="custom-navbar">
       <div class="logo-wrapper">
-        <a href="../frontend/gestion_admin.php">
+        <a href="https://esportify.alwaysdata.net/frontend/admin_dashboard.php">
           <div class="logo-container">
             <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
           </div>
@@ -101,6 +101,13 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
 
   <section class="dashboard">
     <h1>Gestion des Utilisateurs</h1>
+    <div class="dashboard-links">
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
+            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+        </div>
+    </section>
 
     <?php if (isset($_GET['success'])): ?>
       <div class="msg success"><?= htmlspecialchars($_GET['success']) ?></div>
@@ -114,7 +121,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
             <input type="text" name="username" value="<?= htmlspecialchars($editUser['username']) ?>" required>
             <input type="email" name="email" value="<?= htmlspecialchars($editUser['email']) ?>" required>
             <button type="submit" name="update_user" class="button">Enregistrer</button>
-            <a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="button delete">Annuler</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="button delete">Annuler</a>
         </form>
     </div>
     <?php endif; ?>
@@ -124,7 +131,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
             <tr>
                 <th>Pseudo</th>
                 <th>Email</th>
-                <th>Statut</th>
+                <th>Statut du compte</th>
                 <th>Actions</th>
             </tr>
         </thead>

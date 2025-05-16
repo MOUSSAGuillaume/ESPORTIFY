@@ -4,7 +4,7 @@ session_start();
 
 // Vérifier que l'utilisateur est un administrateur
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
-    header("Location: ../frontend/connexion.php");
+    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
     exit;
 }
 
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt = $conn->prepare("UPDATE events SET nb_max_participants = ?, event_date = ?, updated_at = NOW() WHERE id = ?");
     $stmt->bind_param("isi", $nbMax, $date, $tournoiId);
     if ($stmt->execute()) {
-        header("Location: ../frontend/gestion_admin.php?success=Tournoi mis à jour et validé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi mis à jour et validé.");
         exit;
     } else {
         echo "Erreur : " . $conn->error;
@@ -35,7 +35,7 @@ if (isset($_GET['delete'])) {
     $stmt = $conn->prepare("DELETE FROM events WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    header("Location: ../frontend/gestion_admin.php?success=Tournoi supprimé avec succès.");
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi supprimé avec succès.");
     exit;
 }
 
@@ -48,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['eve
         $stmt = $conn->prepare("UPDATE events SET status = 'accepté' WHERE id = ?");
         $stmt->bind_param("i", $eventId);
         $stmt->execute();
-        header("Location: ../frontend/gestion_admin.php?success=Tournoi validé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi validé.");
         exit;
     } elseif ($action === 'refuser') {
         $stmt = $conn->prepare("UPDATE events SET status = 'refusé' WHERE id = ?");
         $stmt->bind_param("i", $eventId);
         $stmt->execute();
-        header("Location: ../frontend/gestion_admin.php?success=Tournoi refusé.");
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php.php?success=Tournoi refusé.");
         exit;
     }
 }
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status_action'], $_PO
     $stmt->bind_param("si", $statusAction, $eventId);
     $stmt->execute();
 
-    header("Location: ../frontend/gestion_admin.php?success=Statut du tournoi mis à jour.");
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Statut du tournoi mis à jour.");
     exit;
 }
 
@@ -85,7 +85,7 @@ $events = $conn->query("SELECT e.*,
 <head>
     <meta charset="UTF-8">
     <title>Gestion Admin</title>
-    <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css">
 </head>
 <body>
 
@@ -93,7 +93,7 @@ $events = $conn->query("SELECT e.*,
     <header>
         <nav class="custom-navbar">
             <div class="logo-wrapper">
-                <a href="/ESPORTIFY/frontend/admin_dashboard.php">
+                <a href="https://esportify.alwaysdata.net/frontend/admin_dashboard.php">
                     <div class="logo-container">
                         <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
                     </div>
@@ -105,6 +105,13 @@ $events = $conn->query("SELECT e.*,
 
     <section class="dashboard">
         <h1>Gestion Admin</h1>
+        <div class="dashboard-links">
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
+            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+        </div>
+    </section>
 
         <?= isset($_GET['success']) ? "<div class='msg success'>" . htmlspecialchars($_GET['success']) . "</div>" : '' ?>
 
@@ -133,7 +140,7 @@ $events = $conn->query("SELECT e.*,
                         <?php if (strtolower(trim($t['status'])) !== 'accepté' && strtolower(trim($t['status'])) !== 'refusé'): ?>
                             <button class="button modify-btn" data-id="<?= $t['id'] ?>">Modifier</button>
                         <?php endif; ?>
-                        <a href="/ESPORTIFY/frontend/gestion_admin.php?delete=<?= $t['id'] ?>" class="button delete" onclick="return confirm('Supprimer ce tournoi ?')">Supprimer</a>
+                        <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php?delete=<?= $t['id'] ?>" class="button delete" onclick="return confirm('Supprimer ce tournoi ?')">Supprimer</a>
                         <?php if (in_array(strtolower($t['status']), ['à confirmer', 'à refuser'])): ?>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="valider">
@@ -235,7 +242,7 @@ document.querySelectorAll('.inscriptions-btn').forEach(btn => {
         const popup = document.getElementById('inscriptionsPopup');
         const listDiv = document.getElementById('inscriptionsList');
         listDiv.innerHTML = "Chargement...";
-        fetch(`/ESPORTIFY/backend/get_inscriptions.php?event_id=${eventId}`)
+        fetch(`https://esportify.alwaysdata.net/backend/get_inscriptions.php?event_id=${eventId}`)
             .then(res => res.text())
             .then(html => listDiv.innerHTML = html);
         popup.style.display = 'flex';
@@ -249,7 +256,7 @@ document.addEventListener("click", function (e) {
         const action = e.target.classList.contains("valider-inscription") ? "confirmé" : "refusé";
         
         // Envoi de la requête pour mettre à jour le statut dans la base de données
-        fetch(`/ESPORTIFY/backend/update_inscription_status.php`, {
+        fetch(`https://esportify.alwaysdata.net/backend/update_inscription_status.php`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `inscription_id=${id}&action=${action}`
@@ -284,7 +291,7 @@ document.querySelectorAll('.inscriptions-btn').forEach(btn => {
         const listDiv = document.getElementById('inscriptionsList');
         listDiv.innerHTML = "Chargement...";
 
-        fetch(`/ESPORTIFY/backend/get_inscriptions.php?event_id=${eventId}`)
+        fetch(`https://esportify.alwaysdata.net/backend/get_inscriptions.php?event_id=${eventId}`)
             .then(res => res.text())
             .then(html => listDiv.innerHTML = html);
         popup.style.display = 'flex';

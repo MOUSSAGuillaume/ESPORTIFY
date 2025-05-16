@@ -7,11 +7,13 @@ session_start();
 
 // Authentification
 if (!isset($_SESSION['user'])) {
-    header("Location: ../frontend/connexion.php");
+    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php
+");
     exit;
 }
 if ($_SESSION['user']['role'] !== 2) {
-    header("Location: ../frontend/accueil.php");
+    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php
+");
     exit;
 }
 
@@ -78,7 +80,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
 <head>
     <meta charset="UTF-8">
     <title>Esportify - Organisateur</title>
-    <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css">
 </head>
 <body>
 
@@ -91,7 +93,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     <header>
         <nav class="custom-navbar">
             <div class="logo-wrapper">
-                <a href="/ESPORTIFY/frontend/organisateur_dashboard.php">
+                <a href="https://esportify.alwaysdata.net/frontend/organisateur_dashboard.php">
                     <div class="logo-container">
                         <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
                     </div>
@@ -104,10 +106,10 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     <section class="dashboard">
         <h1>Bienvenue Organisateur, <?= htmlspecialchars($username) ?> 🛡️</h1>
         <div class="dashboard-links">
-            <a href="/ESPORTIFY/frontend/organisateur_gestion.php" class="btn">Gestion des Events</a>
+            <a href="https://esportify.alwaysdata.net/frontend/organisateur_gestion.php" class="btn">Gestion des Events</a>
             <!--<a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>-->
-            <a href="/ESPORTIFY/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
-            <a href="/ESPORTIFY/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
+            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
         </div>
     </section>
 
