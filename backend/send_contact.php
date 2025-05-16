@@ -1,58 +1,59 @@
 <?php
-include_once("../db.php");
-require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/Exception.php';
-require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/SMTP.php';
+// Autoload Composer
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+// Chargement des variables d'environnement
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+// Si la requête est POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Récupérer les données du formulaire
-    $pseudo = htmlspecialchars($_POST['username']);
-    $email = htmlspecialchars($_POST['email']);
-    $message = htmlspecialchars($_POST['message']);
-    
+    $email = trim($_POST['email'] ?? '');
+    $message = trim($_POST['message'] ?? '');
+
     // Validation des champs
-    if (empty($pseudo) || empty($email) || empty($message)) {
+    if (empty($email) || empty($message)) {
         echo "❌ Tous les champs doivent être remplis.";
         exit;
     }
 
-    // Vérification de la validité de l'email
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "❌ L'email est invalide.";
+        echo "❌ L'adresse e-mail est invalide.";
         exit;
     }
 
-    // Créer une nouvelle instance de PHPMailer
-    $mail = new PHPMailer(true);
-
     try {
-        // Configurer PHPMailer pour utiliser SMTP
+        $mail = new PHPMailer(true);
+
+        // Configuration SMTP
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';  // Exemple : utiliser Gmail comme SMTP
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'moussaguillaume.dev@gmail.com';  // Ton adresse email pour l'envoi
-        $mail->Password = 'wjsixwqbvyyqshnu';  // Mot de passe d'application Gmail
+        $mail->Username = $_ENV['SMTP_USER'];
+        $mail->Password = $_ENV['SMTP_PASS'];
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        // Configurer l'email
-        $mail->setFrom($email, $pseudo);  // L'email de l'utilisateur est utilisé comme expéditeur
-        $mail->addAddress('moussaguillaume.dev@gmail.com');  // L'adresse email où tu veux recevoir les messages
+        // Configuration de l'expéditeur et du destinataire
+        $mail->setFrom($email);
+        $mail->addAddress($_ENV['MAIL_RECEIVER']);
+        $mail->addReplyTo($email);
 
-        $mail->isHTML(true);  // Le message sera au format HTML
-        $mail->Subject = 'Nouveau message de contact';
-        $mail->Body = '<p><strong>Pseudo:</strong> ' . $pseudo . '</p>
-                       <p><strong>Email:</strong> ' . $email . '</p>
-                       <p><strong>Message:</strong> ' . nl2br($message) . '</p>';
+        // Contenu du mail
+        $mail->isHTML(true);
+        $mail->Subject = '📩 Nouveau message de contact';
+        $mail->Body = '
+            <h3>📥 Nouveau message reçu via le formulaire</h3>
+            <p><strong>Email de l\'expéditeur :</strong> ' . htmlspecialchars($email) . '</p>
+            <p><strong>Message :</strong><br>' . nl2br(htmlspecialchars($message)) . '</p>
+        ';
 
-        // Envoi de l'email
         $mail->send();
         echo '✅ Votre message a bien été envoyé !';
     } catch (Exception $e) {
-        echo "❌ L'email n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
+        echo "❌ Erreur lors de l'envoi du message : {$mail->ErrorInfo}";
     }
 }
-?>

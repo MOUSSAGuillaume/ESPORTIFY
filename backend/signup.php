@@ -1,22 +1,25 @@
 <?php
-include_once('../db.php'); // Inclusion de la connexion à la base de données
+// Chargement de l'autoload de Composer
+require_once __DIR__ . '/../vendor/autoload.php';
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// Charger les variables d'environnement
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
-require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/Exception.php';
-require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require_once '../../ESPORTIFY/vendor/phpmailer/phpmailer/src/SMTP.php';
-require_once '../../ESPORTIFY/vendor/autoload.php'; // Autoload de PHPMailer
+// Connexion à la base de données
+require_once __DIR__ . '/../db.php';
 
+// Importation des classes PHPMailer
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $username = $_POST['username'];
-    $mot_de_passe = $_POST['mot_de_passe'];
-    $confirmer_mot_de_passe = $_POST['confirmer_mot_de_passe'];
+    // Récupération des données du formulaire
+    $email = $_POST['email'] ?? '';
+    $username = $_POST['username'] ?? '';
+    $mot_de_passe = $_POST['mot_de_passe'] ?? '';
+    $confirmer_mot_de_passe = $_POST['confirmer_mot_de_passe'] ?? '';
 
     // Vérification de la correspondance des mots de passe
     if ($mot_de_passe !== $confirmer_mot_de_passe) {
@@ -30,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Vérification si l'email existe déjà dans la base de données
+    // Vérification si l'email existe déjà
     $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
     $check->bind_param("s", $email);
     $check->execute();
@@ -40,49 +43,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Hachage du mot de passe pour le stockage sécurisé
+    // Hachage du mot de passe
     $password_hash = password_hash($mot_de_passe, PASSWORD_DEFAULT);
-    
-    // Génération d'un token unique pour la confirmation de l'email
-    $token = bin2hex(random_bytes(50)); // Création d'un token unique pour valider l'email
 
-    // Récupération de l'ID de rôle (par défaut, un membre)
-    $role_id = 4;  // 4 correspond à "joueur" dans la table des rôles
+    // Génération d'un token unique
+    $token = bin2hex(random_bytes(50));
 
-    // Insertion de l'utilisateur dans la base de données
+    // Rôle par défaut : joueur (id 4)
+    $role_id = 4;
+
+    // Insertion en base de données
     $sql = "INSERT INTO users (email, username, password_hash, role_id, token, actif) VALUES (?, ?, ?, ?, ?, 0)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssss", $email, $username, $password_hash, $role_id, $token);
 
     if ($stmt->execute()) {
-        // Si l'utilisateur est inscrit, on envoie un email de confirmation
+        // Envoi de l'email de confirmation
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com'; // Serveur SMTP de Gmail
-            $mail->SMTPAuth = true; // Authentification SMTP
-            $mail->Username = 'monmailtest.dev@gmail.com'; // Utilisation d'un email d'expéditeur
-            $mail->Password = 'wycqaahovznznhba'; // Utilisation d'un mot de passe d'email (il faut protéger ces informations dans des variables d'environnement)
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $_ENV['SMTP_USER_2'];
+            $mail->Password = $_ENV['SMTP_PASS_2'];
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587; // Port SMTP pour TLS
+            $mail->Port = 587;
 
-            // Configurer l'email
-            $mail->setFrom('monmailtest.dev@gmail.com', 'Esportify');
-            $mail->addAddress($email);
+            $mail->setFrom($_ENV['SMTP_USER_2'], 'Esportify'); // Nom de l'expéditeur
+            $mail->addAddress($email);  // Adresse du destinataire
             $mail->isHTML(true);
             $mail->Subject = 'Confirmation de votre compte';
-            $mail->Body = '<p>Bonjour ' . htmlspecialchars($username) . ',</p><p>Merci de vous être inscrit sur Esportify.
-            Cliquez sur le lien suivant pour confirmer votre inscription : <a href="http://localhost/ESPORTIFY/backend/confirm.php?token=' . urlencode($token) . '">
-            Confirmer mon compte</a></p>';
 
-            // Envoi de l'email
+            // Utilisation d'une URL dynamique si définie dans .env
+            $confirmUrl = 'https://esportify.alwaysdata.net/backend/confirm.php?token=' . urlencode($token);
+
+            $mail->Body = "
+                <p>Bonjour " . htmlspecialchars($username) . ",</p>
+                <p>Merci de vous être inscrit sur Esportify. Cliquez sur le lien suivant pour confirmer votre inscription :</p>
+                <p><a href='{$confirmUrl}'>Confirmer mon compte</a></p>
+            ";
+
+
             $mail->send();
-            echo 'success'; // Inscription et email envoyés avec succès
+            echo 'success';
         } catch (Exception $e) {
-            echo "❌ L'email n'a pas pu être envoyé. Vérifiez votre configuration SMTP. Erreur : {$mail->ErrorInfo}";
+            echo "❌ L'email n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
         }
     } else {
         echo '❌ Erreur lors de l\'inscription.';
     }
 }
-?>
+

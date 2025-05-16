@@ -1,108 +1,28 @@
 <?php
-include_once("../db.php");
 session_start();
+set_exception_handler(function($e) {
+  echo "<pre>Erreur critique : " . $e->getMessage() . "</pre>";
+});
 
-// Vérifie si l'utilisateur est connecté
-if (!isset($_SESSION['user'])) {
-    header("Location: ../frontend/connexion.php");
-    exit;
-}
+include_once ("../db.php");
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// Vérifie que l'utilisateur a le bon rôle
-if ($_SESSION['user']['role'] !== 4) { // 4 pour Joueur
-    header("Location: ../frontend/accueil.php");
-    exit;
-}
-
+include_once ("../backend/event_handler.php");// Gestion des événements
+include_once ("../backend/comment_handler.php");// Gestion des commentaires
+include_once ("../backend/like_handler.php");// Gestion des likes
+include_once ("../backend/auth_check.php");// Vérification de l'authentification
 
 $username = $_SESSION['user']['pseudo'];
 $id_joueur = $_SESSION['user']['id'];
 
-// Traitement du formulaire événement
-$message = "";
-if (isset($_POST['submit'])) {
-    $titre = mysqli_real_escape_string($conn, $_POST['titre']);
-    $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $date_event = $_POST['date_event'];
-
-    $sql = "INSERT INTO events (title, description, event_date)
-            VALUES ('$titre', '$description', '$date_event')";
-
-    if (mysqli_query($conn, $sql)) {
-        $message = "<p style='color:green;'>✅ Événement ajouté avec succès !</p>";
-    } else {
-        $message = "<p style='color:red;'>❌ Erreur : " . mysqli_error($conn) . "</p>";
-    }
-}
-
-// Traitement de l'inscription à un événement
-if (isset($_POST['inscription_event'])) {
-  $event_id = (int) $_POST['event_id'];
-  $user_id = $_SESSION['user']['id'];
-
-  // Vérifie si déjà inscrit
-  $checkInscription = mysqli_query($conn, "SELECT * FROM inscriptions WHERE user_id = $user_id AND event_id = $event_id");
-  if (mysqli_num_rows($checkInscription) == 0) {
-      $date_inscription = date('Y-m-d H:i:s');
-      $statut = 'en_attente';
-
-      $insert = mysqli_query($conn, "INSERT INTO inscriptions (user_id, event_id, date_inscription, statut)
-                                     VALUES ($user_id, $event_id, '$date_inscription', '$statut')");
-      if ($insert) {
-          $message = "<p style='color:green;'>✅ Inscription envoyée !</p>";
-      } else {
-          $message = "<p style='color:red;'>❌ Erreur lors de l’inscription : " . mysqli_error($conn) . "</p>";
-      }
-  } else {
-      $message = "<p style='color:orange;'>⚠️ Vous êtes déjà inscrit à cet événement.</p>";
-  }
-}
-
-// Traitement du commentaire
-if (isset($_POST['poster_commentaire'])) {
-    $id_actu = (int) $_POST['id_actualite'];
-    $commentaire = mysqli_real_escape_string($conn, $_POST['commentaire']);
-
-    $sqlComment = "INSERT INTO commentaires_actualites (id_actualite, id_joueur, commentaire)
-                   VALUES ('$id_actu', '$id_joueur', '$commentaire')";
-    mysqli_query($conn, $sqlComment);
-    header("Location: joueur_dashboard.php");
-    exit;
-}
-
 // Récupération des événements
 $evenements = [];
-$resultEvents = mysqli_query($conn, "SELECT * FROM events ORDER BY event_date DESC");
+$resultEvents = mysqli_query($conn, "SELECT * FROM events WHERE status = 'accepté' ORDER BY event_date DESC");
 if ($resultEvents) {
     while ($event = mysqli_fetch_assoc($resultEvents)) {
         $evenements[] = $event;
     }
 }
-// Like actualité
-if (isset($_POST['like_actualite'])) {
-  $id_actu = (int) $_POST['id_actualite_like'];
-  $id_joueur = $_SESSION['user']['id'];
-
-  // Vérifie si déjà liké
-  $check = mysqli_query($conn, "SELECT * FROM likes_actualites WHERE id_actualite = $id_actu AND id_joueur = $id_joueur");
-  if (mysqli_num_rows($check) == 0) {
-      mysqli_query($conn, "INSERT INTO likes_actualites (id_actualite, id_joueur) VALUES ($id_actu, $id_joueur)");
-  } else {
-      // Si déjà liké, on supprime (toggle like)
-      mysqli_query($conn, "DELETE FROM likes_actualites WHERE id_actualite = $id_actu AND id_joueur = $id_joueur");
-  }
-}
-
-if (isset($_POST['poster_reponse'])) {
-  $id_commentaire = (int) $_POST['id_commentaire'];
-  $id_joueur = $_SESSION['user']['id'];
-  $reponse = mysqli_real_escape_string($conn, $_POST['reponse']);
-
-  $sqlReponse = "INSERT INTO reponses_commentaires (id_commentaire, id_joueur, reponse)
-                 VALUES ('$id_commentaire', '$id_joueur', '$reponse')";
-  mysqli_query($conn, $sqlReponse);
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -110,19 +30,20 @@ if (isset($_POST['poster_reponse'])) {
 <head>
   <meta charset="UTF-8">
   <title>Esportify - Espace Joueur</title>
-  <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css" />
+  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css" />
 </head>
 <body>
   <!-- Effet console -->
   <div class="console-overlay" id="console-overlay">
     <div class="console-text" id="console-text"></div>
-  </div>
+</div>
 
-  <main class="hidden" id="dashboard-content">
+
+  <main id="dashboard-content">
     <header>
       <nav class="custom-navbar">
         <div class="logo-wrapper">
-          <a href="/ESPORTIFY/frontend/joueur_dashboard.php">
+          <a href="https://esportify.alwaysdata.net/frontend/joueur_dashboard.php">
             <div class="logo-container">
               <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
             </div>
@@ -135,10 +56,10 @@ if (isset($_POST['poster_reponse'])) {
     <section class="dashboard">
       <h1>Bienvenue, <?php echo htmlspecialchars($username); ?> 🎮</h1>
       <div class="dashboard-links">
-        <a href="/ESPORTIFY/frontend/events.php" class="btn">Voir les tournois</a>
-        <a href="/ESPORTIFY/frontend/mon_profil.php" class="btn">Mon profil</a>
-        <a href="/ESPORTIFY/backend/logout.php" class="btn btn-danger">Se déconnecter</a>
+        <a href="https://esportify.alwaysdata.net/frontend/profile.php" class="btn">Mon profil</a>
         <button id="eventButton" class="btn">Proposer un événement</button>
+        <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Se déconnecter</a>
+
       </div>
     </section>
 
@@ -151,24 +72,62 @@ if (isset($_POST['poster_reponse'])) {
         <table class="event-table">
           <thead>
             <tr>
-              <th>Titre</th>
-              <th>Description</th>
+              <th>Titre du jeu</th>
+              <th>Nombre de joueurs</th>
               <th>Date</th>
+              <th>Nombre d'inscrits</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <?php foreach ($evenements as $event) : ?>
               <tr>
-                <td><?= htmlspecialchars($event['titre']) ?></td>
-                <td><?= nl2br(htmlspecialchars($event['description'])) ?></td>
+                <td><?= htmlspecialchars($event['title']) ?></td>
+                <!-- Affiche le nb de joueurs requis -->
+                <td><?= (int)$event['nb_max_participants'] ?> joueur(s)</td>
                 <td><?= htmlspecialchars(date('d/m/Y', strtotime($event['event_date']))) ?></td>
                 <td>
-                  <form method="POST">
+                  <?php
+                  // Récupérer le nombre d'inscriptions pour l'événement
+                    $id_event = $event['id'];
+                    $resCount = mysqli_prepare($conn, "SELECT COUNT(*) as total FROM inscriptions WHERE event_id = ?");
+                    mysqli_stmt_bind_param($resCount, "i", $id_event);
+                    mysqli_stmt_execute($resCount);
+                    $result = mysqli_stmt_get_result($resCount);
+                    $count = mysqli_fetch_assoc($result)['total'];
+                      echo $count . " joueur(s)";
+                  ?>
+                </td>
+                <td>
+                  <?php
+                  // Vérifie si l'utilisateur est déjà inscrit
+                  $stmt = mysqli_prepare($conn, "SELECT * FROM inscriptions WHERE event_id = ? AND user_id = ?");
+                  mysqli_stmt_bind_param($stmt, "ii", $id_event, $id_joueur);
+                  mysqli_stmt_execute($stmt);$check = mysqli_stmt_get_result($stmt); // récupération du résultat icis
+                  $est_inscrit = mysqli_num_rows($check) > 0;
+                  ?>
+  
+                  <?php if ($est_inscrit): ?>
+                  <form method="POST" style="display:inline;">
+                    <input type="hidden" name="event_id" value="<?= $event['id'] ?>">
+                    <button type="submit" name="desinscription_event">Se désinscrire</button>
+                  </form>
+                  <?php else: ?>
+                  <form method="POST" style="display:inline;">
                     <input type="hidden" name="event_id" value="<?= $event['id'] ?>">
                     <button type="submit" name="inscription_event">S’inscrire</button>
                   </form>
+                  <?php endif; ?>
+
+                  <button type="button" onclick="showDescription(<?= htmlspecialchars(json_encode($event['id'])) ?>)">Voir la description</button>
+                  <?php
+                  // Ajoute la description dans un attribut data pour l'utiliser plus tard
+                  echo "<div id='desc-" . $event['id'] . "' style='display:none;'>"
+                  . htmlspecialchars($event['description']) .
+                  "</div>";
+                  ?>
                 </td>
+
               </tr>
             <?php endforeach; ?>
           </tbody>
@@ -179,58 +138,70 @@ if (isset($_POST['poster_reponse'])) {
     <section class="news-feed">
       <h2>📰 Fil d’actualités</h2>
       <?php
-      $newsQuery = "SELECT * FROM actualites ORDER BY date_pub DESC";
-      $result = mysqli_query($conn, $newsQuery);
+      // Affichage des newsletters
+      $sql = "SELECT n.id, n.subject, n.message, n.created_at, u.username AS author
+      FROM newsletters n
+      JOIN users u ON n.created_by = u.id
+      ORDER BY n.created_at DESC";
+      $result = mysqli_query($conn, $sql);
       while ($row = mysqli_fetch_assoc($result)) {
           $id_actu = $row['id'];
           echo "<div class='news-item'>";
-          echo "<h3>" . htmlspecialchars($row['titre']) . "</h3>";
-          echo "<p>" . nl2br(htmlspecialchars($row['contenu'])) . "</p>";
-          echo "<small>Publié le " . date('d/m/Y H:i', strtotime($row['date_pub'])) . "</small>";
-
+          echo "<h3>" . htmlspecialchars($row['subject']) . "</h3>";
+          echo "<p>" . nl2br(htmlspecialchars($row['message'])) . "</p>";
+          echo "<small>Publié par " . htmlspecialchars($row['author']) . " le " . date('d/m/Y H:i', strtotime($row['created_at'])) . "</small>";  // Affichage de l'auteur et de la dates
+      }
           // Formulaire commentaire
           echo "<form method='POST' action=''>";
-          echo "<input type='hidden' name='id_actualite' value='" . $id_actu . "' />";
+          echo "<input type='hidden' name='id_newsletter' value='" . $id_actu . "' />";
           echo "<textarea name='commentaire' placeholder='Écris un commentaire...' required></textarea>";
           echo "<button type='submit' name='poster_commentaire'>Commenter</button>";
           echo "</form>";
 
           // Affichage des commentaires
-          $commentQuery = "SELECT ca.*, u.pseudo FROM commentaires_actualites ca
-                           JOIN users u ON ca.id_joueur = u.id
-                           WHERE ca.id_actualite = $id_actu
-                           ORDER BY date_commentaire DESC";
-          $comments = mysqli_query($conn, $commentQuery);
+          $comments = []; // Évite le warning si $_GET['id_newsletter'] n’est pas défini
 
-          while ($com = mysqli_fetch_assoc($comments)) {
+            // Récupération des commentaires pour cette newsletter
+            $query = "SELECT cn.*, u.username
+                      FROM commentaires_newsletters cn
+                      JOIN users u ON cn.id_user = u.id
+                      WHERE cn.id_newsletter = $id_actu
+                      ORDER BY cn.date_commentaire DESC";
+            $resCom = mysqli_query($conn, $query);
+            while ($com = mysqli_fetch_assoc($resCom)) {
+                $comments[] = $com;
+            }
+            // Affichage des commentaires + réponses
+          foreach ($comments as $com) {
               echo "<div class='commentaire'>";
-              echo "<strong>" . htmlspecialchars($com['pseudo']) . " :</strong> ";
+              echo "<strong>" . htmlspecialchars($com['username']) . " :</strong> ";
               echo "<span>" . nl2br(htmlspecialchars($com['commentaire'])) . "</span>";
               echo "<small> — " . date('d/m/Y H:i', strtotime($com['date_commentaire'])) . "</small>";
 
-              // Formulaire de réponse
-              echo "<form method='POST' style='margin-top:5px;'>";
-              echo "<input type='hidden' name='id_commentaire' value='" . $com['id'] . "' />";
-              echo "<textarea name='reponse' placeholder='Répondre à ce commentaire...' required></textarea>";
-              echo "<button type='submit' name='poster_reponse'>Répondre</button>";
-              echo "</form>";
-
+              
               // Réponses
               $id_commentaire = $com['id'];
-              $repQuery = "SELECT rc.*, u.pseudo FROM reponses_commentaires rc
+              $repQuery = "SELECT rc.*, u.username FROM reponses_commentaires rc
                            JOIN users u ON rc.id_joueur = u.id
                            WHERE rc.id_commentaire = $id_commentaire
                            ORDER BY date_reponse DESC";
               $reponses = mysqli_query($conn, $repQuery);
 
+
               while ($rep = mysqli_fetch_assoc($reponses)) {
-                  echo "<div class='reponse' style='margin-left:20px; padding-left:10px; border-left: 1px solid #ccc;'>";
-                  echo "<strong>" . htmlspecialchars($rep['pseudo']) . " (réponse) :</strong> ";
+                  echo "<div class='reponse'>";
+                  echo "<strong>" . htmlspecialchars($rep['username']) . " (réponse) :</strong> ";
                   echo "<span>" . nl2br(htmlspecialchars($rep['reponse'])) . "</span>";
                   echo "<small> — " . date('d/m/Y H:i', strtotime($rep['date_reponse'])) . "</small>";
                   echo "</div>";
               }
-
+              
+              // Formulaire de réponse
+              echo "<form method='POST'>";
+              echo "<input type='hidden' name='id_commentaire' value='" . $com['id'] . "' />";
+              echo "<textarea name='reponse' placeholder='Répondre à ce commentaire...' required></textarea>";
+              echo "<button type='submit' name='poster_reponse'>Répondre</button>";
+              echo "</form>";
               echo "</div>"; // fin commentaire
           }
 
@@ -251,17 +222,17 @@ if (isset($_POST['poster_reponse'])) {
           echo "</form>";
 
           echo "</div><hr>";
-      }
+      
       ?>
     </section>
 
-    <!-- Modal popup -->
+    <!-- Modal pour proposer un événement -->
     <div id="eventModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Proposer un événement</h2>
         <form method="POST">
-            <label for="titre">Titre :</label>
+            <label for="titre">Titre du jeu :</label>
             <input type="text" name="titre" id="titre" required>
 
             <label for="description">Description :</label>
@@ -275,6 +246,14 @@ if (isset($_POST['poster_reponse'])) {
         <?php if (!empty($message)) { echo '<div class="message-popup">'.$message.'</div>'; } ?>
       </div>
     </div>
+    <!-- Description Modal -->
+<div id="descPopup" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeDesc">&times;</span>
+    <h2>Description de l'événement</h2>
+    <p id="eventDescriptionText"></p>
+  </div>
+</div>
 
     <footer>
       <nav>
@@ -289,6 +268,7 @@ if (isset($_POST['poster_reponse'])) {
   </main>
 
   <script>
+    // Effet console
     const consoleText = document.getElementById("console-text");
     const overlay = document.getElementById("console-overlay");
     const dashboard = document.getElementById("dashboard-content");
@@ -302,24 +282,23 @@ if (isset($_POST['poster_reponse'])) {
 
     let index = 0;
     function typeLine() {
-      if (index < lines.length) {
-        consoleText.textContent += lines[index] + "\n";
-        index++;
-        setTimeout(typeLine, 600);
-      } else {
-        setTimeout(() => {
-          overlay.remove();
-          const flash = document.createElement("div");
-          flash.classList.add("screen-flash");
-          document.body.appendChild(flash);
-          setTimeout(() => {
-            flash.remove();
-            dashboard.classList.remove("hidden");
-          }, 600);
-        }, 1000);
-      }
+        if (index < lines.length) {
+            consoleText.textContent += lines[index] + "\n";
+            index++;
+            setTimeout(typeLine, 600);
+        } else {
+            setTimeout(() => {
+                overlay.remove();
+                const flash = document.createElement("div");
+                flash.classList.add("screen-flash");
+                document.body.appendChild(flash);
+                setTimeout(() => {
+                    flash.remove();
+                    dashboard.classList.remove("hidden");
+                }, 600);
+            }, 1000);
+        }
     }
-
     typeLine();
 
     const modal = document.getElementById("eventModal");
@@ -333,6 +312,24 @@ if (isset($_POST['poster_reponse'])) {
         modal.style.display = "none";
       }
     }
-  </script>
+
+  function showDescription(eventId) {
+    const desc = document.getElementById("desc-" + eventId).innerText;
+    document.getElementById("eventDescriptionText").textContent = desc;
+    document.getElementById("descPopup").style.display = "block";
+  }
+
+  document.getElementById("closeDesc").onclick = () => {
+    document.getElementById("descPopup").style.display = "none";
+  };
+
+  window.onclick = function(event) {
+    const modal = document.getElementById("descPopup");
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
+
 </body>
 </html>

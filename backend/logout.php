@@ -21,8 +21,8 @@ if (ini_get("session.use_cookies")) {
 // Redirection personnalisée
 switch ($role) {
     case 1:
-        header("Location: /ESPORTIFY/frontend/connexion.php?logout=1");
+        header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?logout=1");
         break;
     default:
-        header("Location: /ESPORTIFY/frontend/accueil.php?logout=1");
+        header("Location: https://esportify.alwaysdata.net/frontend/accueil.php?logout=1");
 }

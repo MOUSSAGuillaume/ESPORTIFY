@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESPORTI</title>
-    <link rel="stylesheet" href="/ESPORTIFY/style.css/contact.css"/>
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/contact.css">
 </head>
 <body>
 
@@ -22,17 +22,17 @@
             <!-- Conteneur des liens avec connecteurs -->
             <div class="nav-links">
                 <div class="link-container left">
-                    <a href="/ESPORTIFY/frontend/accueil.php" class="link">Accueil</a>
+                    <a href="https://esportify.alwaysdata.net/frontend/accueil.php" class="link">Accueil</a>
                     <div class="connector">
                     </div>
                 </div>
                 <div class="link-container center">
-                    <a href="/ESPORTIFY/frontend/connexion.php" class="link">Connexion</a>
+                    <a href="https://esportify.alwaysdata.net/frontend/connexion.php" class="link">Connexion</a>
                     <div class="connector vertical">
                     </div>
                 </div>
                 <div class="link-container right">
-                    <a href="/ESPORTIFY/frontend/contact.php" class="link">Contact</a>
+                    <a href="https://esportify.alwaysdata.net/frontend/contact.php" class="link">Contact</a>
                     <div class="connector">
                     </div>
                 </div>
@@ -44,9 +44,7 @@
     <h1>Contact Us</h1>
     <div class="boxrdv" id="formulaire">
         <div class="formulaire">
-            <form method="POST" action="/ESPORTIFY/backend/send_contact.php" id="contact-form">
-                <label for="nom">Pseudo:</label>
-                <input type="text" id="pseudo" name="pseudo" required />
+            <form method="POST" action="https://esportify.alwaysdata.net/backend/send_contact.php" id="contact-form">
     
                 <label for="email">Email :</label>
                 <input type="email" id="email" name="email" required />

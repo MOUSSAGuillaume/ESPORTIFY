@@ -1,7 +1,7 @@
 <?php include_once("../db.php"); 
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: ../frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
+    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
     exit();
 }
 ?>
@@ -13,7 +13,7 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Page de connexion à Esportify - Connectez-vous ou créez un compte.">
     <title>ESPORTI</title>
-    <link rel="stylesheet" href="../style.css/connexion.css"/>
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/connexion.css"/>
 </head>
 <body>
 
@@ -21,7 +21,7 @@ if (isset($_SESSION['user_id'])) {
         <nav class="custom-navbar">
             <!-- Conteneur du logo + demi-cercle -->
             <div class="logo-wrapper">
-                <a href="../frontend/accueil.php">  <!-- Lien vers la page d'accueil -->
+                <a href="https://esportify.alwaysdata.net/frontend/accueil.php">  <!-- Lien vers la page d'accueil -->
                     <div class="logo-container">
                         <img src="../img/logo.png" alt="Esportify Logo" class="logo">
                     </div>
@@ -36,7 +36,7 @@ if (isset($_SESSION['user_id'])) {
             <!-- IMAGE + BOUTON DEDANS -->
             <div class="imageCompte">
                 <img src="../img/image_ecf/img2.jpg" alt="Imagedecompte">
-                <button onclick="location.href='../frontend/create_account.php'" class="create-account-btn">Create-account</button>
+                <button onclick="location.href='https://esportify.alwaysdata.net/frontend/create_account.php'" class="create-account-btn">Create-account</button>
                 
             </div>
 
@@ -92,63 +92,80 @@ if (isset($_SESSION['user_id'])) {
     </footer>
 
     <script>
-       document.addEventListener("DOMContentLoaded", function () {
-    // Sélection des éléments
-    const modal = document.getElementById("resetPasswordModal");
-    const forgotPasswordLink = document.querySelector(".forgot-password");
-    const closeModal = document.querySelector(".close");
-    const resetEmail = document.getElementById("resetEmail");
-    const resetBtn = document.querySelector(".reset-btn");
-    const resetMessage = document.getElementById("resetMessage");
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sélection des éléments
+        const modal = document.getElementById("resetPasswordModal");
+        const forgotPasswordLink = document.querySelector(".forgot-password");
+        const closeModal = document.querySelector(".close");
+        const resetEmail = document.getElementById("resetEmail");
+        const resetBtn = document.querySelector(".reset-btn");
+        const resetMessage = document.getElementById("resetMessage");
 
-    // Masquer le popup au chargement
-    modal.style.display = "none";
-
-    // Fonction pour valider l'email
-    function validateEmail(email) {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailPattern.test(email);
-    }
-
-    // Quand on clique sur "Mot de passe oublié ?", on affiche la popup
-    forgotPasswordLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        modal.style.display = "flex";
-        resetMessage.style.display = "none"; // Cacher le message à chaque ouverture
-        resetEmail.value = ""; // Réinitialiser le champ email
-    });
-
-    // Quand on clique sur la croix, on ferme la popup
-    closeModal.addEventListener("click", function () {
+        // Masquer le popup au chargement
         modal.style.display = "none";
-    });
 
-    // Fermer la popup en cliquant en dehors
-    window.addEventListener("click", function (event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
+        // Fonction pour valider l'email
+        function validateEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
         }
-    });
 
-    // Gestion du clic sur "Envoyer"
-    resetBtn.addEventListener("click", function () {
-        const email = resetEmail.value.trim();
+        // Quand on clique sur "Mot de passe oublié ?", on affiche la popup
+        forgotPasswordLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            modal.style.display = "flex";
+            resetMessage.style.display = "none"; // Cacher le message à chaque ouverture
+            resetEmail.value = ""; // Réinitialiser le champ email
+        });
 
-        if (email === "") {
-            resetMessage.textContent = "Veuillez entrer votre email.";
-            resetMessage.className = "message error";
-            resetMessage.style.display = "block";
-        } else if (!validateEmail(email)) {
-            resetMessage.textContent = "Veuillez entrer un email valide.";
-            resetMessage.className = "message error";
-            resetMessage.style.display = "block";
-        } else {
-            resetMessage.textContent = "Un email de réinitialisation vous a été envoyé.";
-            resetMessage.className = "message success";
-            resetMessage.style.display = "block";
+        // Quand on clique sur la croix, on ferme la popup
+        closeModal.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+        // Fermer la popup en cliquant en dehors
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+
+        // Gestion du clic sur "Envoyer"
+        resetBtn.addEventListener("click", function () {
+            const email = resetEmail.value.trim();
+
+            if (email === "") {
+                resetMessage.textContent = "Veuillez entrer votre email.";
+                resetMessage.className = "message error";
+                resetMessage.style.display = "block";
+            } else if (!validateEmail(email)) {
+                resetMessage.textContent = "Veuillez entrer un email valide.";
+                resetMessage.className = "message error";
+                resetMessage.style.display = "block";
+            } else {
+        // Envoi de la requête AJAX pour envoyer l'email de réinitialisation
+             const formData = new FormData();
+            formData.append("email", email);
+
+            fetch("https://esportify.alwaysdata.net/backend/reset_pass_request.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                resetMessage.textContent = data;
+                resetMessage.className = "message success";
+                resetMessage.style.display = "block";
+            })
+            .catch(error => {
+                resetMessage.textContent = "Une erreur s'est produite. Veuillez réessayer.";
+                resetMessage.className = "message error";
+                resetMessage.style.display = "block";
+            });
         }
     });
 });
+
 
     </script>
 <?php

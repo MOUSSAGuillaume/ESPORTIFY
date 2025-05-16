@@ -1,47 +1,48 @@
 <?php
-include_once('../db.php'); // Vérifie bien que ce chemin est correct pour ta structure de projet
+// Chargement des variables d'environnement
+require_once __DIR__ . '/../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
-// Vérification si le token est fourni dans l'URL
-if (isset($_GET['token'])) {
-    $token = $_GET['token'];
-    // Validation basique du format du token
-    if (!ctype_xdigit($token))  {
-        echo '⚠️ Le lien est invalide ou a expiré.';
+// Connexion à la base de données
+require_once('../db.php');
+
+// Vérifie si un token est passé dans l'URL
+if (!isset($_GET['token']) || !ctype_xdigit($_GET['token'])) {
+    echo '❌ Lien invalide ou incomplet.';
+    exit;
+}
+
+$token = $_GET['token'];
+
+// Vérifier si le token existe
+$sql = "SELECT id, actif FROM users WHERE token = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $token);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    $user = $result->fetch_assoc();
+
+    if ($user['actif'] == 1) {
+        echo '✅ Votre compte est déjà activé.';
         exit;
     }
 
-    // Vérification si le token existe dans la base de données
-    $sql = "SELECT id, actif FROM users WHERE token = ?"; // Assure-toi que la table s'appelle 'users' dans ta base de données
+    // Activer le compte
+    $sql = "UPDATE users SET actif = 1, token = NULL, updated_at = NOW() WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $token);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->bind_param("i", $user['id']);
 
-    // Si le token existe dans la base de données
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-
-        // Vérification si le compte est déjà activé
-        if ($user['actif'] == 1) {
-            echo '✅ Votre compte est déjà activé.';
-        } else {
-            // Mise à jour de l'utilisateur pour l'activer et vider le token
-            $sql = "UPDATE users SET actif = 1, token = NULL, updated_at = NOW() WHERE token = ?"; // Assure-toi d'utiliser 'users'
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $token);
-
-            if ($stmt->execute()) {
-                // Redirection après activation
-                header("Location: ../../ESPORTIFY/frontend/connexion.php?success=1");
-                exit;  // Empêcher le reste du code de s'exécuter après la redirection
-            } else {
-                echo '❌ Une erreur est survenue lors de l’activation. Veuillez réessayer plus tard.';
-            }
-        }
+    if ($stmt->execute()) {
+        // Redirection après succès
+        $redirectUrl = $_ENV['BASE_URL'] . '/frontend/connexion.php?success=1';
+        header("Location: $redirectUrl");
+        exit;
     } else {
-        echo '⚠️ Ce lien est invalide, a expiré ou a déjà été utilisé.';
+        echo '❌ Erreur lors de l’activation du compte.';
     }
 } else {
-    echo '❌ Aucun token fourni. Le lien est peut-être incomplet.';
+    echo '⚠️ Lien invalide ou déjà utilisé.';
 }
-?>

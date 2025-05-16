@@ -3,8 +3,8 @@ include_once("../db.php");
 session_start();
 
 // Vérification des privilèges admin
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'Admin') {
-    header("Location: /ESPORTIFY/frontend/connexion.php");
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
+    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
     exit;
 }
 
@@ -40,17 +40,17 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         mysqli_query($conn, $sql);
     }
 
-    header("Location: /ESPORTIFY/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
     exit;
 }
 
 // Traitement de la modification d'un utilisateur
 if (isset($_POST['update_user']) && isset($_POST['user_id'])) {
     $user_id = intval($_POST['user_id']);
-    $pseudo = mysqli_real_escape_string($conn, $_POST['pseudo']);
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
 
-    $sql = "UPDATE users SET pseudo = '$username', email = '$email' WHERE id = $user_id";
+    $sql = "UPDATE users SET username = '$username', email = '$email' WHERE id = $user_id";
 
     if (mysqli_query($conn, $sql)) {
         $msg = "Utilisateur modifié avec succès.";
@@ -58,7 +58,7 @@ if (isset($_POST['update_user']) && isset($_POST['user_id'])) {
         $msg = "❌ Erreur lors de la mise à jour de l'utilisateur.";
     }
 
-    header("Location: /ESPORTIFY/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
     exit;
 }
 
@@ -73,7 +73,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) 
 }
 
 // Récupérer tous les utilisateurs
-$result = mysqli_query($conn, "SELECT * FROM users ORDER BY pseudo ASC");
+$result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
 ?>
 
 <!DOCTYPE html>
@@ -81,19 +81,15 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY pseudo ASC");
 <head>
   <meta charset="UTF-8">
   <title>Gestion des Utilisateurs</title>
-  <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css" />
+  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css" />
 </head>
 <body>
 
-<div class="console-overlay" id="console-overlay">
-  <div class="console-text" id="console-text"></div>
-</div>
-
-<main class="hidden" id="dashboard-content">
+<main id="dashboard-content">
   <header>
     <nav class="custom-navbar">
       <div class="logo-wrapper">
-        <a href="../frontend/gestion_admin.php">
+        <a href="https://esportify.alwaysdata.net/frontend/admin_dashboard.php">
           <div class="logo-container">
             <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
           </div>
@@ -105,6 +101,13 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY pseudo ASC");
 
   <section class="dashboard">
     <h1>Gestion des Utilisateurs</h1>
+    <div class="dashboard-links">
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
+            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+        </div>
+    </section>
 
     <?php if (isset($_GET['success'])): ?>
       <div class="msg success"><?= htmlspecialchars($_GET['success']) ?></div>
@@ -112,13 +115,13 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY pseudo ASC");
 
     <?php if ($editUser): ?>
     <div class="form-wrapper">
-        <h2>Modifier l'utilisateur : <?= htmlspecialchars($editUser['pseudo']) ?></h2>
+        <h2>Modifier l'utilisateur : <?= htmlspecialchars($editUser['username']) ?></h2>
         <form method="POST">
             <input type="hidden" name="user_id" value="<?= $editUser['id'] ?>">
-            <input type="text" name="pseudo" value="<?= htmlspecialchars($editUser['pseudo']) ?>" required>
+            <input type="text" name="username" value="<?= htmlspecialchars($editUser['username']) ?>" required>
             <input type="email" name="email" value="<?= htmlspecialchars($editUser['email']) ?>" required>
             <button type="submit" name="update_user" class="button">Enregistrer</button>
-            <a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="button delete">Annuler</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="button delete">Annuler</a>
         </form>
     </div>
     <?php endif; ?>
@@ -128,14 +131,14 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY pseudo ASC");
             <tr>
                 <th>Pseudo</th>
                 <th>Email</th>
-                <th>Statut</th>
+                <th>Statut du compte</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         <?php while ($user = mysqli_fetch_assoc($result)): ?>
             <tr>
-                <td><?= htmlspecialchars($user['pseudo']) ?></td>
+                <td><?= htmlspecialchars($user['username']) ?></td>
                 <td><?= htmlspecialchars($user['email']) ?></td>
                 <td>
                     <span class="status <?= $user['actif'] ? 'active' : 'inactive' ?>">
@@ -168,39 +171,6 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY pseudo ASC");
     </nav>
   </footer>
 </main>
-
-<script>
-  const consoleText = document.getElementById("console-text");
-  const overlay = document.getElementById("console-overlay");
-  const dashboard = document.getElementById("dashboard-content");
-
-  const lines = [
-    "Chargement de la gestion des utilisateurs...",
-    "Vérification des privilèges...",
-    "Interface Admin prête !"
-  ];
-
-  let index = 0;
-  function typeLine() {
-    if (index < lines.length) {
-      consoleText.textContent += lines[index] + "\n";
-      index++;
-      setTimeout(typeLine, 600);
-    } else {
-      setTimeout(() => {
-        overlay.remove();
-        const flash = document.createElement("div");
-        flash.classList.add("screen-flash");
-        document.body.appendChild(flash);
-        setTimeout(() => {
-          flash.remove();
-          dashboard.classList.remove("hidden");
-        }, 600);
-      }, 1000);
-    }
-  }
-  typeLine();
-</script>
 
 </body>
 </html>

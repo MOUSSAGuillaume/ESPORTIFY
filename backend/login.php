@@ -2,6 +2,8 @@
 // Sécurisation des cookies de session avant de commencer
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1); // Si vous utilisez HTTPS
+ini_set('session.cookie_samesite', 'Strict'); // Empêche les cookies d'être envoyés lors de requêtes cross-site
+
 
 session_start();  // Démarrer la session après avoir configuré les paramètres
 
@@ -18,7 +20,7 @@ if (empty($_POST['email']) || empty($_POST['password'])) {
 }
 
 $email = $_POST['email'];
-$password = $_POST['password']; // Pas _hash !
+$password = $_POST['password'];
 
 // Préparer et exécuter la requête
 $sql = "SELECT * FROM users WHERE email = ?";
@@ -30,7 +32,7 @@ $result = $stmt->get_result();
 if ($user = $result->fetch_assoc()) {
     // Vérification si le compte est activé
     if ($user['actif'] != 1) {
-        header("Location: /ESPORTIFY/frontend/connexion.php?error=2");
+        header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=2");
         exit;
     }
 
@@ -48,13 +50,13 @@ if ($user = $result->fetch_assoc()) {
         // Redirection selon le rôle
         switch ($user['role_id']) {
             case 1: // Admin
-                header("Location: ../frontend/admin_dashboard.php");
+                header("Location: https://esportify.alwaysdata.net/frontend/admin_dashboard.php");
                 break;
             case 2: // Organisateurs
-                header("Location: ../frontend/organisateur_dashboard.php");
+                header("Location: https://esportify.alwaysdata.net/frontend/organisateur_dashboard.php");
                 break;
             case 4: // Joueur
-                header("Location: ../frontend/joueur_dashboard.php");
+                header("Location: https://esportify.alwaysdata.net/frontend/joueur_dashboard.php");
                 break;
             default:
                 echo "Rôle non reconnu.";
@@ -66,6 +68,6 @@ if ($user = $result->fetch_assoc()) {
 }
 
 // Mauvais identifiants
-header("Location: ESPORTIFY/frontend/connexion.php?error=1");
+header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=1");
 exit;
 ?>

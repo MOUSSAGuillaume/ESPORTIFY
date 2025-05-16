@@ -2,97 +2,98 @@
 include_once("../db.php");
 session_start();
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'Admin') {
-    header("Location: /ESPORTIFY/frontend/connexion.php");
+// Vérifier que l'utilisateur est un administrateur
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
+    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
     exit;
 }
 
 $userId = $_SESSION['user']['id'];
-mysqli_query($conn, "UPDATE utilisateurs SET last_activity = NOW() WHERE id = $userId");
+$stmt = $conn->prepare("UPDATE users SET last_activity = NOW() WHERE id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
 
-// Ajout / modification d'un tournoi
-if (isset($_POST['save_tournoi'])) {
-    $id = isset($_POST['tournoi_id']) ? intval($_POST['tournoi_id']) : null;
-    $nom = mysqli_real_escape_string($conn, $_POST['nom']);
-    $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $jeu = mysqli_real_escape_string($conn, $_POST['jeu']);
-    $date = $_POST['date_tournoi'];
-    $nb_max = intval($_POST['nb_max_participants']);
-    $statut = 'en attente';
+// Traitement du formulaire de modification + validation
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_event') {
+    $tournoiId = intval($_POST['tournoi_id']);
+    $nbMax = intval($_POST['nb_max_participants']);
+    $date = $_POST['date_event'];
 
-    if ($id) {
-        $sql = "UPDATE tournois SET nom='$nom', description='$description', jeu='$jeu', date_tournoi='$date', nb_max_participants=$nb_max, updated_at=NOW() WHERE id = $id";
-        $msg = "Tournoi modifié avec succès.";
+    $stmt = $conn->prepare("UPDATE events SET nb_max_participants = ?, event_date = ?, updated_at = NOW() WHERE id = ?");
+    $stmt->bind_param("isi", $nbMax, $date, $tournoiId);
+    if ($stmt->execute()) {
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi mis à jour et validé.");
+        exit;
     } else {
-        $sql = "INSERT INTO tournois (nom, description, jeu, date_tournoi, statut, nb_max_participants, created_by) 
-                VALUES ('$nom', '$description', '$jeu', '$date', '$statut', $nb_max, $userId)";
-        $msg = "Tournoi ajouté avec succès.";
+        echo "Erreur : " . $conn->error;
     }
-
-    mysqli_query($conn, $sql);
-    header("Location: ../frontend/gestion_admin.php?success=$msg");
-    exit;
 }
 
 // Suppression d'un tournoi
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
-    mysqli_query($conn, "DELETE FROM tournois WHERE id = $id");
-    header("Location: ../frontend/gestion_admin.php?success=Tournoi supprimé avec succès.");
+    $stmt = $conn->prepare("DELETE FROM events WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi supprimé avec succès.");
     exit;
 }
 
 // Validation / Refus d'un tournoi
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['tournoi_id'])) {
-    $tournoiId = intval($_POST['tournoi_id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['event_id'])) {
+    $eventId = intval($_POST['event_id']);
     $action = $_POST['action'];
 
     if ($action === 'valider') {
-        mysqli_query($conn, "UPDATE tournois SET statut='validé' WHERE id = $tournoiId");
-        header("Location: /frontend/gestion_admin.php?success=Tournoi validé.");
+        $stmt = $conn->prepare("UPDATE events SET status = 'accepté' WHERE id = ?");
+        $stmt->bind_param("i", $eventId);
+        $stmt->execute();
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Tournoi validé.");
         exit;
     } elseif ($action === 'refuser') {
-        mysqli_query($conn, "UPDATE tournois SET statut='refusé' WHERE id = $tournoiId");
-        header("Location: ../frontend/gestion_admin.php?success=Tournoi refusé.");
+        $stmt = $conn->prepare("UPDATE events SET status = 'refusé' WHERE id = ?");
+        $stmt->bind_param("i", $eventId);
+        $stmt->execute();
+        header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php.php?success=Tournoi refusé.");
         exit;
     }
 }
 
-// Récupérations des tournois
-$tournois = mysqli_query($conn, "SELECT * FROM tournois ORDER BY date_tournoi DESC");
+// Changement de statut (en cours / terminé)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['status_action'], $_POST['event_id'])) {
+    $eventId = intval($_POST['event_id']);
+    $statusAction = $_POST['status_action'];
 
-// Récupération des événements en attente
-$evenements_en_attente = mysqli_query($conn, "SELECT * FROM events WHERE statut = 'en attente' ORDER BY date_soumission DESC");
+    $stmt = $conn->prepare("UPDATE events SET status = ? WHERE id = ?");
+    $stmt->bind_param("si", $statusAction, $eventId);
+    $stmt->execute();
 
-// Récupérer les newsletters
-$newsletters = mysqli_query($conn, "SELECT * FROM newsletters ORDER BY date_publication DESC");
-
-$editTournoi = null;
-if (isset($_GET['edit'])) {
-    $editId = intval($_GET['edit']);
-    $res = mysqli_query($conn, "SELECT * FROM tournois WHERE id = $editId");
-    $editTournoi = mysqli_fetch_assoc($res);
+    header("Location: https://esportify.alwaysdata.net/frontend/gestion_admin.php?success=Statut du tournoi mis à jour.");
+    exit;
 }
-?>
 
+// Récupération des tournois avec le nombre d'inscrits
+$events = $conn->query("SELECT e.*,
+    (SELECT COUNT(*) FROM inscriptions i WHERE i.event_id = e.id) AS inscrits
+    FROM events e
+    ORDER BY e.event_date DESC
+");
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Gestion Admin</title>
-    <link rel="stylesheet" href="/ESPORTIFY/style.css/dashboard_style.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css">
 </head>
 <body>
 
-<div class="console-overlay" id="console-overlay">
-  <div class="console-text" id="console-text"></div>
-</div>
-
-<main class="hidden" id="dashboard-content">
+<main id="dashboard-content">
     <header>
         <nav class="custom-navbar">
             <div class="logo-wrapper">
-                <a href="/ESPORTIFY/frontend/admin_dashboard.php">
+                <a href="https://esportify.alwaysdata.net/frontend/admin_dashboard.php">
                     <div class="logo-container">
                         <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
                     </div>
@@ -104,106 +105,71 @@ if (isset($_GET['edit'])) {
 
     <section class="dashboard">
         <h1>Gestion Admin</h1>
+        <div class="dashboard-links">
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
+            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
+            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+        </div>
+    </section>
 
         <?= isset($_GET['success']) ? "<div class='msg success'>" . htmlspecialchars($_GET['success']) . "</div>" : '' ?>
 
-        <!-- Gestion des Tournois -->
-        <div class="form-wrapper">
-            <h2><?= $editTournoi ? 'Modifier le tournoi' : 'Ajouter un tournoi' ?></h2>
-            <form method="POST" action="/ESPORTIFY/frontend/gestion_admin.php">
-                <?php if ($editTournoi): ?>
-                    <input type="hidden" name="tournoi_id" value="<?= $editTournoi['id'] ?>">
-                <?php endif; ?>
-                <input type="text" name="nom" placeholder="Nom du tournoi" required value="<?= $editTournoi['nom'] ?? '' ?>">
-                <textarea name="description" placeholder="Description"><?= $editTournoi['description'] ?? '' ?></textarea>
-                <input type="text" name="jeu" placeholder="Jeu concerné" required value="<?= $editTournoi['jeu'] ?? '' ?>">
-                <input type="date" name="date_tournoi" required value="<?= $editTournoi['date_tournoi'] ?? '' ?>">
-                <input type="number" name="nb_max_participants" placeholder="Nb max de joueurs" required min="2" value="<?= $editTournoi['nb_max_participants'] ?? 8 ?>">
-                <button type="submit" name="save_tournoi" class="button"><?= $editTournoi ? 'Modifier' : 'Ajouter' ?></button>
-            </form>
-        </div>
-
-        <!-- Table des Tournois -->
-        <h3>Tournois</h3>
+        <h3>Events</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Nom</th>
-                    <th>Jeu</th>
+                    <th>Nom du jeu</th>
+                    <th>Description</th>
                     <th>Date</th>
                     <th>Statut</th>
                     <th>Places</th>
                     <th>Actions</th>
+                    <th>Nb d'inscrits</th>
                 </tr>
             </thead>
             <tbody>
-            <?php while ($t = mysqli_fetch_assoc($tournois)): ?>
+                <?php while ($t = mysqli_fetch_assoc($events)): ?>
                 <tr>
-                    <td><?= htmlspecialchars($t['nom']) ?></td>
-                    <td><?= htmlspecialchars($t['jeu']) ?></td>
-                    <td><?= htmlspecialchars($t['date_tournoi']) ?></td>
-                    <td><?= htmlspecialchars($t['statut']) ?></td>
+                    <td><?= htmlspecialchars($t['title']) ?></td>
+                    <td><?= htmlspecialchars($t['description']) ?></td>
+                    <td><?= htmlspecialchars(date('Y-m-d', strtotime($t['event_date']))) ?></td>
+                    <td><?= htmlspecialchars($t['status']) ?></td>
                     <td><?= intval($t['nb_max_participants']) ?></td>
-                    <td>
-                        <a href="/ESPORTIFY/frontend/gestion_admin.php?edit=<?= $t['id'] ?>" class="button">Modifier</a>
-                        <a href="/ESPORTIFY/frontend/gestion_admin.php?delete=<?= $t['id'] ?>" class="button delete" onclick="return confirm('Supprimer ce tournoi ?')">Supprimer</a>
-
-                        <?php if ($t['statut'] === 'en attente'): ?>
+                    <td class="actions-cell">
+                        <?php if (strtolower(trim($t['status'])) !== 'accepté' && strtolower(trim($t['status'])) !== 'refusé'): ?>
+                            <button class="button modify-btn" data-id="<?= $t['id'] ?>">Modifier</button>
+                        <?php endif; ?>
+                        <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php?delete=<?= $t['id'] ?>" class="button delete" onclick="return confirm('Supprimer ce tournoi ?')">Supprimer</a>
+                        <?php if (in_array(strtolower($t['status']), ['à confirmer', 'à refuser'])): ?>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="valider">
-                                <input type="hidden" name="tournoi_id" value="<?= $t['id'] ?>">
+                                <input type="hidden" name="event_id" value="<?= $t['id'] ?>">
                                 <button type="submit" class="button">Valider</button>
                             </form>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="refuser">
-                                <input type="hidden" name="tournoi_id" value="<?= $t['id'] ?>">
+                                <input type="hidden" name="event_id" value="<?= $t['id'] ?>">
                                 <button type="submit" class="button delete">Refuser</button>
                             </form>
                         <?php endif; ?>
+                        
+                        <!-- Nouveau menu déroulant pour changer le statut -->
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="event_id" value="<?= $t['id'] ?>">
+                            <select name="status_action" onchange="this.form.submit()">
+                                <option value="en cours" <?= $t['status'] === 'en cours' ? 'selected' : '' ?>>En cours</option>
+                                <option value="terminé" <?= $t['status'] === 'terminé' ? 'selected' : '' ?>>Terminé</option>
+                            </select>
+                        </form>
                     </td>
-                </tr>
-            <?php endwhile; ?>
-            </tbody>
-        </table>
-
-        <!-- Gestion des Événements -->
-        <h3><a href="/ESPORTIFY/frontend/gestion_evenements.php" class="btn">Gérer les Événements en Attente de Validation</a></h3>
-
-        <!-- Gestion des Newsletters -->
-        <h3>Newsletters publiées</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Date de Publication</th>
-                    <th>Extrait</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php while ($news = mysqli_fetch_assoc($newsletters)): ?>
-                <tr>
-                    <td><?= htmlspecialchars($news['titre']) ?></td>
-                    <td><?= htmlspecialchars($news['date_publication']) ?></td>
-                    <td><?= substr(htmlspecialchars($news['contenu']), 0, 80) . '...' ?></td>
                     <td>
-                        <button class="button toggle-news" data-id="<?= $news['id'] ?>">Voir</button>
-                        <a href="/ESPORTIFY/frontend/gestion_newsletters.php?edit=<?= $news['id'] ?>" class="button">Modifier</a>
-                    </td>
-                </tr>
-                <tr class="news-content-row" id="news-<?= $news['id'] ?>" style="display: none;">
-                    <td colspan="4">
-                        <div class="newsletter-full">
-                            <?= nl2br(htmlspecialchars($news['contenu'])) ?>
-                        </div>
+                        <button class="button inscriptions-btn" data-id="<?= $t['id'] ?>">Voir (<?= $t['inscrits'] ?? 0 ?>)</button>
                     </td>
                 </tr>
             <?php endwhile; ?>
             </tbody>
         </table>
-
-    </section>
-
     <footer>
         <nav>
             <span>Moussa Mehdi-Guillaume</span>
@@ -216,53 +182,123 @@ if (isset($_GET['edit'])) {
     </footer>
 </main>
 
+<!-- Popups -->
+<div id="editPopup" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Modifier l'event</h2>
+        <form id="editForm" method="POST">
+            <input type="hidden" name="tournoi_id" id="editTournoiId">
+            <label for="nb_max">Nombre de joueurs :</label>
+            <input type="number" name="nb_max_participants" id="editNbMax" required>
+            <label for="date">Date du tournoi :</label>
+            <input type="date" name="date_event" id="editDate" required>
+            <input type="hidden" name="action" value="update_event">
+            <button type="submit">Valider les changements</button>
+        </form>
+    </div>
+</div>
+
+<div id="inscriptionsPopup" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-inscriptions">&times;</span>
+        <h2>Liste des inscrits</h2>
+        <div id="inscriptionsList">Chargement...</div>
+    </div>
+</div>
+
 <script>
-    const consoleText = document.getElementById("console-text");
-    const overlay = document.getElementById("console-overlay");
-    const dashboard = document.getElementById("dashboard-content");
-
-    const lines = [
-        "Chargement du gestionnaire admin...",
-        "Vérification des privilèges...",
-        "Connexion validée ✔",
-        "Interface admin prête !"
-    ];
-
-    let index = 0;
-    function typeLine() {
-        if (index < lines.length) {
-            consoleText.textContent += lines[index] + "\n";
-            index++;
-            setTimeout(typeLine, 600);
+document.querySelectorAll('.toggle-news').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const contentRow = document.getElementById('news-' + id);
+        if (contentRow.style.display === 'none') {
+            contentRow.style.display = 'table-row';
+            btn.textContent = 'Cacher';
         } else {
-            setTimeout(() => {
-                overlay.remove();
-                const flash = document.createElement("div");
-                flash.classList.add("screen-flash");
-                document.body.appendChild(flash);
-                setTimeout(() => {
-                    flash.remove();
-                    dashboard.classList.remove("hidden");
-                }, 600);
-            }, 1000);
+            contentRow.style.display = 'none';
+            btn.textContent = 'Voir';
         }
-    }
-    typeLine();
-
-    // Script pour les newsletters
-    document.querySelectorAll('.toggle-news').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const id = this.dataset.id;
-            const contentRow = document.getElementById('news-' + id);
-            if (contentRow.style.display === 'none') {
-                contentRow.style.display = 'table-row';
-                this.textContent = 'Cacher';
-            } else {
-                contentRow.style.display = 'none';
-                this.textContent = 'Voir';
-            }
-        });
     });
+});
+
+document.querySelectorAll('.modify-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const row = this.closest('tr');
+        const id = this.dataset.id;
+        const date = row.children[2].textContent.trim();
+        const nbMax = row.children[4].textContent.trim();
+        document.getElementById('editTournoiId').value = id;
+        document.getElementById('editNbMax').value = nbMax;
+        document.getElementById('editDate').value = date;
+        document.getElementById('editPopup').style.display = 'flex';
+    });
+});
+document.querySelector('.close-button').onclick = () => document.getElementById('editPopup').style.display = 'none';
+
+document.querySelectorAll('.inscriptions-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const eventId = btn.dataset.id;
+        const popup = document.getElementById('inscriptionsPopup');
+        const listDiv = document.getElementById('inscriptionsList');
+        listDiv.innerHTML = "Chargement...";
+        fetch(`https://esportify.alwaysdata.net/backend/get_inscriptions.php?event_id=${eventId}`)
+            .then(res => res.text())
+            .then(html => listDiv.innerHTML = html);
+        popup.style.display = 'flex';
+    });
+});
+document.querySelector('.close-inscriptions').onclick = () => document.getElementById('inscriptionsPopup').style.display = 'none';
+
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("valider-inscription") || e.target.classList.contains("refuser-inscription")) {
+        const id = e.target.dataset.id;
+        const action = e.target.classList.contains("valider-inscription") ? "confirmé" : "refusé";
+        
+        // Envoi de la requête pour mettre à jour le statut dans la base de données
+        fetch(`https://esportify.alwaysdata.net/backend/update_inscription_status.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `inscription_id=${id}&action=${action}`
+        })
+        .then(res => res.text())
+        .then(msg => {
+            alert(msg);
+            updateButtons(id, action);
+        });
+    }
+});
+
+function updateButtons(id, action) {
+    const row = document.querySelector(`tr[data-id='${id}']`);
+    if (!row) return;
+
+    // Supprimer les boutons Valider/Refuser
+    row.querySelectorAll(".valider-inscription, .refuser-inscription").forEach(btn => btn.remove());
+
+    // Mettre à jour le statut dans la cellule prévue
+    const statusCell = row.querySelector(".status-cell");
+    if (statusCell) {
+        statusCell.textContent = action.charAt(0).toUpperCase() + action.slice(1); // "Confirmé" ou "Refusé"
+    }
+}
+
+// Gérer l'affichage dans le popup des inscriptions
+document.querySelectorAll('.inscriptions-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const eventId = btn.dataset.id;
+        const popup = document.getElementById('inscriptionsPopup');
+        const listDiv = document.getElementById('inscriptionsList');
+        listDiv.innerHTML = "Chargement...";
+
+        fetch(`https://esportify.alwaysdata.net/backend/get_inscriptions.php?event_id=${eventId}`)
+            .then(res => res.text())
+            .then(html => listDiv.innerHTML = html);
+        popup.style.display = 'flex';
+    });
+});
+
+document.querySelector('.close-inscriptions').onclick = () => document.getElementById('inscriptionsPopup').style.display = 'none';
 </script>
 
 </body>

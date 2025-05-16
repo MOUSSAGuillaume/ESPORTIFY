@@ -1,11 +1,14 @@
-<?php include_once('../db.php'); ?>
+<?php
+require_once __DIR__ . '/../db.php';
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sportify - Inscription</title>
-  <link rel="stylesheet" href="/ESPORTIFY/style.css/create_account.css" />
+  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/create_account.css" />
 </head>
 <body>
 
@@ -16,7 +19,7 @@
   <header>
     <nav class="custom-navbar">
       <div class="logo-wrapper">
-        <a href="/ESPORTIFY/frontend/accueil.php"> <!-- Lien vers la page d'accueil -->
+        <a href="https://esportify.alwaysdata.net/frontend/accueil.php"> <!-- Lien vers la page d'accueil -->
           <div class="logo-container">
             <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
           </div>
@@ -31,7 +34,7 @@
       <div class="image-form">
         <img src="../img/image_ecf/img1.webp" alt="Image de fond" class="background-image" />
 
-        <form id="signup-form" class="form-overlay" action="/ESPORTIFY/backend/signup.php" method="POST">
+        <form id="signup-form" class="form-overlay" action="https://esportify.alwaysdata.net/backend/signup.php" method="POST">
           <label for="email">Email:</label>
           <input type="email" id="email" name="email" placeholder="email" required />
 
@@ -135,7 +138,7 @@
       }
 
       try {
-        const response = await fetch("/ESPORTIFY/backend/signup.php", {
+        const response = await fetch("https://esportify.alwaysdata.net/backend/signup.php", {
           method: "POST",
           body: new URLSearchParams({
           email,
@@ -169,20 +172,6 @@
       window.location.href = "/frontend/accueil.php"; // Rediriger vers la page d'accueil après la confirmation
     }
   </script>
-  <?php
-$host = 'localhost'; // ou ton adresse de serveur
-$username = 'root'; // ton utilisateur de base de données
-$password = ''; // ton mot de passe pour la base de données
-$dbname = 'ESPORTIFY'; // nom de la base de données
-
-// Créer la connexion
-$conn = new mysqli($host, $username, $password, $dbname);
-
-// Vérifier la connexion
-if ($conn->connect_error) {
-    die("La connexion a échoué: " . $conn->connect_error);
-}
-?>
 
 </body>
 </html>
