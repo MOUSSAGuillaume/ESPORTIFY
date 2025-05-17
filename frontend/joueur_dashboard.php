@@ -1,16 +1,15 @@
 <?php
 session_start();
-set_exception_handler(function($e) {
-  echo "<pre>Erreur critique : " . $e->getMessage() . "</pre>";
-});
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 include_once ("../db.php");
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-include_once ("../backend/event_handler.php");// Gestion des événements
-include_once ("../backend/comment_handler.php");// Gestion des commentaires
-include_once ("../backend/like_handler.php");// Gestion des likes
-include_once ("../backend/auth_check.php");// Vérification de l'authentification
+include_once ("../backend/event_handler.php");
+include_once ("../backend/comment_handler.php");
+include_once ("../backend/like_handler.php");
+include_once ("../backend/auth_check.php");
 
 $username = $_SESSION['user']['pseudo'];
 $id_joueur = $_SESSION['user']['id'];
@@ -167,12 +166,11 @@ if ($resultEvents) {
                       JOIN users u ON cn.id_user = u.id
                       WHERE cn.id_newsletter = $id_actu
                       ORDER BY cn.date_commentaire DESC";
-            mysqli_stmt_bind_param($stmt, "i", $id_actu);
-            mysqli_stmt_execute($stmt);
-            $resCom = mysqli_stmt_get_result($stmt);
+            $resCom = mysqli_query($conn, $query);
             while ($com = mysqli_fetch_assoc($resCom)) {
               $comments[] = $com;
-          }
+            }
+
             // Affichage des commentaires + réponses
           foreach ($comments as $com) {
               echo "<div class='commentaire'>";
@@ -303,6 +301,8 @@ if ($resultEvents) {
     }
     typeLine();
 
+
+    // Modal pour proposer un événement
     const modal = document.getElementById("eventModal");
     const btn = document.getElementById("eventButton");
     const span = document.getElementsByClassName("close")[0];
