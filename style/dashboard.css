@@ -61,8 +61,14 @@ body {
     display: flex;
     gap: 1rem;
   }
-  .dashboard-content {
+  .dashboard-content , th {
     color: white;
+  }
+  td {
+    color: wheat;
+  }
+  h1 , h3 {
+    color: purple;
   }
 
   .btn {
@@ -100,6 +106,9 @@ body {
     height: 4rem;
   }
 
+  .tournois-section {
+    color: wheat;
+  }
 /* Changer la couleur du bouton lorsqu'on passe la souris dessus */
 .close:hover,
 .close:focus {
