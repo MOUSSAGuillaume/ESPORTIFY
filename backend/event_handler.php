@@ -63,21 +63,33 @@ if (isset($_POST['desinscription_event']) || isset($_POST['inscription_event']))
         } else {
             $message = "<p style='color:red;'>❌ Erreur de préparation de la requête pour la désinscription.</p>";
         }
+
     } elseif (isset($_POST['inscription_event'])) {
-        // Vérification inscription existante sécurisée
+        // Vérification si déjà inscrit
         $stmt = $conn->prepare("SELECT id FROM inscriptions WHERE user_id = ? AND event_id = ?");
         $stmt->bind_param("ii", $user_id, $event_id);
         $stmt->execute();
         $checkInscription = $stmt->get_result();
+        $stmt->close();
 
         if ($checkInscription->num_rows == 0) {
-            // Vérifie que le nombre max de joueurs n'est pas atteint
-            $eventInfo = mysqli_query($conn, "SELECT nb_max_participants FROM events WHERE id = $event_id");
-            if ($eventInfo && mysqli_num_rows($eventInfo) > 0) {
-                $max = (int) mysqli_fetch_assoc($eventInfo)['nb_max_participants'];
+            // Récupère le nombre max de participants
+            $stmt = $conn->prepare("SELECT nb_max_participants FROM events WHERE id = ?");
+            $stmt->bind_param("i", $event_id);
+            $stmt->execute();
+            $eventInfo = $stmt->get_result();
+            $stmt->close();
 
-                $resCount = mysqli_query($conn, "SELECT COUNT(*) as total FROM inscriptions WHERE event_id = $event_id");
-                $nbInscrits = (int) mysqli_fetch_assoc($resCount)['total'];
+            if ($eventInfo && $eventInfo->num_rows > 0) {
+                $max = (int) $eventInfo->fetch_assoc()['nb_max_participants'];
+
+                // Compte les inscrits actuels
+                $stmt = $conn->prepare("SELECT COUNT(*) as total FROM inscriptions WHERE event_id = ?");
+                $stmt->bind_param("i", $event_id);
+                $stmt->execute();
+                $resCount = $stmt->get_result();
+                $nbInscrits = (int) $resCount->fetch_assoc()['total'];
+                $stmt->close();
 
                 if ($nbInscrits >= $max) {
                     $message = "<p style='color:red;'>❌ Nombre maximum de participants atteint.</p>";
@@ -98,10 +110,11 @@ if (isset($_POST['desinscription_event']) || isset($_POST['inscription_event']))
                         $message = "<p style='color:red;'>❌ Erreur de préparation de la requête.</p>";
                     }
                 }
+            } else {
+                $message = "<p style='color:red;'>❌ Événement non trouvé.</p>";
             }
         } else {
             $message = "<p style='color:orange;'>⚠️ Vous êtes déjà inscrit à cet événement.</p>";
         }
-        $stmt->close();
     }
 }

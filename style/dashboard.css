@@ -5,6 +5,7 @@ body {
     justify-content: flex-start;
     background: url('../img/image_ecf/fond1.jpg') no-repeat center/cover;
     margin: 5px;
+    min-height: 100vh;
 }
 .status-green { color: green; }
 .status-red { color: red; }
@@ -16,13 +17,12 @@ body {
     width: 100%; height: 100%;
     background: black;
     z-index: 9999;
-    display: none;
     align-items: center;
     justify-content: center;
+    display: flex;
   }
-
   .console-text {
-    color: whitesmoke;
+    color: blueviolet;
     font-size: 1.2rem;
     white-space: pre-wrap;
   }
