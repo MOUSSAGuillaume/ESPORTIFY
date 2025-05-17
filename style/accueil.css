@@ -122,11 +122,12 @@ body {
     margin: 0 auto;
     background: rgba(87,104,219,100);
     border-radius: 10px;
-    text-align: flex-start;
     max-width: 800px;
     max-height: 300px;
-    overflow-y: auto; /* permet le scroll si contenu dépasse */
+    overflow-x: auto; /* permet le scroll si contenu dépasse */
+    scroll-behavior: smooth; /* pour un défilement fluide */
 }
+
 .calendar .event {
     background-color: #2b2b3d;
     border-radius: 8px;
@@ -282,8 +283,8 @@ h1 {
     margin: 20px 0;
 }
 
-/* Section 1 (Newsletter) */
-.newsletter1 {
+/* Section (Newsletter) */
+.newsletter1, .newsletter2 {
     background-color: rgba(121, 129, 156, 90%);
     align-items: center;
     justify-content: center;
@@ -296,27 +297,6 @@ h1 {
     flex-direction: column;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
     margin-bottom: 15px;
-}
-
-/* Section 2 (Newsletter) */
-.newsletter2 {
-    background-color: rgba(121, 129, 156, 90%);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 50%;
-    width: 485px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
-    margin-bottom: 15px;
-}
-
-/* Box dans chaque newsletter */
-.boxNewsletter1,
-.boxNewsletter2 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -326,40 +306,6 @@ h1 {
 h3 {
     text-align: center;
     font-size: 18px;
-}
-
-/* Le séparateur */
-.separator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    flex-grow: 1;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.line {
-    height: 2px;
-    background-color: black;
-    width: 100%;
-}
-
-.diamond {
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-bottom: 15px solid black;
-    position: absolute;
-}
-
-.diamond:first-child {
-    left: -15px; /* Position le premier losange à gauche */
-}
-
-.diamond:last-child {
-    right: -15px; /* Position le deuxième losange à droite */
 }
 
 /* Style pour les flèches de navigation */

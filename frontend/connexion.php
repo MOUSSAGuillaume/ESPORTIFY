@@ -13,7 +13,7 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Page de connexion à Esportify - Connectez-vous ou créez un compte.">
     <title>ESPORTI</title>
-    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/connexion.css"/>
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/connexion.css"/>
 </head>
 <body>
 

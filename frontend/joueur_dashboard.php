@@ -30,7 +30,7 @@ if ($resultEvents) {
 <head>
   <meta charset="UTF-8">
   <title>Esportify - Espace Joueur</title>
-  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css" />
+  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/dashboard.css" />
 </head>
 <body>
   <!-- Effet console -->
@@ -167,10 +167,12 @@ if ($resultEvents) {
                       JOIN users u ON cn.id_user = u.id
                       WHERE cn.id_newsletter = $id_actu
                       ORDER BY cn.date_commentaire DESC";
-            $resCom = mysqli_query($conn, $query);
+            mysqli_stmt_bind_param($stmt, "i", $id_actu);
+            mysqli_stmt_execute($stmt);
+            $resCom = mysqli_stmt_get_result($stmt);
             while ($com = mysqli_fetch_assoc($resCom)) {
-                $comments[] = $com;
-            }
+              $comments[] = $com;
+          }
             // Affichage des commentaires + réponses
           foreach ($comments as $com) {
               echo "<div class='commentaire'>";
