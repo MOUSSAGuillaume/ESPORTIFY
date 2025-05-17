@@ -78,7 +78,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
 <head>
     <meta charset="UTF-8">
     <title>Esportify - Admin</title>
-    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/dashboard.css">
 </head>
 <body>
 

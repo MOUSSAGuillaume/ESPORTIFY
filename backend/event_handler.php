@@ -1,25 +1,33 @@
 <?php
 include_once("../db.php");
 
-// Traitement du formulaire événement
 $message = "";
+
 if (isset($_POST['submit'])) {
     $titre = mysqli_real_escape_string($conn, $_POST['titre']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $date_event = $_POST['date_event'];
-   // $nb_joueurs = (int) $_POST['nb_joueurs'];//
+    $nb_joueurs = isset($_POST['nb_joueurs']) ? (int) $_POST['nb_joueurs'] : 0;
+    $created_by = $_SESSION['user']['id'] ?? 0;
 
-    $stmt = $conn->prepare("INSERT INTO events (title, description, event_date, status, nb_max_participants, created_by) VALUES (?, ?, ?, 'en attente', ?, ?)");
-    if ($stmt) {
-        $stmt->bind_param("sssii", $titre, $description, $date_event, $nb_joueurs, $created_by);
-        if ($stmt->execute()) {
-            $message = "<p style='color:green;'>✅ Événement ajouté avec succès !</p>";
-        } else {
-            $message = "<p style='color:red;'>❌ Erreur lors de l'ajout de l'événement : " . $stmt->error . "</p>";
-        }
-        $stmt->close();
+    // Validation
+    if (empty($titre) || empty($description) || empty($date_event)) {
+        $message = "<p style='color:red;'>❌ Tous les champs sont obligatoires.</p>";
+    } elseif (strtotime($date_event) < strtotime(date("Y-m-d"))) {
+        $message = "<p style='color:red;'>❌ La date de l'événement doit être ultérieure à aujourd'hui.</p>";
     } else {
-        $message = "<p style='color:red;'>❌ Erreur de préparation de la requête pour l’ajout de l’événement.</p>";
+        $stmt = $conn->prepare("INSERT INTO events (title, description, event_date, status, nb_max_participants, created_by) VALUES (?, ?, ?, 'en attente', ?, ?)");
+        if ($stmt) {
+            $stmt->bind_param("sssii", $titre, $description, $date_event, $nb_joueurs, $created_by);
+            if ($stmt->execute()) {
+                $message = "<p style='color:green;'>✅ Événement ajouté avec succès !</p>";
+            } else {
+                $message = "<p style='color:red;'>❌ Erreur lors de l'ajout de l'événement : " . $stmt->error . "</p>";
+            }
+            $stmt->close();
+        } else {
+            $message = "<p style='color:red;'>❌ Erreur de préparation de la requête pour l’ajout de l’événement.</p>";
+        }
     }
 }
 
@@ -43,7 +51,6 @@ if (isset($_POST['desinscription_event']) || isset($_POST['inscription_event']))
     $user_id = $_SESSION['user']['id'];
 
     if (isset($_POST['desinscription_event'])) {
-        // Désinscription
         $stmt = $conn->prepare("DELETE FROM inscriptions WHERE user_id = ? AND event_id = ?");
         if ($stmt) {
             $stmt->bind_param("ii", $user_id, $event_id);
@@ -57,9 +64,13 @@ if (isset($_POST['desinscription_event']) || isset($_POST['inscription_event']))
             $message = "<p style='color:red;'>❌ Erreur de préparation de la requête pour la désinscription.</p>";
         }
     } elseif (isset($_POST['inscription_event'])) {
-        // Inscription
-        $checkInscription = mysqli_query($conn, "SELECT * FROM inscriptions WHERE user_id = $user_id AND event_id = $event_id");
-        if (mysqli_num_rows($checkInscription) == 0) {
+        // Vérification inscription existante sécurisée
+        $stmt = $conn->prepare("SELECT id FROM inscriptions WHERE user_id = ? AND event_id = ?");
+        $stmt->bind_param("ii", $user_id, $event_id);
+        $stmt->execute();
+        $checkInscription = $stmt->get_result();
+
+        if ($checkInscription->num_rows == 0) {
             // Vérifie que le nombre max de joueurs n'est pas atteint
             $eventInfo = mysqli_query($conn, "SELECT nb_max_participants FROM events WHERE id = $event_id");
             if ($eventInfo && mysqli_num_rows($eventInfo) > 0) {
@@ -91,5 +102,6 @@ if (isset($_POST['desinscription_event']) || isset($_POST['inscription_event']))
         } else {
             $message = "<p style='color:orange;'>⚠️ Vous êtes déjà inscrit à cet événement.</p>";
         }
+        $stmt->close();
     }
 }

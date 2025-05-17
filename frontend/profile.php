@@ -31,63 +31,101 @@ $avatar = isset($user['avatar']) ? htmlspecialchars((string)$user['avatar'], ENT
 $role_safe = htmlspecialchars((string)$role, ENT_QUOTES, 'UTF-8');
 ?>
 
-<h2>Mon Profil (<?= $role_safe ?>)</h2>
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Esportify - Espace Joueur</title>
+        <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/profile.css" />
+    </head>
 
-<form action="https://esportify.alwaysdata.net/backend/update_profile.php" method="POST" enctype="multipart/form-data">
-    <label>Nom :</label>
-    <input type="text" name="username" value="<?= $username ?>"><br>
+<body>
 
-    <label>Email actuel :</label>
-    <input type="email" value="<?= $email ?>" disabled><br>
+    <div class="wrapper">
+        <header>
+            <nav class="custom-navbar">
+                <div class="logo-wrapper">
+                    <a href="https://esportify.alwaysdata.net/frontend/joueur_dashboard.php">
+                        <div class="logo-container">
+                            <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
+                        </div>
+                    </a>
+                        <div class="semi-circle-outline"></div>
+                </div>
+            </nav>
+        </header>
+    <main id="dashboard-content">
+        <h2>Mon Profil <!--(<?//= $role_safe//?>)--></h2>
 
-    <label>Avatar actuel :</label><br>
-    <?php if (!empty($avatar)): ?>
-        <img src="<?= $avatar ?>" width="80"><br>
-    <?php else: ?>
-        Aucun avatar<br>
-    <?php endif; ?>
+        <form action="https://esportify.alwaysdata.net/backend/update_profile.php" method="POST" enctype="multipart/form-data">
+            <label>Nom :</label>
+                <input type="text" name="username" value="<?= $username ?>"><br>
 
-    <label>Changer avatar :</label><br>
-    <input type="file" name="avatar" id="avatarInput" accept="image/png, image/jpeg, image/jpg, image/gif"><br>
+            <label>Email actuel :</label>
+                <input type="email" value="<?= $email ?>" disabled><br>
 
-    <!-- Prévisualisation -->
-    <img id="avatarPreview" src="#" alt="Aperçu de l'avatar" style="display:none; width:100px; margin-top:10px;"><br><br>
+            <label>Avatar actuel :</label><br>
+            <?php if (!empty($avatar)): ?>
+                <img src="<?= $avatar ?>" width="80"><br>
+            <?php else: ?>
+                Aucun avatar<br>
+            <?php endif; ?>
 
-    <button type="submit">Mettre à jour</button>
-</form>
+            <label>Changer avatar :</label><br>
+                <input type="file" name="avatar" id="avatarInput" accept="image/png, image/jpeg, image/jpg, image/gif"><br>
 
-<br>
-<a href="https://esportify.alwaysdata.net/backend/reset_pass_request.php">Réinitialiser mon mot de passe</a><br>
-<a href="https://esportify.alwaysdata.net/backend/change_email_request.php">Changer mon email</a><br>
+            <!-- Prévisualisation -->
+            <img id="avatarPreview" src="#" alt="Aperçu de l'avatar" style="display:none; width:100px; margin-top:10px;"><br><br>
+            <button type="submit">Mettre à jour</button>
+        </form>
+   
+        <br>
+        <a href="https://esportify.alwaysdata.net/backend/reset_pass_request.php">Réinitialiser mon mot de passe</a><br>
+        <a href="https://esportify.alwaysdata.net/backend/change_email_request.php">Changer mon email</a><br>
+    </main>
+    <footer>
+        <nav>
+            <span>Moussa Mehdi-Guillaume</span>
+                <img src="../img/copyrighlogo.jpg" alt="Illustration copyright" />
+            <ul>
+                <li><a href="#politique_confidentialite">Politique de confidentialité</a></li>
+                <li><a href="#mentions_legales">Mentions légales</a></li>
+            </ul>
+        </nav>
+    </footer>
+    </div>
 
-<script>
-document.getElementById('avatarInput').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    const preview = document.getElementById('avatarPreview');
+    <script>
+    document.getElementById('avatarInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('avatarPreview');
 
-    preview.style.display = 'none';
-    preview.src = '#';
+        preview.style.display = 'none';
+        preview.src = '#';
 
-    if (file) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (!allowedTypes.includes(file.type)) {
-            alert('Seuls les fichiers JPG, PNG et GIF sont autorisés.');
-            event.target.value = '';
-            return;
+        if (file) {
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Seuls les fichiers JPG, PNG et GIF sont autorisés.');
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Fichier trop volumineux (max 2 Mo).');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
         }
+    });
+    </script>
 
-        if (file.size > 2 * 1024 * 1024) {
-            alert('Fichier trop volumineux (max 2 Mo).');
-            event.target.value = '';
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-});
-</script>
+</body>
+</html>

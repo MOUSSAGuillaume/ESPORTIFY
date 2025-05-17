@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESPORTI</title>
-    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/contact.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/contact.css">
 </head>
 <body>
 

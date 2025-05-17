@@ -81,7 +81,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
 <head>
   <meta charset="UTF-8">
   <title>Gestion des Utilisateurs</title>
-  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/dashboard_style.css" />
+  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/dashboard.css" />
 </head>
 <body>
 

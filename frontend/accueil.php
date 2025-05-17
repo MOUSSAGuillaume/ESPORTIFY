@@ -27,7 +27,7 @@ include_once(__DIR__ . '/../db.php');?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESPORTIFY</title>
-    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style.css/accueil.css">
+    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/accueil.css">
 
 </head>
 <body>
@@ -66,15 +66,29 @@ include_once(__DIR__ . '/../db.php');?>
         <h3>📆 Calendrier des événements</h3>
 
         <?php
-        $query = "SELECT * FROM events";
+        $query = "SELECT * FROM events WHERE status != 'refusé'";
         $result = mysqli_query($conn, $query);
 
         if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
+                $title = htmlspecialchars($row['title']);
+                $date = htmlspecialchars($row['event_date']);
+                $description = htmlspecialchars($row['description']);
+                $status = htmlspecialchars($row['status']);  // On utilise directement la colonne de la BDD
+
+                // Optionnel : Couleur selon statut
+                $statusColor = match(strtolower($status)) {
+                    'à venir' => '#2196F3',
+                    'en cours' => '#4CAF50',
+                    'terminé' => '#9E9E9E',
+                    default => '#CCCCCC',
+                };
+
                 echo "<div class='event'>";
-                echo "<h2>" . htmlspecialchars($row['title']) . "</h2>";
-                echo "<p><strong>Description :</strong> " . htmlspecialchars($row['description']) . "</p>";
-                echo "<p><strong>Date :</strong> " . htmlspecialchars($row['event_date']) . "</p>";
+                echo "<h2>$title</h2>";
+                echo "<p><strong>Date :</strong> $date</p>";
+                echo "<p><strong>Statut :</strong> <span style='color: black; background-color: $statusColor; padding: 4px 8px; border-radius: 4px;'>$status</span></p>";
+                echo "<button class='voir-description' data-description=\"$description\">Voir</button>";
                 echo "</div>";
             }
         } else {
@@ -186,6 +200,15 @@ if (isset($_GET['logout'])) {
 <?php
 mysqli_close($conn);  // Ferme la connexion à la base de données ici, une seule fois à la fin
 ?>
+    <div id="popupDescription" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000;">
+        <div style="background:white; padding:20px; border-radius:8px; max-width:600px; position:relative;">
+            <h3>Description de l'événement</h3>
+            <p id="popupContent"></p>
+            <button onclick="document.getElementById('popupDescription').style.display='none'"
+            style="position:absolute; top:10px; right:10px;">Fermer</button>
+        </div>
+    </div>
 
 <!-- Script Diaporama -->
 <script>
@@ -202,6 +225,36 @@ mysqli_close($conn);  // Ferme la connexion à la base de données ici, une seul
     setInterval(() => {
         changeSlide(1);
     }, 4000);
+
+    // défilement automatique du calendrier
+    const container = document.querySelector('.calendar');
+
+    function autoScroll() {
+        if ((container.scrollLeft + container.clientWidth) >= container.scrollWidth) {
+            container.scrollLeft = 0; // retour au début
+        } else {
+            container.scrollLeft += 2; // avance douce
+        }
+    }
+
+    let scrollInterval = setInterval(autoScroll, 20); // + rapide = + fluide
+
+    // Arrêt si l'utilisateur interagit (optionnel)
+    container.addEventListener('mouseenter', () => clearInterval(scrollInterval));
+    container.addEventListener('mouseleave', () => scrollInterval = setInterval(autoScroll, 20));
+
+
+
+    // popup pour la description
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.voir-description').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const description = btn.getAttribute('data-description');
+            document.getElementById('popupContent').textContent = description;
+            document.getElementById('popupDescription').style.display = 'flex';
+        });
+    });
+});
 </script>
 
 </body>

@@ -1,10 +1,11 @@
 body {
-    margin: 0;
-    font-family: 'Courier New', monospace;
-    background-color: #000;
-    color: #0f0;
-  }
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: url('../img/image_ecf/fond1.jpg') no-repeat center/cover;
+    margin: 5px;
+}
 .status-green { color: green; }
 .status-red { color: red; }
 .status-yellow { color: orange; }
@@ -15,13 +16,13 @@ body {
     width: 100%; height: 100%;
     background: black;
     z-index: 9999;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
   }
 
   .console-text {
-    color: #0f0;
+    color: whitesmoke;
     font-size: 1.2rem;
     white-space: pre-wrap;
   }
@@ -34,6 +35,7 @@ body {
     background: white;
     z-index: 9999;
     animation: flash 0.2s linear;
+    display: none;
   }
 
   @keyframes flash {
@@ -47,9 +49,7 @@ body {
 
   .dashboard {
     padding: 2rem;
-    background-color: #111;
     color: white;
-    min-height: 100vh;
   }
 
   .dashboard h1 {
@@ -61,18 +61,21 @@ body {
     display: flex;
     gap: 1rem;
   }
+  .dashboard-content {
+    color: white;
+  }
 
   .btn {
     padding: 10px 20px;
-    background-color: #0f0;
-    color: #000;
+    background: linear-gradient(45deg, purple, blue);
+    color: whitesmoke;
     text-decoration: none;
     border-radius: 8px;
     transition: background 0.3s ease;
   }
 
   .btn:hover {
-    background-color: #8f8;
+    background: linear-gradient(45deg, blue, purple);
   }
 
   .btn-danger {
@@ -90,12 +93,11 @@ body {
   
 
   nav.custom-navbar {
-    background-color: #0f0;
-    padding: 1rem;
+    padding: 0.5rem;
   }
 
   .logo {
-    height: 50px;
+    height: 4rem;
   }
 
 /* Changer la couleur du bouton lorsqu'on passe la souris dessus */
@@ -118,39 +120,20 @@ body {
   background-color: rgba(0,0,0,0.6);
 }
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: 10px;
-  width: 50%;
-}
-
 .close {
   float: right;
   font-size: 24px;
   cursor: pointer;
+  font-weight: bold;
 }
 
     /* Popup */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
-    }
-
     .modal-content {
       background-color: #5a1717;
       margin: 5% auto;
-      padding: 30px;
+      padding: 20px;
       border: 1px solid #888;
-      width: 90%;
+      width: 60%;
       max-width: 500px;
       border-radius: 10px;
     }
@@ -184,14 +167,6 @@ body {
       border-radius: 5px;
       cursor: pointer;
     }
-
-    .close {
-      float: right;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
     .message-popup {
       margin-top: 10px;
     }
@@ -214,7 +189,7 @@ body {
     }
     
     .event-table tr:hover {
-      background-color: #f2f2f2;
+      background: linear-gradient(45deg, blue, purple);
     }
     
     .news-feed {
@@ -226,6 +201,7 @@ body {
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 30px;
+      color: wheat;
     }
     
     .news-item h3 {
@@ -238,23 +214,87 @@ body {
       padding: 8px;
       border-left: 3px solid #007bff;
       border-radius: 4px;
+      color: #c08c3f;
     }
     
     textarea {
-      width: 100%;
+      width: 95%;
       padding: 8px;
       margin-top: 10px;
     }
-    
-  footer nav {
+    small {
+      font-size: 0.8em;
+      color: #979797;
+    }
+/* Footer */
+footer {
     display: flex;
-    justify-content: space-between;
-    background-color: #222;
-    padding: 1rem;
-    color: white;
-  }
+    align-items: center;
+    justify-content: space-between; /* Espacement entre les éléments */
+    background-color: rgba(121, 129, 156, 90); /* Fond coloré uniquement pour la boîte texte */
+    width: 100%;
+    opacity: 0.9;
+    padding: 0px 0px; /* Réduit la hauteur du footer */
+    position: relative; /* Utilise un positionnement relatif pour éviter le décalage */
+    bottom: 0;
+}
 
-  footer img {
-    height: 20px;
-    margin: 0 10px;
-  }
+/* Contenu du nav dans le footer */
+footer nav {
+    display: flex;
+    justify-content: space-between; /* Espacement entre les éléments */
+    width: 100%; /* Utilise toute la largeur disponible */
+    align-items: center;
+}
+
+/* Le texte dans le footer */
+footer span {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    margin-left: 10px;
+    display: flex; /* Utilise flex pour aligner l'image et le texte */
+    align-items: center;
+}
+
+/* L'icône dans le footer */
+footer img {
+    width: auto; /* Réduit la taille de l'icône */
+    height: auto;
+    margin-left: 5px; /* Ajoute un léger espacement entre le texte et l'icône */
+}
+
+/* Liste de liens dans le footer */
+footer ul {
+    display: flex;
+    justify-content: flex-end; /* Aligne les liens à droite */
+    list-style: none;
+    padding: 0;
+    margin-left: auto; /* Pousse l'ul à droite */
+}
+
+/* Élément de liste dans le footer */
+footer li {
+    display: flex;
+    align-items: center;
+    margin-left: 10px; /* Espacement entre les liens */
+    margin-right: 10px; /* Espacement entre les liens */
+}
+
+/* Liens dans le footer */
+footer li a {
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: black;
+    background-color: rgba(226, 219, 3, 0.2); /* Fond avec 20% d’opacité */
+    border: 2px solid rgba(255, 197, 254, 0.5); /* Bordure avec 50% d’opacité */
+    border-radius: 10px;
+    padding: 5px 10px; /* Espacement interne des liens */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Pour le survol des liens */
+footer li a:hover {
+    background-color: rgba(255, 197, 254, 0.5); /* Changer la couleur au survol */
+}
