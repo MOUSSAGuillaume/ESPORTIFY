@@ -1,4 +1,4 @@
-## 📚 Sommaire (fait un Ctrl clickdroit sur le lien)
+## 📚 Sommaire (fait un Ctrl clickdroit sur le lien sur vscode)
 - [⚙️ Fonctionnalités principales](#️-fonctionnalités-principales)
 - [🧰 Technologies utilisées](#-technologies-utilisées)
 - [📦 Prérequis](#-prérequis)
