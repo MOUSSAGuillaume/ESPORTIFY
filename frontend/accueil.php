@@ -1,34 +1,38 @@
 <?php
-// Authentification basique 
+// Authentification basique
 /*
 $valid_username = 'admin';  // Utilisateur autorisé
 $valid_password = getenv('PROD_PASSWORD');  // Mot de passe stocké dans l'environnement
-
 if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
     $_SERVER['PHP_AUTH_USER'] !== $valid_username ||
     $_SERVER['PHP_AUTH_PW'] !== $valid_password) {
-    
     // Si l'utilisateur n'est pas authentifié, on lui demande de se connecter
     header('WWW-Authenticate: Basic realm="Espace sécurisé"');
     header('HTTP/1.0 401 Unauthorized');
     echo 'Accès refusé';
     exit;
 }*/
-
-// Inclure la connexion à la base de données
 ?>
 <?php
 
 //connexion à la base de données
 include_once(__DIR__ . '/../db.php');?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESPORTIFY</title>
+    <title>Esportify - Plateforme d’événements e-sport</title>
+    <meta name="description" content="Esportify est une plateforme web de gestion d’événements e-sport : création, organisation, inscription et interaction via newsletters.">
+    <meta name="keywords" content="esport, événements, gaming, tournoi, PHP, newsletters, jeux vidéo, esportify">
+    <meta name="author" content="Mehdi-Guillaume Moussa">
+    <meta property="og:title" content="Esportify - Plateforme e-sport">
+    <meta property="og:description" content="Organisez et participez à des événements e-sport facilement avec Esportify.">
+    <meta property="og:image" content="https://esportify.alwaysdata.net/img/logo.png">
+    <meta property="og:url" content="https://esportify.alwaysdata.net/">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/accueil.css">
-
 </head>
 <body>
 
@@ -111,12 +115,15 @@ if (isset($_GET['logout'])) {
 <!-- Section Présentation -->
 <section class="presentation">
     <div class="textPresentation">
-        <p>&nbsp;&nbsp;La spécialisation innovante de cette startup en pleine essor dont le nom n’est plus , ni moins ESPORTIFY comme vous le savez deja.
-            Nous faisont parti de cette belle fammile du E-SPORT! !! <br>
-           &nbsp;&nbsp;Et c’est avec plaisir , que nous organisons divers évènements  proposez par nos joueurs autours de JEUX VIDEOS qui peuvent en équipe ou bien individuel
-            mais aussi sur n’importe quelles consoles ( PC , PLAYSTATION , XBOX , SWITCH , ... ) <br>
-           &nbsp;&nbsp;Peut importe votre genre (Homme, Femme ou bien Autres) cela à très peu d’importance du moment que la passion est présente. Vous êtes les bienvenues pour participer
-            et nous proposer les évènements que vous souhaitez.</p>
+        <p>
+            &nbsp;&nbsp;Esportify est une startup en plein essor, spécialisée dans l’organisation d’événements e-sport.
+            Comme vous le savez déjà, nous faisons partie intégrante de cette grande famille du E-SPORT !<br><br>
+            &nbsp;&nbsp;C’est avec enthousiasme que nous organisons une multitude d’événements proposés par nos joueurs,
+            qu’ils soient en solo ou en équipe, et sur toutes les plateformes : PC, PlayStation, Xbox, Nintendo Switch, etc.<br><br>
+            &nbsp;&nbsp;Quel que soit votre genre (Homme, Femme ou Autre), cela importe peu tant que la passion est présente.
+            Vous êtes les bienvenus pour participer, interagir, et surtout proposer les événements que vous aimeriez voir naître. <br><br>
+            &nbsp;&nbsp;La compétion sens comme un orage dans l'air!!.
+        </p>
     </div>
 </section>
 
@@ -159,32 +166,33 @@ if (isset($_GET['logout'])) {
             }
             ?>
         </div>
-        
-        <div class="newsletter-item" id="newsletter2">
-            <h3>📰 Newsletter</h3>
-
-            <?php
-            // Exemple pour une autre newsletter, ici je duplique la requête pour afficher une autre newsletter
-            $resultNews2 = mysqli_query($conn, "SELECT subject, message, created_at FROM newsletters ORDER BY created_at DESC LIMIT 2, 2");
-
-            if ($resultNews2 && mysqli_num_rows($resultNews2) > 0) {
-                while ($news2 = mysqli_fetch_assoc($resultNews2)) {
-                    echo "<div class='newsletter-content'>";
-                    echo "<h4>" . htmlspecialchars($news2['subject']) . "</h4>";
-                    echo "<p>" . nl2br(htmlspecialchars($news2['message'])) . "</p>";
-                    echo "<small>📅 Publié le " . date("d/m/Y", strtotime($news2['created_at'])) . "</small>";
-                    echo "</div><hr>";
-                }
-            } else {
-                echo "<p>Aucune autre newsletter disponible pour le moment.</p>";
-            }
-            ?>
-        </div>
     </div>
 
-    <button class="prev-newsletter" onclick="changeNewsletter(-1)">&#10094;</button>
-    <button class="next-newsletter" onclick="changeNewsletter(1)">&#10095;</button>
+
+        <div class="newsletter-wrapper">
+            <div class="newsletter-item" id="newsletter2">
+                <h3>📰 Newsletter</h3>
+
+                <?php
+                // Exemple pour une autre newsletter, ici je duplique la requête pour afficher une autre newsletter
+                $resultNews2 = mysqli_query($conn, "SELECT subject, message, created_at FROM newsletters ORDER BY created_at DESC LIMIT 2, 2");
+
+                if ($resultNews2 && mysqli_num_rows($resultNews2) > 0) {
+                    while ($news2 = mysqli_fetch_assoc($resultNews2)) {
+                        echo "<div class='newsletter-content'>";
+                        echo "<h4>" . htmlspecialchars($news2['subject']) . "</h4>";
+                        echo "<p>" . nl2br(htmlspecialchars($news2['message'])) . "</p>";
+                        echo "<small>📅 Publié le " . date("d/m/Y", strtotime($news2['created_at'])) . "</small>";
+                        echo "</div><hr>";
+                    }
+                } else {
+                    echo "<p>Aucune autre newsletter disponible pour le moment.</p>";
+                }
+                ?>
+            </div>
+        </div>
 </section>
+    
 
 <footer>
     <nav>
@@ -200,7 +208,7 @@ if (isset($_GET['logout'])) {
 <?php
 mysqli_close($conn);  // Ferme la connexion à la base de données ici, une seule fois à la fin
 ?>
-    <div id="popupDescription" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+    <div id="popupDescription" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
         background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000;">
         <div style="background:white; padding:20px; border-radius:8px; max-width:600px; position:relative;">
             <h3>Description de l'événement</h3>

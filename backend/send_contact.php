@@ -24,6 +24,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "❌ L'adresse e-mail est invalide.";
         exit;
     }
+    // Vérification du reCAPTCHA
+    if (empty($_POST['g-recaptcha-response'])) {
+        echo "❌ Veuillez valider le reCAPTCHA.";
+        exit;
+    }
+
+    $recaptchaSecret = $_ENV['RECAPTCHA_SECRET_KEY'];
+    $recaptchaResponse = $_POST['g-recaptcha-response'];
+
+    // Requête à Google pour valider le token
+    $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
+    $responseData = json_decode($verifyResponse);
+
+    if (!$responseData->success) {
+        echo "❌ Échec de la vérification reCAPTCHA.";
+        exit;
+}
 
     try {
         $mail = new PHPMailer(true);

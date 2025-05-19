@@ -188,7 +188,7 @@ body {
     text-decoration: underline;
     text-align: center; /* Centre le texte */
     margin-top: 125px; /* Décale le titre vers le bas */
-    font-size: 90px; /* Ajuste la taille du titre */
+    font-size: clamp(3rem, 8vw, 6rem); /* Ajuste la taille du titre */
     font-family: 'Freckle Face', 'cursive', sans-serif; /* Ajoute une police stylisée si besoin */
     color: rgb(85, 102, 211); /* Ajuste la couleur si nécessaire */
 }
@@ -201,7 +201,7 @@ h1 {
 
 /*sectionPresentation*/
 .presentation {
-    background-color: rgba(121,129,156,90%); /* Fond coloré uniquement pour la boîte texte */
+    background-color: rgba(121,129,156,0.9%); /* Fond coloré uniquement pour la boîte texte */
     font-size: 20px;
     align-items: center;
     justify-content: center;
@@ -214,7 +214,7 @@ h1 {
     max-width: 70%;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0,0,0,50%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
     margin-bottom: 15px; /* Ajoute une marge en bas */
 }
 .textPresentation {
@@ -282,10 +282,9 @@ h1 {
     flex-wrap: wrap;
     margin: 20px 0;
 }
-
-/* Section (Newsletter) */
-.newsletter1, .newsletter2 {
-    background-color: rgba(121, 129, 156, 90%);
+/* Section 1 (Newsletter) */
+.newsletter1 {
+    background-color: rgba(121, 129, 156, 0.9);
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -297,6 +296,27 @@ h1 {
     flex-direction: column;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
     margin-bottom: 15px;
+}
+
+/* Section 2 (Newsletter) */
+.newsletter2 {
+    background-color: rgba(121, 129, 156, 0.9);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 50%;
+    width: 485px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
+    margin-bottom: 15px;
+}
+
+/* Box dans chaque newsletter */
+.boxNewsletter1,
+.boxNewsletter2 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -374,7 +394,7 @@ footer {
     display: flex;
     align-items: center;
     justify-content: space-between; /* Espacement entre les éléments */
-    background-color: rgba(121, 129, 156, 90); /* Fond coloré uniquement pour la boîte texte */
+    background-color: rgba(121, 129, 156, 0.9); /* Fond coloré uniquement pour la boîte texte */
     width: 100%;
     opacity: 0.9;
     padding: 0px 0px; /* Réduit la hauteur du footer */
@@ -446,24 +466,39 @@ footer li a:hover {
 /*responsive*/
 @media (max-width: 768px) {
     .nav-links {
-      flex-direction: column;
-      gap: 20px;
+        flex-direction: column;
+        gap: 20px;
     }
   
     .newsletters-container {
-      flex-direction: column;
-      align-items: center;
+        flex-direction: column;
+        align-items: center;
     }
   
     .newsletter1, .newsletter2 {
-      width: 90%;
+        width: 90%;
     }
   
     .titrePrincipal {
-      font-size: 50px;
+        font-size: 50px;
     }
-  }
-  
+}
+@media (max-width: 768px) {
+    footer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    footer ul {
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    footer span {
+        margin: 10px 0;
+    }
+}
+
 
   /* Scrollbar personnalisée pour le calendrier (Webkit: Chrome, Edge, Safari) */
 .calendar::-webkit-scrollbar {

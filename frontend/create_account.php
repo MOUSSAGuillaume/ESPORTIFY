@@ -7,6 +7,7 @@ require_once __DIR__ . '/../db.php';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Page de création de compte - Permet de créer un compte.">
   <title>Sportify - Inscription</title>
   <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/create_account.css" />
 </head>

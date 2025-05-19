@@ -5,10 +5,6 @@ session_start();
 // Inclusion de la connexion à la base de données
 include_once('../db.php');
 
-// Activer l'affichage des erreurs pour le développement
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 // Chargement des dépendances de PHPMailer
 require_once '/vendor/phpmailer/phpmailer/src/Exception.php';
 require_once '/vendor/phpmailer/phpmailer/src/PHPMailer.php';
