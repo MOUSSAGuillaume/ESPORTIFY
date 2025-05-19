@@ -11,6 +11,9 @@
 
 
 # 🎮 Esportify - Plateforme de gestion d’événements e-sport
+## 🔗 Démo en ligne
+Le projet est déployé ici 👉 [https://esportify.monsite.com](https://esportify.alwaysdata.net/)
+
 **Esportify** est une plateforme web qui permet de créer, gérer et participer à des événements e-sport.  
 Elle prend en charge plusieurs types d’utilisateurs (visiteurs, joueurs, organisateurs, administrateurs) et intègre :
 - 🔐 Un système de sécurité basé sur les rôles (RBAC)
