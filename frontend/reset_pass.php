@@ -5,70 +5,118 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-function afficherMessage($message, $type = "info") {
-    $styles = [
-        "success" => "color: green;",
-        "error"   => "color: red;",
-        "info"    => "color: #333;"
-    ];
-    echo "<p style='{$styles[$type]}'>$message</p>";
+// Sécurité HTTP
+header("Content-Type: text/html; charset=UTF-8");
+header("X-Robots-Tag: noindex, nofollow", true);
+header("Content-Security-Policy: default-src 'self';");
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
+// Fonction de redirection selon le rôle utilisateur
+function redirectBasedOnRole($role) {
+    switch ($role) {
+        case 'admin':
+            header("Location: /backend/admin_dashboard.php");
+            break;
+        case 'organisateur':
+            header("Location: /backend/organisateur_dashboard.php");
+            break;
+        default:
+            header("Location: /frontend/profile.php");
+            break;
+    }
+    exit;
+}
+
+// Init message pour affichage dans le HTML
+$message = null;
+$messageType = 'info';
+
+// Récupération du token
 $token = $_GET['token'] ?? null;
 
 if (!$token) {
-    afficherMessage("❌ Aucun token fourni.", "error");
-    exit;
-}
+    $message = "❌ Aucun token fourni.";
+    $messageType = "error";
+} else {
+    // Heure serveur MySQL
+    $resultTime = $conn->query("SELECT NOW() AS now");
+    $timeNow = $resultTime->fetch_assoc()['now'];
 
-afficherMessage("Token reçu : <strong>" . htmlspecialchars($token) . "</strong>", "info");
+    // Vérification du token en BDD
+    $stmt = $conn->prepare("
+        SELECT u.id, u.email, u.username, r.role_name AS role
+        FROM users u
+        JOIN roles r ON u.role_id = r.id
+        WHERE u.reset_token = ? AND u.reset_token_expires > ?
+    ");
+    $stmt->bind_param("ss", $token, $timeNow);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-// Récupérer l'heure actuelle via MySQL
-$resultTime = $conn->query("SELECT NOW() AS now");
-$timeNow = $resultTime->fetch_assoc()['now'];
-afficherMessage("Heure serveur MySQL : <strong>$timeNow</strong>", "info");
-
-// Vérifier que le token est valide et non expiré
-$query = "SELECT * FROM users WHERE reset_token = ? AND reset_token_expires > ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("ss", $token, $timeNow);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
-    afficherMessage("❌ Ce lien de réinitialisation est invalide ou a expiré.", "error");
-    exit;
-}
-
-// Si le formulaire est soumis
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $newPassword = $_POST['newPassword'] ?? '';
-    $confirmPassword = $_POST['confirmPassword'] ?? '';
-
-    if (empty($newPassword) || empty($confirmPassword)) {
-        afficherMessage("❌ Veuillez remplir tous les champs.", "error");
-    } elseif ($newPassword !== $confirmPassword) {
-        afficherMessage("❌ Les mots de passe ne correspondent pas.", "error");
+    if ($result->num_rows === 0) {
+        $message = "❌ Ce lien est invalide ou expiré.";
+        $messageType = "error";
     } else {
-        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $user = $result->fetch_assoc();
 
-        $updateQuery = "UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?";
-        $updateStmt = $conn->prepare($updateQuery);
-        $updateStmt->bind_param("ss", $hashedPassword, $token);
-        $updateStmt->execute();
+        // Traitement du formulaire
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $newPassword = $_POST['newPassword'] ?? '';
+            $confirmPassword = $_POST['confirmPassword'] ?? '';
 
-        afficherMessage("✅ Votre mot de passe a été réinitialisé avec succès.", "success");
+            if (empty($newPassword) || empty($confirmPassword)) {
+                $message = "❌ Veuillez remplir tous les champs.";
+                $messageType = "error";
+            } elseif ($newPassword !== $confirmPassword) {
+                $message = "❌ Les mots de passe ne correspondent pas.";
+                $messageType = "error";
+            } elseif (strlen($newPassword) < 8 || !preg_match('/[A-Z]/', $newPassword) || !preg_match('/\d/', $newPassword)) {
+                $message = "❌ Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.";
+                $messageType = "error";
+            } else {
+                // Hash et mise à jour
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                $update = $conn->prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?");
+                $update->bind_param("si", $hashedPassword, $user['id']);
+                $update->execute();
+
+                // Connexion automatique
+                $fullUserStmt = $conn->prepare("
+                    SELECT u.*, r.role_name AS role
+                    FROM users u
+                    JOIN roles r ON u.role_id = r.id
+                    WHERE u.id = ?
+        ");
+                $fullUserStmt->bind_param("i", $user['id']);
+                $fullUserStmt->execute();
+                $fullUserResult = $fullUserStmt->get_result();
+                $fullUser = $fullUserResult->fetch_assoc();
+                $_SESSION['user'] = $fullUser;
+                redirectBasedOnRole($fullUser['role']); // ici role = "admin"
+
+
+                if ($fullUser) {
+                    $_SESSION['user'] = $fullUser;
+                    redirectBasedOnRole($fullUser['role']); // Redirection ici
+                } else {
+                    $message = "Une erreur est survenue après la mise à jour du mot de passe.";
+                    $messageType = "error";
+                }
+            }
+        }
     }
 }
 ?>
-
-<!-- Formulaire HTML -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Réinitialisation du mot de passe</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -76,39 +124,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 20px;
         }
         form {
-            background: #fff;
+            background: white;
             padding: 20px;
-            border-radius: 5px;
-            max-width: 400px;
             margin: auto;
+            max-width: 400px;
+            border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        label {
+        label, input {
             display: block;
-            margin-bottom: 5px;
+            width: 100%;
+            margin-bottom: 12px;
         }
         input[type="password"] {
-            width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
         button {
-            background-color: #28a745;
+            background: #28a745;
             color: white;
-            padding: 10px 15px;
+            padding: 12px;
             border: none;
             border-radius: 4px;
-            width: 100%;
             cursor: pointer;
         }
         button:hover {
-            background-color: #218838;
+            background: #218838;
+        }
+        .message {
+            margin: 20px auto;
+            max-width: 400px;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
         }
     </style>
 </head>
 <body>
+
+<?php if ($message): ?>
+    <div class="message <?= htmlspecialchars($messageType) ?>">
+        <?= htmlspecialchars($message) ?>
+    </div>
+<?php endif; ?>
 
 <form method="POST">
     <label for="newPassword">Nouveau mot de passe :</label>

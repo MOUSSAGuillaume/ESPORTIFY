@@ -2,12 +2,11 @@
 require_once __DIR__ . '/../vendor/autoload.php'; // Si ton composer.json est à la racine
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
-
 session_start();
-if (isset($_SESSION['user_id'])) {
-    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
-    exit();
-}
+//if (isset($_SESSION['user_id'])) {
+//    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
+//   exit();
+//}
 
 if (isset($_GET['error']) && $_GET['error'] == 'captcha') {
     echo "<p class='error-message'>Veuillez valider le reCAPTCHA.</p>";
