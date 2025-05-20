@@ -1,6 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 include_once("../db.php");
 session_start();
@@ -104,6 +102,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     <section class="dashboard">
         <h1>Bienvenue Admin, <?= htmlspecialchars($username) ?> 🛡️</h1>
         <div class="dashboard-links">
+            <a href="https://esportify.alwaysdata.net/frontend/profile.php" class="btn">Mon profil</a>
             <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
             <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
             <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>

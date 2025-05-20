@@ -1,11 +1,28 @@
-<?php include_once("../db.php"); ?>
+<?php
+session_start(); // pour le token CSRF
+
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+require_once __DIR__ . '/../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+include_once("../db.php");
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Page de contact à Esportify - envoyer une requête via le formulaire.">
     <title>ESPORTI</title>
     <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/contact.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -52,8 +69,8 @@
                 <label for="message">Votre message :</label>
                 <textarea id="message" name="message" required></textarea>
     
-                <!-- Ajouter le token reCAPTCHA -->
-                <input type="hidden" id="recaptcha_token" name="recaptcha_token">
+                <!-- reCAPTCHA -->
+                <div class="g-recaptcha" data-sitekey="<?php echo $_ENV['RECAPTCHA_SITE_KEY']; ?>"></div>
     
                 <!-- Ajouter le token CSRF -->
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
@@ -77,5 +94,40 @@
             </nav>
           </footer>
           
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Empêche le rechargement
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const resultText = await response.text(); // <- On récupère le texte brut envoyé par send_contact.php
+
+            Swal.fire({
+                icon: resultText.includes("✅") ? "success" : "error",
+                title: resultText.includes("✅") ? "Succès" : "Erreur",
+                text: resultText
+            });
+
+            if (resultText.includes("✅")) {
+                form.reset(); // Réinitialise le formulaire si succès
+                grecaptcha.reset(); // Réinitialise le reCAPTCHA
+            }
+
+        } catch (error) {
+            console.error("Erreur réseau : ", error);
+            alert("❌ Une erreur est survenue lors de l'envoi du message.");
+        }
+    });
+    </script>
+
+
 </body>
 </html>

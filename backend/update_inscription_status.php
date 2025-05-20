@@ -24,4 +24,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['inscription_id'], $_P
 } else {
     echo "❌ Données manquantes.";
 }
-?>
+

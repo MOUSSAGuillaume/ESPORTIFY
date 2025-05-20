@@ -8,12 +8,14 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user']['id'];
 
 // Récupération de l'utilisateur
 $query = $conn->prepare("SELECT * FROM users WHERE id = ?");
-$query->execute([$user_id]);
-$user = $query->fetch();
+$query->bind_param("i", $user_id);
+$query->execute();
+$result = $query->get_result();
+$user = $result->fetch_assoc();
 
 if (!$user) {
     echo "Utilisateur non trouvé.";
@@ -61,7 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Mise à jour BDD
     $update = $conn->prepare("UPDATE users SET username = ?, avatar = ? WHERE id = ?");
     $update->execute([$username, $avatar, $user_id]);
-
     echo "Profil mis à jour avec succès.";
+    
+    // Redirection vers le profil après succès
+    header("Location: https://esportify.alwaysdata.net/frontend/profile.php?success=1");
+    exit();
+
 }
-?>
+    

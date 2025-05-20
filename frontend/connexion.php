@@ -1,9 +1,17 @@
-<?php include_once("../db.php"); 
+<?php include_once("../db.php");
+require_once __DIR__ . '/../vendor/autoload.php'; // Si ton composer.json est à la racine
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 session_start();
-if (isset($_SESSION['user_id'])) {
-    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
-    exit();
+//if (isset($_SESSION['user_id'])) {
+//    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php"); // Redirige vers la page d'accueil si l'utilisateur est déjà connecté
+//   exit();
+//}
+
+if (isset($_GET['error']) && $_GET['error'] == 'captcha') {
+    echo "<p class='error-message'>Veuillez valider le reCAPTCHA.</p>";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -14,6 +22,7 @@ if (isset($_SESSION['user_id'])) {
     <meta name="description" content="Page de connexion à Esportify - Connectez-vous ou créez un compte.">
     <title>ESPORTI</title>
     <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/connexion.css"/>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
@@ -50,13 +59,14 @@ if (isset($_SESSION['user_id'])) {
                 <form action="../backend/login.php" method="POST">
                     <div class="input-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Email" required>
+                        <input type="email" id="email" name="email" autocomplete="email" placeholder="Email" required>
                     </div>
                     <div class="input-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Password" required>
+                        <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Password" required>
                     </div>
                     <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+                    <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars($_ENV['RECAPTCHA_SITE_KEY']) ?>"></div> <!-- La clé publique de reCAPTCHA -->
                     <button type="submit" class="login-btn">Connexion</button>
                 </form>
             </div>
