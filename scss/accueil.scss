@@ -1,0 +1,280 @@
+@import "/scss/custom.scss";
+/* Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amarante&family=Long+Cang&display=swap");
+
+/* Styles globaux et initialisation */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: url("../img/image_ecf/foudre.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+}
+
+/* Logo */
+.logo {
+  width: 100px;
+  z-index: 2;
+  position: relative;
+}
+.logo-container {
+  width: 120px;
+  height: 120px;
+  background: transparent;
+  border-radius: 50%;
+  z-index: 3;
+}
+
+/* Demi-cercle sous le logo */
+.semi-circle-outline {
+  width: 140px;
+  height: 70px;
+  border: 2px solid blue;
+  border-top: none;
+  border-radius: 0 0 70px 70px;
+  position: absolute;
+  bottom: -10px; /* Ajustement pour coller au logo */
+  margin-right: 20px;
+}
+
+/* Liens de navigation */
+.navbar-nav {
+  gap: 8rem;
+}
+
+.nav-link {
+  font-size: 1.375rem;
+  font-family: "Times New Roman", Times, serif;
+  border-radius: 15px;
+  background: linear-gradient(45deg, purple, blue);
+  padding: 0.5rem 1rem;
+  text-align: center;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.nav-link:hover {
+  transform: scale(1.1);
+  background: linear-gradient(45deg, blue, purple);
+}
+
+/* Bouton hamburger */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+/* Calendrier */
+.calendar-container {
+  position: relative;
+}
+
+.calendar {
+  width: 450px;
+  height: 325px;
+  padding: 15px;
+  margin-top: 22rem;
+  background: rgba(87, 104, 219, 100);
+  border-radius: 10px;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 16px;
+  overflow-y: auto; /* permet le scroll si contenu dépasse */
+}
+.presentation {
+  margin-top: 20px;
+}
+
+h1 {
+  font-family: "Freckle Face", "cursive", "sans serif";
+  font-size: 90px;
+  background-color: transparent;
+  margin-left: 1rem;
+}
+.bloc-presentation {
+  font-size: 20px;
+  font-weight: bold;
+  align-items: center;
+  margin-right: 150px;
+  position: relative;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 50%);
+  margin-bottom: 15px;
+  width: 100%;
+}
+.textPresentation {
+  font-family: "amarante", "cursive", "sans serif";
+  font-size: 25px;
+}
+// Diaporama//
+#carouselExample {
+  width: 60% !important;
+}
+
+.slides_img {
+  height: 400px; /* Ajuste selon la hauteur souhaitée */
+  object-fit: cover; /* Évite la déformation */
+  border-radius: 50%; /* Rend l'image ovale */
+}
+// Media queries//
+
+@media screen and (min-width: 768px) and (max-width: 1100px) {
+  .calendar {
+    margin-top: 5rem; // ou une valeur plus adaptée comme 6rem
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-nav {
+    gap: 1rem; /* Réduire encore plus l'espacement entre les liens */
+  }
+
+  .nav-link {
+    font-size: 0.875rem; /* Réduire encore plus la taille de la police */
+    padding: 0.3rem 0.6rem; /* Réduire le remplissage */
+  }
+  .semi-circle-outline {
+    display: none;
+  }
+
+  .calendar {
+    width: 100%;
+    height: auto;
+    padding-right: 7px;
+    margin: auto; /* Ajouter une marge supérieure pour éviter le chevauchement */
+    text-align: center;
+    font-size: 15px;
+  }
+
+  h1 {
+    margin-top: 10px; /* Ajuster la marge supérieure pour les écrans mobiles */
+    font-size: 45px;
+    margin-left: 0;
+  }
+
+  .textPresentation {
+    padding: 10px;
+    margin-top: 10px; /* Ajuster la marge supérieure pour les écrans mobiles */
+    font-size: 17px;
+  }
+  .slides_img {
+    height: auto; /* Ajuste selon la hauteur souhaitée */
+    object-fit: cover; /* Évite la déformation */
+    border-radius: 15%; /* Rend l'image ovale */
+  }
+}
+@media (min-width: 992px) {
+  .bloc-presentation {
+    max-width: 1200px; /* Augmente la largeur maximale sur les écrans larges */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .bloc-presentation {
+    max-width: 900px; /* Ajuste la largeur maximale sur les tablettes */
+  }
+}
+//Newsletters//
+.newsletters {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
+}
+
+//footer//
+
+.footer {
+  background-color: rgba(121, 129, 156, 0.9);
+  opacity: 0.9;
+  padding: 1rem 0; /* Ajout de padding pour augmenter la hauteur du footer */
+}
+.footer-link {
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  color: black;
+  background-color: rgba(226, 219, 3, 0.2);
+  border: 2px solid rgba(255, 197, 254, 0.5);
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.footer-link:hover {
+  background-color: rgba(255, 197, 254, 0.5);
+}
+footer span {
+  font-family: "Inter", sans-serif;
+}
+// Desktop : espacement standard
+@media screen and (min-width: 768px) {
+  .footer {
+    padding: 0.5rem 0;
+  }
+}
+
+// Mobile : ajustement pour écrans étroits (iPhone SE, etc.)
+@media screen and (max-width: 480px) {
+  .footer {
+    padding: 0.3rem 0;
+  }
+
+  .footer .row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-link {
+    font-size: 9px;
+    padding: 4px 6px;
+    margin: 3px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .footer ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-left: 0;
+    margin-top: 0.25rem;
+  }
+
+  .footer span {
+    font-size: 10px;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer img {
+    height: 16px;
+    margin-left: 4px;
+  }
+}
+
+/*Page connexion*/
+
+.form-container {
+  flex-wrap: nowrap;
+  min-height: 100vh;
+  gap: 0;
+  max-width: 900px;
+}
+.custom-image {
+  width: 100%;
+  height: 550px;
+  border-radius: 20px 0 0 20px;
+  border: 2.5px solid black;
+  object-fit: cover;
+  opacity: 0.83;
+}

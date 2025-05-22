@@ -1,5 +1,8 @@
 {
   "scripts": {
     "build": "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && composer install --no-dev --optimize-autoloader"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.6"
   }
 }
