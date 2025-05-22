@@ -1,19 +1,17 @@
-@charset "UTF-8";
 body {
   background: url("../img/image_ecf/multiverse.jpg") no-repeat center/cover;
 }
-
 h1 {
   font-family: "Freckle Face", "cursive", "sans serif";
   font-size: 9.375rem;
-  color: rgb(87, 104, 219);
-  text-shadow: 1px 1px 0px black, -1px -1px 0px black, 1px -1px 0px black, -1px 1px 0px black;
+  color: rgba(87, 104, 219, 40);
+  text-shadow: 1px 1px 0px black, -1px -1px 0px black, 1px -1px 0px black,
+    -1px 1px 0px black;
   opacity: 0.7;
   margin-bottom: -60px;
 }
-
 .boxrdv {
-  background-color: rgba(121, 129, 156, 0.8);
+  background-color: rgba(121, 129, 156, 80%);
   font-family: "cursive", "sans-serif";
   padding: 20px;
   margin-left: 7.8rem;
@@ -21,7 +19,6 @@ h1 {
   border-radius: 20px;
   width: 60%; /* Ajuste la largeur */
 }
-
 #email,
 #message {
   max-width: 390px; /* Limite la largeur des champs */
@@ -30,15 +27,13 @@ h1 {
   border: 1.5px solid black;
   border-radius: 20px;
   font-size: 16px;
-  background-color: rgba(121, 129, 156, 0.8);
+  background-color: rgba(121, 129, 156, 80%);
   cursor: pointer;
 }
-
 #message {
   height: 120px; /* Augmente la hauteur du textarea */
   resize: vertical; /* Permet de redimensionner seulement en hauteur */
 }
-
 .bouton-envoyer {
   margin-top: 20px;
   margin-left: 9.375rem;
@@ -48,35 +43,36 @@ h1 {
   border-radius: 83px 0px 83px 0px;
   max-width: 120px;
   background-color: rgba(84, 136, 194, 0.8); /* valeur correcte en CSS */
-  color: rgb(151, 41, 124); /* valeur correcte en CSS */
+  color: rgba(151, 41, 124, 1); /* valeur correcte en CSS */
   border: 1.5px solid black;
   font-size: 12px;
   cursor: pointer;
   text-align: center;
 }
-
 .bouton-envoyer:hover {
   background-color: #e06c4d; /* Orange saumon plus foncé */
   transform: scale(1.05); /* Léger agrandissement au survol */
 }
-
 /* TABLETTES (entre 768px et 1024px) */
 @media screen and (max-width: 1024px) {
   h1 {
     font-size: 6rem;
     margin-bottom: -30px;
   }
+
   .boxrdv {
     width: 80%;
     margin-left: auto;
     margin-right: auto;
     padding: 15px;
   }
+
   #email,
   #message {
     max-width: 100%;
     font-size: 15px;
   }
+
   .bouton-envoyer {
     margin-left: auto;
     margin-right: auto;
@@ -84,6 +80,7 @@ h1 {
     padding: 8px 4px;
   }
 }
+
 /* SMARTPHONES (<= 768px) */
 @media screen and (max-width: 768px) {
   h1 {
@@ -91,17 +88,20 @@ h1 {
     text-align: center;
     margin-bottom: 0;
   }
+
   .boxrdv {
     width: 90%;
     margin: 20px auto;
     padding: 10px;
   }
+
   #email,
   #message {
     font-size: 12px;
     padding: 6px;
     border-radius: 15px;
   }
+
   .bouton-envoyer {
     font-size: 10px;
     padding: 6px 4px;
@@ -110,42 +110,52 @@ h1 {
     display: block;
   }
 }
+
 /* PETITS TÉLÉPHONES (<= 480px) */
 @media screen and (max-width: 480px) {
   h1 {
     font-size: 2.5rem;
     margin-top: 10px;
   }
+
   .boxrdv {
     width: 95%;
     padding: 8px;
   }
+
   #email,
   #message {
     font-size: 12px;
     padding: 5px;
   }
+
   .bouton-envoyer {
     font-size: 10px;
     max-width: 100px;
     padding: 5px 3px;
   }
 }
+// Desktop : espacement standard
 @media screen and (min-width: 768px) {
   .footer {
     padding: 0.5rem 0;
   }
 }
+
 /*Footer*/
+
+// Mobile : ajustement pour écrans étroits (iPhone SE, etc.)
 @media screen and (max-width: 480px) {
   .footer {
     padding: 0.3rem 0;
   }
+
   .footer .row {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
+
   .footer-link {
     font-size: 9px;
     padding: 4px 6px;
@@ -153,6 +163,7 @@ h1 {
     display: inline-block;
     text-align: center;
   }
+
   .footer ul {
     flex-direction: row;
     flex-wrap: wrap;
@@ -160,6 +171,7 @@ h1 {
     padding-left: 0;
     margin-top: 0.25rem;
   }
+
   .footer span {
     font-size: 10px;
     margin-top: 0.25rem;
@@ -167,8 +179,9 @@ h1 {
     align-items: center;
     justify-content: center;
   }
+
   .footer img {
     height: 16px;
     margin-left: 4px;
   }
-}/*# sourceMappingURL=/style/contact.css.map */
+}

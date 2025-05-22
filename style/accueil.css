@@ -1,394 +1,243 @@
-/* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Amarante&family=Long+Cang&display=swap');
-
-body {
-    display: flex;
-    flex-direction: column; /* Force les éléments à s'empiler */
-    align-items: center; /* Centre les sections horizontalement */
-    justify-content:flex-start; /* Alignement en haut */
-    height: auto; /* Éviter que tout prenne la hauteur complète de l'écran */
-    min-height: 100vh; /* Minimum pour couvrir l'écran */
-    background: url('../img/image_ecf/foudre.jpg') no-repeat center center fixed; /* Image de fond */
-    padding-top: 50px;
+/* Conteneur du formulaire */
+/* Nouveau conteneur pour aligner la box et l'image */
+/* Centrer .login-box dans la page */
+.container {
+  /*display: flex;*/
+  justify-content: center; /* centrer horizontalement */
+  align-items: stretch;
+  /*min-height: 100vh; /* Pour centrer verticalement */
+  gap: 0px; /* Suppression de l'espace entre les éléments */
+  flex-wrap: nowrap; /* Empêche le passage à la ligne */
+  margin: 0px; /* Suppression de la marge */
+  width: 100%;
+  max-width: 900px; /* Limite la largeur maximale */
 }
 
-/*Navbar*/
-.custom-navbar {
-    position: absolute;
-    top: 0;
-    left: 10px;
-    display: flex;
-    flex-direction: column;
+/* Image + bouton dedans */
+.imageCompte {
+  position: relative; /* Permet de positionner le bouton par rapport à l'image */
+  margin: 0px;
+  padding: 0px;
+  flex-grow: 1; /* Permet à l'image de prendre tout l'espace disponible */
+  width: 50%; /*chaque bloc preend 50% de l'espace*/
+  display: flex;
+  justify-content: center; /* Centrer le bouton horizontalement */
+  align-items: center; /* Centrer le bouton verticalement */
+}
+
+.imageCompte img {
+  width: 100%;
+  height: 550px;
+  border-radius: 20px 0px 0px 20px;
+  border: 2.5px solid black;
+  object-fit: cover;
+  opacity: 83%;
+}
+
+/* Positionner le bouton "Créer un compte" SUR l'image */
+.create-account-btn {
+  position: absolute;
+  bottom: 38%;
+  left: 50%;
+  transform: translatex(-50%);
+  background: rgba(255, 255, 255, 0.856);
+  padding: 12px 20px;
+  font-size: 18px;
+  color: darkblue;
+  font-weight: bold;
+  border: black 2px solid;
+  border-radius: 40px;
+  cursor: pointer;
+  width: 60%;
+}
+
+.create-account-btn:hover {
+  background: #636363f5 !important;
+}
+
+.login-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centrage vertical du contenu */
+  background: rgba(121, 129, 156, 0.95);
+  border-radius: 0px 20px 20px 0px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  width: 50%;
+  max-width: 400px; /* Limite la largeur maximale */
+  height: 550px;
+  border: 2.5px solid black;
+  margin: auto;
+  flex-grow: 1; /* Permet à la boîte de prendre tout l'espace disponible */
+}
+
+.login-box h2 {
+  text-align: flex-start;
+  margin: 10px;
+  color: white;
+  font-family: "cursive", "sans serif";
+}
+.image {
+  flex-shrink: 0; /* Empêche l'image de se redimensionner */
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group input {
+  width: 94%;
+  padding: 10px;
+  border: 1.5px solid black;
+  font-size: 14px;
+  background-color: rgba(121, 129, 156, 95%);
+}
+
+/* Aligner "Mot de passe oublié ?" et "Connexion" côte à côte */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Prend toute la largeur */
+  margin-top: 20px;
+}
+
+/* "Mot de passe oublié ?" à gauche */
+.forgot-password {
+  font-size: 14px;
+  color: white;
+  text-decoration: none;
+  flex: 1;
+  text-align: left;
+  margin-left: 10px;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* "Connexion" à droite */
+.login-btn {
+  flex: 1;
+  background: rgb(121, 129, 156, 95%);
+  color: black;
+  padding: 7px;
+  margin-left: 100px;
+  font-size: 13px;
+  font-weight: 800;
+  border: black 2px solid;
+  border-radius: 0px 83px 0px 83px;
+  cursor: pointer;
+  text-align: center;
+}
+.login-btn:hover {
+  background: #636363f5;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/*Media Queries pour s'adapter aux petits écrans*/
+/* MEDIA QUERIES pour s’adapter aux petits écrans */
+@media screen and (max-width: 800px) {
+  .container {
+    flex-direction: column; /* Repasser en colonne sur petits écrans */
     align-items: center;
-    padding-left: 10px;
-    padding-top: 7px; /* Ajustement pour le logo */
-}
-/*Conteneur du logo + demi-cercle */
-.logo-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-/*Logo*/
-.logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 120px;
-    height: 120px;
-    background: black;
-    border-radius: 50%;
-    z-index: 2;
-}
-.logo {
-    width: 100px;
-    height: auto;
-}
+  }
 
-/*Demi-cercle en contour */
-.semi-circle-outline {
-    width: 140px;
-    height: 70px;
-    border: 2px solid blue;
-    border-top: none;
-    border-radius: 0 0 70px 70px;
-    position: absolute;
-    bottom: -5px; /* Ajustement pour coller au logo */
-    background: transparent;
-}
-/*Conteneur des liens */
-.nav-links {
-    display: flex;
-    justify-content: center;
-    gap: 100px;
-    margin-top: 20px; /* Ajustement */
-    position: relative;
-}
-
-/* Container des boutons avec connecteurs */
-.link-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-}
-
-/* Style des boutons */
-.link {
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    background: linear-gradient(45deg, purple, blue);
-    border-radius: 15px;
-    text-decoration: none;
-    position: relative;
-    margin-top: 5px; /* Ajustement pour coller au trait */
-}
-/* Effet au survol */
-.link:hover {
-    transform: scale(1.1);
-    background: linear-gradient(45deg, blue, purple);
-}
-
-.success-message {
-    color: #155724;
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    padding: 10px 20px;
-    text-align: center;
-    border-radius: 5px;
-    width: 80%;
-    margin: 20px auto;
-    font-weight: bold;
-    animation: fadeIn 0.6s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Calendier & Compte à rebours */
-.calendar {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    height: 120px;
-    padding: 15px;
-    margin: 0 auto;
-    background: rgba(87,104,219,100);
-    border-radius: 10px;
-    max-width: 800px;
-    max-height: 300px;
-    overflow-x: auto; /* permet le scroll si contenu dépasse */
-    scroll-behavior: smooth; /* pour un défilement fluide */
-}
-
-.calendar .event {
-    background-color: #2b2b3d;
-    border-radius: 8px;
-    padding: 6px 8px;
-    margin-bottom: 10px;
-    color: #fff;
-    font-size: 13px;
-    line-height: 1.1;
-    overflow-wrap: break-word;
-}
-.calendar .event-row { 
-    background-color: rgba(255, 255, 255, 0.1);
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-.calendar .event-row strong {
-    color: white;
-    font-size: 13px;
-}
-
-.calendar .flipclock {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    gap: 8px;
-}
-
-.calendar .countdown-section {
-    background-color: #111;
-    color: #fff;
-    border-radius: 5px;
-    width: 60px;
-    text-align: center;
-    padding: 6px 4px;
-    font-size: 14px;
-}
-.calendar .countdown-amount {
-    font-weight: bold;
-    font-size: 18px;
-}
-.calendar .countdown-period {
-    font-size: 10px;
-    text-transform: uppercase;
-}
-
-
-.ctaContainer {
-    display: flex;
-    align-items: center; 
-    margin: 0 ; /* Ajustez la valeur selon l'espacement souhaité */
-
-}
-
-.titrePrincipal {
-    text-decoration: underline;
-    text-align: center; /* Centre le texte */
-    margin-top: 125px; /* Décale le titre vers le bas */
-    font-size: clamp(3rem, 8vw, 6rem); /* Ajuste la taille du titre */
-    font-family: 'Freckle Face', 'cursive', sans-serif; /* Ajoute une police stylisée si besoin */
-    color: rgb(85, 102, 211); /* Ajuste la couleur si nécessaire */
-}
-
-h1 {
-    font-family: 'Freckle Face', 'cursive' , 'sans serif';
-    font-size: 48px;
-    color: rgba(151,41,124,100);
-}
-
-/*sectionPresentation*/
-.presentation {
-    background-color: rgba(121,129,156,0.9%); /* Fond coloré uniquement pour la boîte texte */
-    font-size: 20px;
-    align-items: center;
-    justify-content: center;
-    margin-right: 5px;
-    margin-left: 5px;
-    gap: 20px;
-    position: relative;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 70%;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-    margin-bottom: 15px; /* Ajoute une marge en bas */
-}
-.textPresentation {
-    display: flex;
-    flex-direction: column;
-    font-family:'amarante', 'cursive' , 'sans serif';
-    font-size:18px;
-}
-
-/*Image Diapo*/
-.slideshow-container {
-    position: relative;
-    width: 75%;
-    max-width: 800px;
-    margin: auto; /* Centre horizontalement */
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    margin-top: 15px; /* Ajoute une marge en haut */
-    margin-bottom: 15px; /* Ajoute une marge en bas */
-}
-
-
-.slides {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-}
-
-.slides img {
+  .imageCompte,
+  .login-box {
     width: 100%;
-    height: 400px; /* Ajuste selon la hauteur souhaitée */
-    object-fit: cover; /* Évite la déformation */
-    border-radius: 60%; /* Rend l'image ovale */
-
-}
-
-
-.btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    z-index: 10; /* Assure que les boutons sont au-dessus des images */
-    border-radius: 50%; /* Boutons arrondis */
-}
-
-.prev {
-    left: 10px;
-}
-
-.next {
-    right: 10px;
-}
-
-/* Conteneur des newsletters */
-.newsletters-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin: 20px 0;
-}
-/* Section 1 (Newsletter) */
-.newsletter1 {
-    background-color: rgba(121, 129, 156, 0.9);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 50%;
-    width: 485px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
-    margin-bottom: 15px;
-}
-
-/* Section 2 (Newsletter) */
-.newsletter2 {
-    background-color: rgba(121, 129, 156, 0.9);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 50%;
-    width: 485px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 50);
-    margin-bottom: 15px;
-}
-
-/* Box dans chaque newsletter */
-.boxNewsletter1,
-.boxNewsletter2 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Pour les titres */
-h3 {
-    text-align: center;
-    font-size: 18px;
-}
-
-/* Style pour les flèches de navigation */
-.prev-newsletter, .next-newsletter {
-    position: absolute;
-    top: 50%;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    transform: translateY(-50%);
-    z-index: 10;
-}
-
-.prev-newsletter {
-    left: 10px;
-}
-
-.next-newsletter {
-    right: 10px;
-}
-
-.prev-newsletter:hover, .next-newsletter:hover {
-    background: rgba(0, 0, 0, 0.8);
-}
-
-/* Compte à rebours */
-#countdown2 {
-    display: flex;
-    justify-content: center;
+    max-width: 100%;
+    border-radius: 20px;
   }
-  
-  .flipclock {
-    display: flex;
-    flex-direction: row;
-    font-family:'amarante',sans-serif;
+
+  .imageCompte img {
+    border-radius: 20px;
   }
-  
-  .countdown-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 10px;
-    background-color: #222;
-    color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 5px #000;
-    width: 100px;
-    height: 120px;
-    font-size: 2em;
-      justify-content: center;
-  }
-  
-  .countdown-amount {
-    margin: 10px 0;
-  }
-  
-  .countdown-period {
-    font-size: 14px;
-    text-transform: uppercase;
-  }
+}
+/* Popup Modale */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contenu de la popup */
+.modal-content {
+  background: rgba(26, 7, 56);
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Bouton de fermeture */
+.close {
+  color: red;
+  float: right;
+  font-size: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: darkred;
+}
+
+/* Style du champ email dans la popup */
+#resetEmail {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Bouton envoyer */
+.reset-btn {
+  width: 100%;
+  padding: 10px;
+  background: #145da0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: #0e4c8a;
+}
+
+/* Messages de validation */
+.message {
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: bold;
+  display: none;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
 /* Footer */
 footer {
     display: flex;
@@ -462,59 +311,50 @@ footer li a:hover {
     background-color: rgba(255, 197, 254, 0.5); /* Changer la couleur au survol */
 }
 
-
-/*responsive*/
-@media (max-width: 768px) {
-    .nav-links {
-        flex-direction: column;
-        gap: 20px;
-    }
-  
-    .newsletters-container {
-        flex-direction: column;
-        align-items: center;
-    }
-  
-    .newsletter1, .newsletter2 {
-        width: 90%;
-    }
-  
-    .titrePrincipal {
-        font-size: 50px;
-    }
+.calendar .event {
+    background-color: #2b2b3d;
+    border-radius: 8px;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.1;
+    overflow-wrap: break-word;
 }
-@media (max-width: 768px) {
-    footer {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    footer ul {
-        justify-content: center;
-        margin: 10px 0;
-    }
-
-    footer span {
-        margin: 10px 0;
-    }
+.calendar .event-row { 
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
-
-  /* Scrollbar personnalisée pour le calendrier (Webkit: Chrome, Edge, Safari) */
-.calendar::-webkit-scrollbar {
-    width: 8px; /* largeur de la barre */
+.calendar .event-row strong {
+    color: white;
+    font-size: 13px;
 }
 
-.calendar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1); /* couleur de fond du track */
-    border-radius: 10px;
+.calendar .flipclock {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 8px;
 }
 
-.calendar::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.5); /* couleur du "pouce" */
-    border-radius: 10px;
+.calendar .countdown-section {
+    background-color: #111;
+    color: #fff;
+    border-radius: 5px;
+    width: 60px;
+    text-align: center;
+    padding: 6px 4px;
+    font-size: 14px;
 }
-
-.calendar::-webkit-scrollbar-thumb:hover {
-    background: rgba(79, 1, 153, 0.7); /* plus foncé au hover */
+.calendar .countdown-amount {
+    font-weight: bold;
+    font-size: 18px;
+}
+.calendar .countdown-period {
+    font-size: 10px;
+    text-transform: uppercase;
 }

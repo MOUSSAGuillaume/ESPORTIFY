@@ -41,4 +41,3 @@ mysqli_set_charset($conn, "utf8");
 
 // N'oubliez pas de fermer la connexion à la base de données si vous n'en avez plus besoin
 $conn->close(); // Utilise cette ligne si tu as terminé avec la connexion
-

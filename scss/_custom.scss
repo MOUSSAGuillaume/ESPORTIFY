@@ -1,0 +1,25 @@
+// 1. Import des fonctions de Bootstrap
+@import "../node_modules/bootstrap/scss/functions";
+
+// 2. Définition des variables personnalisées
+$primary: rgb(85, 102, 211);
+$secondary: rgba(121, 129, 156, 90%);
+$dark: black;
+$main-font-family: "Freckle Face", sans-serif;
+$font-family-serif: "Amarante", serif;
+$font-family-texte: "Times New Roman", Times, serif;
+
+// 3. Définition des classes CSS
+.text-primary {
+  color: $primary;
+}
+.bg-secondary {
+  background-color: $secondary;
+}
+
+// 4. Import des variables et mixins de Bootstrap
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+
+// 5. Import complet de Bootstrap
+@import "../node_modules/bootstrap/scss/bootstrap";
