@@ -43,6 +43,48 @@ Elle prend en charge plusieurs types d’utilisateurs (visiteurs, joueurs, organ
 
 ---
 
+## 🐳 Compatibilité Docker (NOUVEAU)
+Le projet est désormais dockerisé pour faciliter le développement et les tests en local !
+Lance-le instantanément avec Docker sans avoir besoin de XAMPP ou d’une configuration manuelle.
+
+### 🚀 Démarrage rapide avec Docker
+
+```bash
+# Clone le projet et place-toi dans le dossier
+git clone https://github.com/ton-pseudo/esportify.git
+cd esportify
+
+# Lancer Docker (assure-toi d’avoir Docker Desktop installé)
+docker-compose up -d
+
+# Ouvre ensuite http://localhost:8080 dans ton navigateur
+```
+
+Tu peux configurer la base de données via le fichier .env :
+```env
+#En local (Docker) :
+DB_HOST=mysql
+DB_PORT=3306
+DB_USER=esportify_user
+DB_PASS=esportify_pass
+DB_NAME=esportify
+```
+
+En production (Alwaysdata), adapte les variables.
+
+La version Alwaysdata reste accessible ici : [https://esportify.alwaysdata.net](https://esportify.alwaysdata.net)
+
+🟢 **Astuce :**
+Termine par un petit commit :
+
+```bash
+git add README.md
+git commit -m "docs: add Docker usage instructions"
+git push
+```
+
+---
+
 ## 📦 Prérequis
 
 - PHP ≥ 7.4
