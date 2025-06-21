@@ -4,7 +4,7 @@
 # Dépendances et librairies
 /vendor/
 composer.lock
-
+node_modules/
 # Librairies externes
 
 /uploads_avatars/
