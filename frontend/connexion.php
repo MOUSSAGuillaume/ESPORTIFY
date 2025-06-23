@@ -17,7 +17,7 @@ $pageTitle = "Connexion | Esportify";
 $pageDescription = "Connecte-toi à Esportify pour participer à des événements e-sport.";
 ?>
 
-<link rel="stylesheet" href="../style/connexion.css">
+<link rel="stylesheet" href="../css/connexion.css">
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <main>

@@ -7,61 +7,45 @@ $pageTitle = "Accueil | Esportify";
 $pageDescription = "Esportify est une plateforme web de gestion d’événements e-sport : création, organisation, inscription et interaction via newsletters";
 ?>
 
-<!--<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: #1a0738;">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="#" style="font-size: 1.7rem; letter-spacing: 2px;">ESPORTIFY</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item mx-2"><a class="nav-link" href="#">Accueil</a></li>
-        <li class="nav-item mx-2"><a class="nav-link" href="#">Événements</a></li>
-        <li class="nav-item mx-2"><a class="nav-link" href="#">Contact</a></li>
-        <li class="nav-item mx-2"><a class="btn btn-primary rounded-pill px-4" href="#">Connexion</a></li>
-      </ul>
-    </div>
-  </div>
-</nav> -->
 
-<!-- Hero section modernisé -->
-<section class="hero-section py-5" style="background: linear-gradient(120deg,#1a0738 70%,#31295a 100%); min-height: 40vh;">
+
+<section class="esportify-hero-bg" style="background: url('../img/center1.png') center/cover; min-height: 900px; padding-bottom:60px;">
   <div class="container">
-    <div class="row align-items-center">
-      <div class="col-lg-7 text-white">
-        <h1 class="display-4 fw-bold mb-3 text-primary" style="letter-spacing:2px;">Esportify</h1>
-        <p class="lead mb-4" style="max-width: 600px;">
-          Esportify, la plateforme dédiée à la gestion d'événements e-sport : crée, organise, participe, propose, vibre avec la communauté gaming !
+    <!-- Hero : titre + image -->
+    <div class="row align-items-center flex-lg-row flex-column-reverse py-5">
+      <div class="col-lg-7 text-white text-lg-start text-center">
+        <h1 class="display-4 fw-bold mb-3" style="letter-spacing:2px; color: #4fc3f7;">
+          Esportify
+        </h1>
+        <p class="lead mb-4">
+          Esportify, la plateforme dédiée à la gestion d'événements e-sport : crée, organise, participe, propose, vibre avec la communauté gaming !
         </p>
-        <a href="#events" class="btn btn-lg btn-primary rounded-pill shadow">Voir les événements</a>
+        <a href="#events" class="btn btn-lg btn-primary rounded-pill shadow px-5" style="font-weight:600;">
+          Voir les événements
+        </a>
       </div>
-      <div class="col-lg-5 d-flex justify-content-center">
-        <img src="../img/logo.png" alt="Logo Esportify" class="img-fluid shadow rounded-4" style="max-width: 260px; background: rgba(255,255,255,0.04);">
+      <div class="col-lg-5 text-center mb-4 mb-lg-0">
+        <img src="../img/deco_transparent.png" alt="image gaming" class="img-fluid shadow-lg rounded-4 " style="max-width: 350px;">
       </div>
     </div>
-  </div>
-</section>
 
-<!-- Présentation et calendrier -->
-<section class="presentation my-5">
-  <div class="container">
+    <!-- Présentation + calendrier -->
     <div class="row g-4 align-items-start">
       <div class="col-lg-7">
-        <div class="bg-secondary p-4 rounded-4 shadow-sm" style="min-height: 260px;">
-          <h2 class="text-white mb-3">Bienvenue sur Esportify</h2>
-          <p class="fs-5" style="color: #fafafa;">
+        <div class="bg-secondary p-4 rounded-4 shadow-sm" style="min-height: 250px;">
+          <h2 class="mb-3" style="color:rgb(239, 236, 229);">Bienvenue sur Esportify</h2>
+          <p class="fs-5" style="color:rgb(239, 236, 229);">
             Startup en pleine croissance, Esportify rassemble les passionnés de e-sport : joueurs, organisateurs et fans autour de tournois multi-plateformes (PC, PlayStation, Xbox, Switch…). Peu importe ton genre ou ton niveau, l'essentiel c'est la passion !<br><br>
             <strong>Propose, participe et vis la compétition autrement !</strong>
           </p>
         </div>
       </div>
-      <div class="col-lg-5" id="events">
-        <div class="calendar-container bg-dark rounded-4 p-4 shadow-lg">
-          <h3 class="text-white mb-4"><span class="me-2">📆</span>Calendrier des événements</h3>
+      <div class="container py-5" id="events">
+        <h2 class="text-white text-center mb-5">Calendrier des événements</h2>
+        <div class="event-horizontal-scroll d-flex flex-row gap-4 overflow-auto py-3">
           <?php
-          $query = "SELECT * FROM events WHERE status != 'refusé'";
+          $query = "SELECT * FROM events WHERE status != 'refusé' ORDER BY event_date ASC";
           $result = mysqli_query($conn, $query);
-
           if ($result && mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
               $title = htmlspecialchars($row['title']);
@@ -74,26 +58,29 @@ $pageDescription = "Esportify est une plateforme web de gestion d’événements
                 'terminé' => '#9E9E9E',
                 default => '#CCCCCC',
               };
-              echo "<div class='event-card mb-3 p-3 bg-secondary rounded-3 shadow-sm'>";
-              echo "<h5 class='mb-2'>$title</h5>";
-              echo "<p class='mb-1'><strong>Date :</strong> $date</p>";
-              echo "<span class='badge' style='background:$statusColor; color:#fff; padding:5px 12px;'>$status</span>";
-              echo "<button class='voir-description btn btn-sm btn-outline-light ms-3' data-description=\"$description\">Voir</button>";
-              echo "</div>";
+              echo '<div class="event-card-pro shadow-lg p-4 rounded-4 bg-dark text-white" style="min-width:330px; max-width:330px; flex:0 0 330px;">';
+              echo "    <h5 class='mb-2 fw-bold'>$title</h5>";
+              echo "    <div class='mb-1'><span class='me-2'>🗓️</span><strong>Date :</strong> " . date("d/m/Y H:i", strtotime($date)) . "</div>";
+              echo "    <span class='badge mb-3' style='background:$statusColor; color:#fff; padding:5px 12px;'>$status</span>";
+              echo "    <p style='min-height: 60px;'>" . substr($description, 0, 80) . "...</p>";
+              echo "    <button class='btn btn-sm btn-outline-primary voir-description' data-description=\"$description\">Voir plus</button>";
+              echo '</div>';
             }
           } else {
-            echo "<p class='text-light'>Aucun événement trouvé.</p>";
+            echo "<p class='text-light text-center'>Aucun événement trouvé.</p>";
           }
           ?>
         </div>
       </div>
+
+
     </div>
   </div>
 </section>
 
 <!-- Carrousel stylé -->
 <section>
-  <div id="carouselExample" class="carousel slide mx-auto mb-4 shadow-lg" style="max-width: 650px; border-radius: 18px; overflow: hidden;" data-bs-ride="carousel">
+  <div id="carouselExample" class="carousel slide mx-auto mt-4 mb-4 shadow-lg" style="max-width: 600px; border-radius: 18px; overflow: hidden;"   data-bs-ride="carousel">
     <div class="carousel-inner">
       <div class="carousel-item active"><img src="../img/img diapo/console.jpg" class="d-block w-100" alt="consoles de jeux"></div>
       <div class="carousel-item"><img src="../img/img diapo/pc.jpg" class="d-block w-100" alt="photo illustration ordinateur"></div>
@@ -110,7 +97,7 @@ $pageDescription = "Esportify est une plateforme web de gestion d’événements
 </section>
 
 <!-- Newsletters modernisé -->
-<section class="newsletters py-5" style="background:linear-gradient(120deg,#1a0738 60%,#2b183f 100%);">
+<section class="newsletters py-5" style="background: url('../img/center1.png') center/cover; min-height: 900px; ">
   <div class="container">
     <h2 class="text-white text-center mb-5">📰 Dernières Newsletters</h2>
     <div class="row g-4">
@@ -174,7 +161,7 @@ $pageDescription = "Esportify est une plateforme web de gestion d’événements
   // défilement automatique du calendrier
   const container = document.querySelector('.calendar');
 
- /* function autoScroll() {
+  /* function autoScroll() {
     if ((container.scrollLeft + container.clientWidth) >= container.scrollWidth) {
       container.scrollLeft = 0; // retour au début
     } else {

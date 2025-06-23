@@ -1,4 +1,8 @@
 /* Connexion Page */
+body {
+  background: url("../img/center1.png") no-repeat center/cover !important;
+}
+
 .connexion-wrapper {
   max-width: 900px;
   margin: 0 auto;
@@ -38,7 +42,7 @@
   left: 50%;
   bottom: 35%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.856);
+  background: #6c757d;
   padding: 12px 20px;
   font-size: 18px;
   color: darkblue;

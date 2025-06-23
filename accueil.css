@@ -1,0 +1,80 @@
+@charset "UTF-8";
+/* Calendrier */
+.calendar-container {
+  position: relative;
+}
+
+.calendar {
+  width: 450px;
+  height: 325px;
+  padding: 15px;
+  margin-top: 22rem;
+  background: rgb(87, 104, 219);
+  border-radius: 10px;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 16px;
+  overflow-y: auto; /* permet le scroll si contenu dépasse */
+}
+
+.presentation {
+  margin-top: 20px;
+}
+
+h1 {
+  font-family: "Freckle Face", "cursive", "sans serif";
+  font-size: 90px;
+  background-color: transparent;
+  margin-left: 1rem;
+}
+
+.bloc-presentation {
+  font-size: 20px;
+  font-weight: bold;
+  align-items: center;
+  margin-right: 150px;
+  position: relative;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.textPresentation {
+  font-family: "amarante", "cursive", "sans serif";
+  font-size: 25px;
+}
+
+#carouselExample {
+  width: 60% !important;
+}
+
+.slides_img {
+  height: 400px; /* Ajuste selon la hauteur souhaitée */
+  -o-object-fit: cover;
+     object-fit: cover; /* Évite la déformation */
+  border-radius: 50%; /* Rend l'image ovale */
+}
+
+.newsletters {
+  box-shadow: 0 4px 8px rgb(0, 0, 0);
+}
+
+/*Page connexion*/
+.form-container {
+  flex-wrap: nowrap;
+  min-height: 100vh;
+  gap: 0;
+  max-width: 900px;
+}
+
+.custom-image {
+  width: 100%;
+  height: 550px;
+  border-radius: 20px 0 0 20px;
+  border: 2.5px solid black;
+  -o-object-fit: cover;
+     object-fit: cover;
+  opacity: 0.83;
+}/*# sourceMappingURL=accueil.css.map */

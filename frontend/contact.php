@@ -17,7 +17,7 @@ $pageTitle = "Contact | Esportify";
 $pageDescription = "Contact-nous en cas de problème ou d'incident.";
 ?>
 
-<link rel="stylesheet" href="../style/contact.css">
+<link rel="stylesheet" href="../css/contact.css">
 
 <section class="container my-5">
     <h1 class="text-center">Contact Us</h1>
