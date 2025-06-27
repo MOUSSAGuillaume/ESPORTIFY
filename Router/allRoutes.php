@@ -3,5 +3,7 @@ return [
     'accueil' => 'frontend/accueil.php',
     'contact' => 'frontend/contact.php',
     'connexion' => 'frontend/connexion.php',
-    // Ajoute tes routes ici
+    'inscription' => 'frontend/create_account.php',
+    'joueur_dashboard' => 'frontend/joueur_dashboard.php',
+
 ];

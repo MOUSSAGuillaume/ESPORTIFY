@@ -1,5 +1,5 @@
 <?php
-include_once('../db.php'); // Inclusion de la connexion à la base de données
+include_once(__DIR__ . '/../db.php');// Inclusion de la connexion à la base de données
 
 // Vérification si le token est fourni dans l'URL
 if (isset($_GET['token'])) {

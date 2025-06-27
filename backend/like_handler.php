@@ -2,11 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();// indispensable pour lire $_SESSION
 }
-require_once '../backend/fonctions.php'; // fonction checkCsrf()
-include_once("../db.php");
+require_once(__DIR__ . '/fonctions.php'); // fonction checkCsrf()
+include_once(__DIR__ . '/../db.php');
 
 if (isset($_POST['like_actualite'])) {
-    checkCsrf(); // CSRF protection
+    checkCsrf(); // CSRF protections
 
     $id_actu = (int) $_POST['id_actualite_like'];
 

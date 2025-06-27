@@ -1,5 +1,6 @@
 # Fichiers sensibles
 .env
+.htaccess
 
 # Dépendances et librairies
 /vendor/

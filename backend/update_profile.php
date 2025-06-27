@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('../db.php'); // Connexion DB
+include_once(__DIR__ . '/../db.php'); // Connexion DB
 
 // Vérification utilisateur connecté
 if (!isset($_SESSION['user_id'])) {

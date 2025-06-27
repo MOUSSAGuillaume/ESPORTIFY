@@ -26,7 +26,7 @@ $pageDescription = "Connecte-toi à Esportify pour participer à des événement
       <!-- Bloc image + bouton -->
       <div class="col-12 col-md-6 image-container p-0 position-relative">
         <img src="../img/image_ecf/img2.jpg" alt="illustration" class="custom-image">
-        <button onclick="location.href='https://esportify.alwaysdata.net/frontend/create_account.php'" class="btn-create">Create-account</button>
+        <button onclick="location.href='/index.php?page=inscription'" class="btn-create">Create-account</button>
       </div>
 
       <!-- Bloc login -->

@@ -5,7 +5,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 // Connexion à la base de données
-require_once('../db.php');
+include_once(__DIR__ . '/../db.php');
 
 // Vérifie si un token est passé dans l'URL
 if (!isset($_GET['token']) || !ctype_xdigit($_GET['token'])) {

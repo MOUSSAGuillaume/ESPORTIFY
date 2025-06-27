@@ -36,9 +36,9 @@
    LAYOUT & LIENS DASHBOARD
 ================================ */
 body {
+  background: linear-gradient(120deg, #1a0738 60%, #2b183f 100%);
   min-height: 100vh;
   color: #fff;
-  background: url("../img/center1.png") center/cover;
 }
 
 .dashboard-links {
@@ -294,4 +294,4 @@ footer li a {
     flex-direction: column;
     gap: 0.7rem;
   }
-}/*# sourceMappingURL=dashboard.css.map */
+}/*# sourceMappingURL=dashbord.css.map */

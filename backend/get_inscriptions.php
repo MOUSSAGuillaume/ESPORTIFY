@@ -1,5 +1,5 @@
 <?php
-include_once("../db.php");
+include_once(__DIR__ . '/../db.php');
 
 if (!isset($_GET['event_id'])) {
     echo "ID événement manquant.";

@@ -3,7 +3,7 @@
 session_start();
 
 // Inclusion de la connexion à la base de données
-include_once('../db.php');
+include_once(__DIR__ . '/../db.php');
 
 // Chargement des dépendances de PHPMailer
 require_once '/vendor/phpmailer/phpmailer/src/Exception.php';
