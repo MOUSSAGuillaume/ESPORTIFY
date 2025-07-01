@@ -1,85 +1,117 @@
 <?php
-// Démarre la session pour accéder aux variables $_SESSION
-session_start();
+// On démarre la session pour récupérer les infos utilisateur
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Inclusion de la connexion à la base de données
 include_once(__DIR__ . '/../db.php');
 
-// Chargement des dépendances de PHPMailer
-require_once '/vendor/phpmailer/phpmailer/src/Exception.php';
-require_once '/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require_once '/vendor/phpmailer/phpmailer/src/SMTP.php';
-require_once '/vendor/autoload.php'; // Autoload de PHPMailer
+// Inclusion de l'autoloader PHPMailer
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Charger les variables d'environnement
+// Chargement des variables d'environnement (pour les infos SMTP)
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-// Si le formulaire a été soumis
+// Si le formulaire a été soumis (méthode POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $new_email = $_POST['new_email'];
-    $user_id = $_SESSION['user_id'];  // Récupération de l'ID utilisateur depuis la session
+    // Récupération de la nouvelle adresse email et de l'id utilisateur depuis la session
+    $new_email = $_POST['new_email'] ?? '';
+    $user_id = $_SESSION['user']['id'] ?? null;
 
-    // Vérification si l'email existe déjà dans la base de données
-    $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $check->bind_param("s", $new_email);
-    $check->execute();
-    $check->store_result();
-    
-    if ($check->num_rows > 0) {
-        echo "❌ Cet email est déjà utilisé.";
+    // Vérifie que l'utilisateur est bien connecté
+    if (!$user_id) {
+        echo "❌ Utilisateur non authentifié.";
         exit;
     }
 
-    // Validation de l'email (vérification de la syntaxe)
+    // Vérifie si l'email existe déjà (dans email OU dans pending_email d'un autre utilisateur)
+    $check = $conn->prepare("SELECT id FROM users WHERE email = ? OR pending_email = ?");
+    $check->bind_param("ss", $new_email, $new_email);
+    $check->execute();
+    $check->store_result();
+    if ($check->num_rows > 0) {
+        echo "❌ Cet email est déjà utilisé ou en cours de validation.";
+        exit;
+    }
+
+    // Vérifie que l'adresse est valide
     if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
         echo "❌ Adresse email invalide.";
         exit;
     }
 
-    // Génération d'un token unique pour la confirmation de l'email
-    $token = bin2hex(random_bytes(50)); // Création d'un token unique pour valider l'email
+    // Génère un token unique (pour le lien de validation)
+    $token = bin2hex(random_bytes(50));
 
-    // Mise à jour de l'utilisateur avec le nouveau token pour la confirmation
-    $sql = "UPDATE users SET token = ? WHERE id = ?";
+    // Enregistre le token ET la nouvelle adresse (pending_email) dans la base
+    $sql = "UPDATE users SET pending_email = ?, token = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("si", $token, $user_id);
+    $stmt->bind_param("ssi", $new_email, $token, $user_id);
 
     if ($stmt->execute()) {
-        // Envoi d'un email de confirmation à la nouvelle adresse
+        // Envoie un mail de validation à la nouvelle adresse
         $mail = new PHPMailer(true);
         try {
-            // Configuration SMTP
+            // Paramètres SMTP (Gmail ici, adapte si besoin)
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com'; // Serveur SMTP de Gmail
-            $mail->SMTPAuth = true; // Authentification SMTP
-            $mail->Username = $_ENV['SMTP_USER_2']; // Utilisation d'un email d'expéditeur
-            $mail->Password = $_ENV['SMTP_PASS_2']; // Mot de passe ou mot de passe d'application
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $_ENV['SMTP_USER_2'];
+            $mail->Password = $_ENV['SMTP_PASS_2'];
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587; // Port SMTP pour TLS
+            $mail->Port = 587;
 
-            // Récupération de l'URL de base depuis les variables d'environnement
+            // URL de base pour le lien de validation
             $base_url = $_ENV['BASE_URL'] ?? 'http://localhost/ESPORTIFY';
 
-            // Configuration de l'email
-            $mail->setFrom($_ENV['SMTP_USER_2'], 'Esportify'); // Adresse email de l'expéditeur
-            $mail->addAddress($new_email); // Adresse email du destinataire
+            // Construction de l'e-mail
+            $mail->setFrom($_ENV['SMTP_USER_2'], 'Esportify');
+            $mail->addAddress($new_email);
             $mail->isHTML(true);
             $mail->Subject = 'Confirmation de modification de votre email';
             $mail->Body = '<p>Bonjour,</p>
-                           <p>Vous avez demandé à changer votre adresse email sur Esportify.</p>
-                           <p>Pour confirmer cette modification, cliquez sur le lien suivant : <a href="' . $base_url . '/backend/confirm_email_change.php?token=' . urlencode($token) . '">Confirmer la modification de mon email</a></p>';
+                <p>Vous avez demandé à changer votre adresse email sur Esportify.</p>
+                <p>Pour confirmer cette modification, cliquez sur le lien suivant :<br>
+                <a href="' . $base_url . '/backend/confirm_email_change.php?token=' . urlencode($token) . '">Confirmer la modification de mon email</a></p>';
 
-            // Envoi de l'email
             $mail->send();
             echo 'Un email de confirmation a été envoyé à votre nouvelle adresse.';
         } catch (Exception $e) {
             echo "❌ L'email n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
         }
     } else {
-        echo '❌ Erreur lors de la mise à jour du token.';
+        echo '❌ Erreur lors de la mise à jour de votre demande.';
     }
+} else {
+    // Affiche un petit formulaire simple si la page est chargée en GET
+?>
+    <!DOCTYPE html>
+    <html lang="fr">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Changer mon email</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    </head>
+
+    <body class="bg-dark text-light">
+        <div class="container mt-5">
+            <h2>Changer mon adresse email</h2>
+            <form method="POST" class="my-4" style="max-width: 420px;">
+                <div class="mb-3">
+                    <label for="new_email" class="form-label">Nouvel email</label>
+                    <input type="email" name="new_email" id="new_email" class="form-control" required placeholder="nouveau@email.com">
+                </div>
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </form>
+        </div>
+    </body>
+
+    </html>
+<?php
 }

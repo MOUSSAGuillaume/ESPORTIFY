@@ -19,27 +19,27 @@ $page = $_GET['page'] ?? 'accueil'; // Page par défaut
     <meta property="og:image" content="https://esportify.alwaysdata.net/img/logo.png">
     <meta property="og:url" content="https://esportify.alwaysdata.net/">
     <meta property="og:type" content="website">
-   
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/img/logo.png" />
     <link rel="stylesheet" href="../css/main.css"> <!-- CSS global -->
-        <?php
-        // Si un CSS spécifique existe pour la page, on le charge
-        $cssPageFile = __DIR__ . "../css/{$page}.css";
-        if (file_exists($cssPageFile)) {
-            echo '<link rel="stylesheet" href="../css/' . htmlspecialchars($page) . '.css">';
-        }
-        ?>
+    <?php
+    // Si un CSS spécifique existe pour la page, on le charge
+    $cssPageFile = __DIR__ . "../css/{$page}.css";
+    if (file_exists($cssPageFile)) {
+        echo '<link rel="stylesheet" href="../css/' . htmlspecialchars($page) . '.css">';
+    }
+    ?>
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: #1a0738;">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="#" style="font-size: 1.7rem; letter-spacing: 2px;">ESPORTIFY
+                <a class="navbar-brand fw-bold" style="font-size: 1.7rem; letter-spacing: 2px;">ESPORTIFY
                     <img src="../img/logo.png" alt="Logo Esportify" class="img-fluid shadow rounded-4" style="max-width: 60px;">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -47,10 +47,29 @@ $page = $_GET['page'] ?? 'accueil'; // Page par défaut
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item mx-2"><a class="nav-link" href="/index.php?page=accueil">Accueil</a></li>
-                        <li class="nav-item mx-2"><a class="nav-link" href="/index.php?page=contact">Contact</a></li>
-                        <li class="nav-item mx-2"><a class="btn btn-primary rounded-pill px-4" href="/index.php?page=connexion">Connexion</a></li>
+                        <li class="nav-item mx-2">
+                            <a class="btn btn-accueil rounded-pill px-4" href="/index.php?page=accueil">Accueil</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="btn btn-contact rounded-pill px-4" href="/index.php?page=contact">Contact</a>
+                        </li>
+                        <?php if (empty($_SESSION['user'])): ?>
+                            <li class="nav-item mx-2">
+                                <a class="btn btn-connexion rounded-pill px-4" href="/index.php?page=connexion">Connexion</a>
+                            </li>
+                            <li class="nav-item mx-2">
+                                <a class="btn btn-outline-light rounded-pill px-4" href="/index.php?page=inscription">Inscription</a>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item mx-2">
+                                <a class="btn btn-info rounded-pill px-4" href="/index.php?page=profile">Mon profil</a>
+                            </li>
+                            <li class="nav-item mx-2">
+                                <a class="btn btn-danger rounded-pill px-4" href="/index.php?page=logout">Se déconnecter</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
+
                 </div>
             </div>
         </nav>

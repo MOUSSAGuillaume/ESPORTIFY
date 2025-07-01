@@ -1,0 +1,96 @@
+// ==============================
+// Variables couleurs (optionnel)
+$fond1: '../img/image_ecf/fond1.jpg';
+$wheat: wheat;
+$main-bg: rgb(26, 7, 56); // ancien modal
+$accent: linear-gradient(45deg, blue, purple);
+
+// ==============================
+// Fond général, logo
+body {
+  background: url($fond1) no-repeat center/cover;
+  color: $wheat;
+  min-height: 100vh;
+}
+.logo {
+  height: 4rem;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// ==============================
+// Layout général
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+header, main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+main {
+  flex: 1;
+  padding-bottom: 20px;
+  line-height: 1.25;
+}
+
+// ==============================
+// Formulaires généraux
+form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  button {
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background .2s;
+    &:hover {
+      background-color: #f5e6ff;
+    }
+  }
+}
+// ==============================
+// Modal styles
+.modal-content {
+  background: rgb(26, 7, 56) !important;
+  color: wheat !important;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 32px 0 rgba(40,0,80,0.18);
+}
+
+// ==============================
+// Avatar preview style
+#avatarPreview, .rounded-circle {
+  border: 3px solid #eee;
+  background: rgba(255,255,255,.18);
+  margin-bottom: .5rem;
+  max-width: 90px;
+}
+
+// ==============================
+// NE PAS inclure ces styles si tu utilises la modal Bootstrap !
+// (On retire les styles custom modals, ils cassent Bootstrap !)
+/*
+#passwordModal {
+  ... tout ce block est supprimé ...
+}
+*/
+
+.alert {
+  margin-top: 10px;
+  font-weight: bold;
+  &.error { color: red; }
+  &.success { color: green; }
+}

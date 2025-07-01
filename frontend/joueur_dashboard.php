@@ -38,11 +38,6 @@ if ($resultEvents) {
   <div class="row mb-4">
     <div class="col-12 text-center">
       <h1 class="fw-bold">Bienvenue, <?= htmlspecialchars($username); ?> 🎮</h1>
-      <div class="dashboard-links d-flex flex-wrap gap-2 justify-content-center my-4">
-        <a href="https://esportify.alwaysdata.net/frontend/profile.php" class="btn btn-primary">Mon profil</a>
-        <button id="eventButton" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#eventModal">Proposer un événement</button>
-        <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Se déconnecter</a>
-      </div>
     </div>
   </div>
 
@@ -50,6 +45,7 @@ if ($resultEvents) {
   <div class="row mb-5">
     <div class="col-12">
       <h2 class="h4 mb-3">📅 Événements proposés</h2>
+      <button id="eventButton" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#eventModal">Proposer un événement</button>
       <?php if (!empty($message)) {
         echo '<div class="alert alert-info">' . $message . '</div>';
       } ?>
