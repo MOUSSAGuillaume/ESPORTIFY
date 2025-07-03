@@ -1,5 +1,5 @@
 <?php
-include_once("../db.php");
+include_once(__DIR__ . '/../db.php');
 
 if (isset($_GET['id'])) {
     $newsletterId = intval($_GET['id']);
@@ -18,19 +18,11 @@ if (isset($_GET['id'])) {
     exit;
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
     <title>Détail de la Newsletter</title>
-</head>
-<body>
-    <h1><?= htmlspecialchars($newsletter['title']) ?></h1>
-    <p><strong>Date :</strong> <?= htmlspecialchars($newsletter['created_at']) ?></p>
-    <div>
+
+    <h1 style="color: whitesmoke;"><?= htmlspecialchars($newsletter['title']) ?></h1>
+    <p style="color: #c08c3f;"><strong>Date :</strong> <?= htmlspecialchars($newsletter['created_at']) ?></p>
+    <div style= "color:wheat;">
         <?= nl2br(htmlspecialchars($newsletter['message'])) ?>
     </div>
-    <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="button">Retour</a>
-</body>
-</html>
+    <a href="/gestion_newsletters" class="button">Retour</a>

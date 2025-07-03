@@ -62,7 +62,7 @@ $page = $_GET['page'] ?? 'accueil'; // Page par défaut
                             </li>
                         <?php else: ?>
                             <li class="nav-item mx-2">
-                                <a class="btn btn-info rounded-pill px-4" href="/index.php?page=profile">Mon profil</a>
+                                <a class="btn btn-info rounded-pill fw-bold px-4" href="/index.php?page=profile">Mon profil</a>
                             </li>
                             <li class="nav-item mx-2">
                                 <a class="btn btn-danger rounded-pill px-4" href="/index.php?page=logout">Se déconnecter</a>

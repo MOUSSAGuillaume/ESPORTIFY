@@ -138,6 +138,15 @@ small {
   color: #979797;
 }
 
+.btn-sm {
+  color: #c08c3f;
+}
+
+.btn-sm:hover {
+  color: whitesmoke;
+  background: transparent;
+}
+
 /* ================================
    MODALS (Bootstrap compatibles)
 ================================ */
@@ -203,34 +212,23 @@ input:focus {
 }
 
 /* ================================
-   FOOTER (optionnel si déjà dans main.css)
+   Tableau Gestion events
 ================================ */
-footer nav {
-  background: rgba(34, 30, 56, 0.97);
+.custom-gradient-table {
+  background: linear-gradient(90deg, rgba(29, 233, 182, 0.94), rgba(55, 0, 179, 0.94));
+  /* 'cc' = 80% opacity */
+  /* Optionnel : pour que le texte reste lisible */
   color: #fff;
-  padding: 1.2rem 0;
-  margin-top: 3rem;
-  text-align: center;
-  border-radius: 1.5rem 1.5rem 0 0;
+  border-radius: 14px;
+  overflow: hidden;
+  /* Ajoute un peu de shadow si tu veux */
+  box-shadow: 0 4px 24px rgba(20, 15, 60, 0.08);
 }
 
-footer nav img {
-  height: 26px;
-  margin: 0 0.6rem;
-  vertical-align: middle;
-}
-
-footer ul {
-  display: inline-flex;
-  gap: 1.3rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-footer li a {
-  color: #7fd4ff;
-  text-decoration: none;
+.custom-gradient-table th,
+.custom-gradient-table td {
+  background: transparent !important;
+  /* pour ne pas écraser le gradient du parent */
 }
 
 /* ================================
