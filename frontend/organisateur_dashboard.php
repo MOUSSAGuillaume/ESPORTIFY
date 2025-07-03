@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../db.php');
 
 // Authentification
 if (!isset($_SESSION['user'])) {
-    header('Location: /index.php?page=connexion');
+    header('Location: /index.php?page=frontend/connexion.php');
     exit;
 }
 if ($_SESSION['user']['role'] !== 2) {
@@ -187,7 +187,9 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
             <p>Aucun tournoi prévu pour l’instant.</p>
         <?php endif; ?>
     </section>
+    
 </main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const consoleText = document.getElementById("console-text");
     const overlay = document.getElementById("console-overlay");

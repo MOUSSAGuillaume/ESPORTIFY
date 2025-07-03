@@ -3,7 +3,7 @@ return [
     // Frontend routes
     '404' => 'frontend/404.php',
     'accueil' => 'frontend/accueil.php',
-    'admin_dashboard.php' => 'frontend/admin_dashboard.php',
+    'admin_dashboard' => 'frontend/admin_dashboard.php',
     'ajouter_evenement' => 'frontend/ajouter_evenementt.php',
     'connexion' => 'frontend/connexion.php',
     'contact' => 'frontend/contact.php',

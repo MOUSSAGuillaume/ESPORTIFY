@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
     <title>Ajouter un événement</title>
     <style>
         body {
@@ -30,8 +26,6 @@
             border-radius: 5px;
         }
     </style>
-</head>
-<body>
 
     <h2>➕ Ajouter un événement</h2>
 
@@ -71,6 +65,3 @@ if (isset($_POST['submit'])) {
     mysqli_close($conn);
 }
 ?>
-
-</body>
-</html>
