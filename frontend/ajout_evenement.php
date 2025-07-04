@@ -45,7 +45,7 @@
     <?php
 if (isset($_POST['submit'])) {
     // Connexion à la base de données
-    include_once("../db.php");
+    include_once(__DIR__ . '/../db.php');
 
     $titre = mysqli_real_escape_string($conn, $_POST['titre']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);

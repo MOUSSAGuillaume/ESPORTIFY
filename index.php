@@ -35,7 +35,7 @@ $page = $_GET['page'] ?? 'accueil'; // Page par défaut
     ?>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: #1a0738;">
             <div class="container">
@@ -48,24 +48,24 @@ $page = $_GET['page'] ?? 'accueil'; // Page par défaut
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item mx-2">
-                            <a class="btn btn-accueil rounded-pill px-4" href="/index.php?page=accueil">Accueil</a>
+                            <a class="btn btn-accueil rounded-pill px-4" href="/accueil">Accueil</a>
                         </li>
                         <li class="nav-item mx-2">
-                            <a class="btn btn-contact rounded-pill px-4" href="/index.php?page=contact">Contact</a>
+                            <a class="btn btn-contact rounded-pill px-4" href="/contact">Contact</a>
                         </li>
                         <?php if (empty($_SESSION['user'])): ?>
                             <li class="nav-item mx-2">
-                                <a class="btn btn-connexion rounded-pill px-4" href="/index.php?page=connexion">Connexion</a>
+                                <a class="btn btn-connexion rounded-pill px-4" href="/connexion">Connexion</a>
                             </li>
                             <li class="nav-item mx-2">
-                                <a class="btn btn-outline-light rounded-pill px-4" href="/index.php?page=inscription">Inscription</a>
+                                <a class="btn btn-outline-light rounded-pill px-4" href="/inscription">Inscription</a>
                             </li>
                         <?php else: ?>
                             <li class="nav-item mx-2">
-                                <a class="btn btn-info rounded-pill fw-bold px-4" href="/index.php?page=profile">Mon profil</a>
+                                <a class="btn btn-info rounded-pill fw-bold px-4" href="/profile">Mon profil</a>
                             </li>
                             <li class="nav-item mx-2">
-                                <a class="btn btn-danger rounded-pill px-4" href="/index.php?page=logout">Se déconnecter</a>
+                                <a class="btn btn-danger rounded-pill px-4" href="/logout">Se déconnecter</a>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -75,7 +75,7 @@ $page = $_GET['page'] ?? 'accueil'; // Page par défaut
         </nav>
     </header>
 
-    <main id="main-page">
+    <main id="main-page" class="flex-shrink-0">
         <!-- Le contenu de la page sera injectée ici-->
         <?php
         // Charge dynamiquement le contenu de la page demandée
@@ -85,7 +85,7 @@ $page = $_GET['page'] ?? 'accueil'; // Page par défaut
     </main>
 
     <!-- Footer -->
-    <footer class="footer w-100 bg-secondary bg-opacity-75 py-3">
+    <footer class="footer mt-auto w-100 bg-secondary bg-opacity-75 py-3">
         <div class="container">
             <div class="row align-items-center text-center text-md-start">
                 <div class="col-12 col-md-6 mb-2 mb-md-0">

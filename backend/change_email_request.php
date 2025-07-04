@@ -90,28 +90,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     // Affiche un petit formulaire simple si la page est chargée en GET
 ?>
-    <!DOCTYPE html>
-    <html lang="fr">
+        <title style="color: whitesmoke;">Changer mon email</title>
+  
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Changer mon email</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    </head>
-
-    <body class="bg-dark text-light">
+    <main class="text-light">
         <div class="container mt-5">
             <h2>Changer mon adresse email</h2>
             <form method="POST" class="my-4" style="max-width: 420px;">
                 <div class="mb-3">
-                    <label for="new_email" class="form-label">Nouvel email</label>
+                    <label for="new_email" class="form-label" style="color: whitesmoke;">Nouvel email</label>
                     <input type="email" name="new_email" id="new_email" class="form-control" required placeholder="nouveau@email.com">
                 </div>
                 <button type="submit" class="btn btn-primary">Valider</button>
             </form>
         </div>
-    </body>
-
-    </html>
+    </main>
 <?php
 }

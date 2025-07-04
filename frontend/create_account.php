@@ -4,8 +4,6 @@ $pageTitle = "Inscription | Esportify";
 $pageDescription = "Esportify est une plateforme web de gestion d’événements e-sport : création, organisation, inscription et interaction via newsletters";
 ?>
 
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="../css/create_account.css">
 
 <!-- Effet console au chargement -->

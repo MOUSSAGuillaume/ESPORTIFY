@@ -25,10 +25,10 @@ if (ini_get("session.use_cookies")) {
 // Redirection personnalisée
 switch ($role) {
     case 1:
-        header("Location: /index.php?page=connexion&logout=1");
+        header("Location: /connexion");
         break;
     default:
-        header("Location: /index.php?page=accueil&logout=1");
+        header("Location: /accueil");
         break;
 }
 exit;

@@ -3,11 +3,11 @@ include_once(__DIR__ . '/../db.php');
 
 // Authentification
 if (!isset($_SESSION['user'])) {
-    header('Location: /index.php?page=frontend/connexion.php');
+    header('Location: /connexion');
     exit;
 }
 if ($_SESSION['user']['role'] !== 2) {
-    header("Location: /index.php?page=frontend/accueil.php");
+    header("Location: /accueil");
     exit;
 }
 

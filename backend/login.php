@@ -64,13 +64,13 @@ if ($user = $result->fetch_assoc()) {
         // Redirige selon le rôle de l'utilisateur
         switch ($user['role_id']) {
             case 1:
-                header("Location: /index.php?page=admin_dashboard");
+                header("Location: /admin_dashboard");
                 break;
             case 2:
-                header("Location: /index.php?page=organisateur_dashboard");
+                header("Location: /organisateur_dashboard");
                 break;
             case 4:
-                header("Location: /index.php?page=joueur_dashboard");
+                header("Location: /joueur_dashboard");
                 break;
             default:
                 session_destroy();

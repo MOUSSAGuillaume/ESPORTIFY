@@ -1,6 +1,6 @@
 <?php
 if (empty($_SESSION['user'])) {
-  header('Location: /index.php?page=connexion');
+  header('Location: /connexion');
   exit;
 }
 if (empty($_SESSION['csrf_token'])) {

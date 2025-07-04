@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../db.php');
 
 // Authentification organisateur
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 2) {
-    header("Location: /index.php?page=connexion");
+    header("Location: /connexion");
     exit;
 }
 

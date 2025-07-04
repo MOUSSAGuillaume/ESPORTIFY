@@ -5,13 +5,13 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Vérifie si l'utilisateur est connecté
 if (!isset($_SESSION['user'])) {
-    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
+    header("Location: /connexion");
     exit;
 }
 
 // Vérifie que l'utilisateur a le bon rôle
 if ($_SESSION['user']['role'] !== 4) { // 4 pour Joueur
-    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php");
+    header("Location: /accueil");
     exit;
 }
 

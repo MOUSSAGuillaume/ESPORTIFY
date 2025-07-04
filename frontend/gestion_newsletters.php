@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../db.php');
 
 if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 1 && $_SESSION['user']['role'] !== 2)) {
-    header("Location: /index.php?page=connexion");
+    header("Location: /connexion");
     exit;
 }
 

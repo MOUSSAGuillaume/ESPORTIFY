@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../db.php');
 if (!isset($_SESSION['user'])) {
-    header("Location: /index.php?page=connexion");
+    header("Location: /connexion");
     exit();
 }
 
@@ -15,12 +15,12 @@ $rolesMap = [4 => 'joueur', 2 => 'organisateur', 1 => 'admin'];
 $role = $rolesMap[$roleId] ?? 'joueur';
 
 $dashboardMap = [
-    'admin' => '/index.php?page=admin_dashboard',
-    'organisateur' => '/index.php?page=organisateur_dashboard',
-    'joueur' => '/index.php?page=joueur_dashboard',
+    'admin' => '/dashboard',
+    'organisateur' => '/organisateur_dashboard',
+    'joueur' => '/joueur_dashboard',
 ];
 $baseUrl = 'https://esportify.alwaysdata.net';
-$dashboardUrl = $baseUrl . ($dashboardMap[$role] ?? '/index.php?page=joueur_dashboard');
+$dashboardUrl = $baseUrl . ($dashboardMap[$role] ?? '/joueur_dashboard');
 ?>
 
 <link rel="stylesheet" href="../css/profile.css">

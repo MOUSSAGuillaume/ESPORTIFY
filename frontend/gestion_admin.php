@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../db.php');
 
 // Vérifier que l'utilisateur est un administrateur
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
-    header('Location: /index.php?page=frontend/connexion.php');
+    header('Location: /connexion');
     exit;
 }
 
