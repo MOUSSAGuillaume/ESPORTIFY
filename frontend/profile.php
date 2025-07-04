@@ -1,132 +1,111 @@
 <?php
-session_start();
-require_once ('../db.php');
-
-
+include_once(__DIR__ . '/../db.php');
 if (!isset($_SESSION['user'])) {
-    header("Location: https://esportify.alwaysdata.net/backend/login.php");
+    header("Location: /connexion");
     exit();
 }
 
-$user = $_SESSION['user'];// Récupération de l'utilisateur depuis la session
-$role = $user['role'];// Récupération du rôle de l'utilisateur
-
+$user = $_SESSION['user'];
+$roleId = $user['role'];
 $username = htmlspecialchars($user['username'] ?? '', ENT_QUOTES, 'UTF-8');
-$email = htmlspecialchars($user['email']?? '', ENT_QUOTES, 'UTF-8');
-$role_safe = htmlspecialchars($role, ENT_QUOTES, 'UTF-8');
+$email = htmlspecialchars($user['email'] ?? '', ENT_QUOTES, 'UTF-8');
 $avatar = htmlspecialchars($user['avatar'] ?? '', ENT_QUOTES, 'UTF-8');
 
-$roleId = $user['role']; // entier : 1, 2 ou 4
-
-$rolesMap = [
-    4=> 'joueur',
-    2 => 'organisateur',
-    1 => 'admin'
-];
-$role = $rolesMap[$roleId] ?? 'joueur'; // Valeur de secours : 'joueur'
+$rolesMap = [4 => 'joueur', 2 => 'organisateur', 1 => 'admin'];
+$role = $rolesMap[$roleId] ?? 'joueur';
 
 $dashboardMap = [
-    'admin' => '/frontend/admin_dashboard.php',
-    'organisateur' => '/frontend/organisateur_dashboard.php',
-    'joueur' => '/frontend/joueur_dashboard.php',
+    'admin' => '/dashboard',
+    'organisateur' => '/organisateur_dashboard',
+    'joueur' => '/joueur_dashboard',
 ];
-
 $baseUrl = 'https://esportify.alwaysdata.net';
-$dashboardUrl = $baseUrl . ($dashboardMap[$role] ?? '/frontend/joueur_dashboard.php');
-
+$dashboardUrl = $baseUrl . ($dashboardMap[$role] ?? '/joueur_dashboard');
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <title>Esportify - Espace Joueur</title>
-    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/profile.css" />
-</head>
-<body>
+<link rel="stylesheet" href="../css/profile.css">
 
-<div class="wrapper">
-    <header>
-        <nav class="custom-navbar">
-            <div class="logo-wrapper">
-                <a href="<?= $dashboardUrl ?>">
-                    <div class="logo-container">
-                        <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
-                    </div>
-                </a>
+<div class="container my-5" style="max-width: 700px;">
+    <div class="card shadow"  style= "background: rgb(26, 7, 56); color: wheat;">
+        <div class="card-header bg-primary text-white text-center fs-4 d-flex justify-content-between align-items-center">
+            <span>Mon Profil</span>
+            <a href="<?= htmlspecialchars($dashboardUrl) ?>" class="btn btn-light btn-sm ms-auto">← Retour Dashboard</a>
+        </div>
+        <div class="card-body">
+            <form action="/index.php?page=update_profile.php" method="POST" enctype="multipart/form-data" class="row g-3">
+                <div class="col-12">
+                    <label for="username" class="form-label fw-semibold">Nom :</label>
+                    <input type="text" name="username" id="username" value="<?= $username ?>" class="form-control">
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Email actuel :</label>
+                    <input type="email" value="<?= $email ?>" disabled class="form-control">
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Avatar actuel :</label><br>
+                    <?php if (!empty($avatar)): ?>
+                        <img src="<?= $avatar ?>" width="80" alt="Avatar utilisateur" class="rounded-circle border mb-2">
+                    <?php else: ?>
+                        <span class="text-white" text-white>Aucun avatar</span>
+                    <?php endif; ?>
+                </div>
+                <div class="col-12">
+                    <label for="avatarInput" class="form-label fw-semibold">Changer avatar :</label>
+                    <input type="file" name="avatar" id="avatarInput" accept="image/png, image/jpeg, image/jpg, image/gif" class="form-control">
+                    <img id="avatarPreview" src="#" alt="Aperçu de l'avatar" style="display:none; width:90px; margin-top:10px;" class="rounded">
+                </div>
+                <div class="col-12 d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn btn-success px-4">Mettre à jour</button>
+                </div>
+            </form>
+            <hr>
+            <div class="d-flex flex-column align-items-center gap-2">
+                <button id="openPasswordModalBtn" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#passwordModal">Changer mon mot de passe</button>
+                <a href="/change_email" class="btn btn-outline-secondary w-100">Changer mon email</a>
             </div>
-        </nav>
-    </header>
-
-    <main id="dashboard-content">
-        <h2>Mon Profil</h2>
-
-        <form action="https://esportify.alwaysdata.net/backend/update_profile.php" method="POST" enctype="multipart/form-data">
-            <label>Nom :</label>
-            <input type="text" name="username" value="<?= $username ?>"><br>
-
-            <label>Email actuel :</label>
-            <input type="email" value="<?= $email ?>" disabled><br>
-
-            <label>Avatar actuel :</label><br>
-            <?php if (!empty($avatar)): ?>
-                <img src="<?= $avatar ?>" width="80" alt="Avatar utilisateur"><br>
-            <?php else: ?>
-                Aucun avatar<br>
-            <?php endif; ?>
-
-            <label>Changer avatar :</label><br>
-            <input type="file" name="avatar" id="avatarInput" accept="image/png, image/jpeg, image/jpg, image/gif"><br>
-
-            <img id="avatarPreview" src="#" alt="Aperçu de l'avatar" style="display:none; width:100px; margin-top:10px;"><br><br>
-            <button type="submit">Mettre à jour</button>
-        </form>
-
-        <br>
-        <button id="openPasswordModalBtn">Changer mon mot de passe</button><br><br>
-        <a href="https://esportify.alwaysdata.net/backend/change_email_request.php">Changer mon email</a><br>
-    </main>
-
-    <footer>
-        <nav>
-            <span>Moussa Mehdi-Guillaume</span>
-            <img src="../img/copyrighlogo.jpg" alt="Illustration copyright" />
-            <ul>
-                <li><a href="#politique_confidentialite">Politique de confidentialité</a></li>
-                <li><a href="#mentions_legales">Mentions légales</a></li>
-            </ul>
-        </nav>
-    </footer>
-</div>
-
-<!-- Modal popup changement de mot de passe -->
-<div id="passwordModal">
-    <div class="modal-content">
-        <span class="close-btn" id="closePasswordModal">&times;</span>
-        <h3>Changer mon mot de passe</h3>
-        <form id="changePasswordForm">
-
-            <label for="oldPassword">Ancien mot de passe :</label>
-            <input type="password" id="oldPassword" name="oldPassword" required>
-
-            <label for="newPassword">Nouveau mot de passe :</label>
-            <input type="password" id="newPassword" name="newPassword" required>
-
-            <label for="confirmPassword">Confirmer le mot de passe :</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required>
-
-            <button type="submit">Valider</button>
-        </form>
-        <div class="message" id="passwordMessage"></div>
+        </div>
     </div>
 </div>
 
+<!-- Modal Bootstrap pour changement mot de passe -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <form id="changePasswordForm" novalidate>
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordModalLabel">Changer mon mot de passe</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="oldPassword" class="form-label">Ancien mot de passe :</label>
+                    <input type="password" id="oldPassword" name="oldPassword" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">Nouveau mot de passe :</label>
+                    <input type="password" id="newPassword" name="newPassword" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirmer le mot de passe :</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+                </div>
+                <div class="alert d-none" id="passwordMessage"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Valider</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Preview avatar
+// Avatar preview
 document.getElementById('avatarInput').addEventListener('change', function(event) {
     const file = event.target.files[0];
     const preview = document.getElementById('avatarPreview');
-
     preview.style.display = 'none';
     preview.src = '#';
 
@@ -151,83 +130,59 @@ document.getElementById('avatarInput').addEventListener('change', function(event
     }
 });
 
-// Modal controls
-const modal = document.getElementById('passwordModal');
-const openBtn = document.getElementById('openPasswordModalBtn');
-const closeBtn = document.getElementById('closePasswordModal');
-const messageBox = document.getElementById('passwordMessage');
-
-openBtn.onclick = () => {
-    modal.style.display = 'block';
-    messageBox.textContent = '';
-    document.getElementById('changePasswordForm').reset();
-};
-
-closeBtn.onclick = () => {
-    modal.style.display = 'none';
-};
-
-// Fermer le modal en cliquant hors de la fenêtre
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
-};
-
-// AJAX pour envoyer le formulaire changement mdp
+// AJAX changement mot de passe Bootstrap only
 document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
     const oldPassword = document.getElementById('oldPassword').value.trim();
     const newPassword = document.getElementById('newPassword').value.trim();
     const confirmPassword = document.getElementById('confirmPassword').value.trim();
+    const messageBox = document.getElementById('passwordMessage');
 
+    // Validation front simple
     if (newPassword.length < 8) {
-        messageBox.textContent = "Le mot de passe doit contenir au moins 8 caractères.";
-        messageBox.className = 'message error';
-        return;
+        showError("Le mot de passe doit contenir au moins 8 caractères."); return;
     }
     if (!/[A-Z]/.test(newPassword)) {
-        messageBox.textContent = "Le mot de passe doit contenir au moins une majuscule.";
-        messageBox.className = 'message error';
-        return;
+        showError("Le mot de passe doit contenir au moins une majuscule."); return;
     }
     if (!/[0-9]/.test(newPassword)) {
-        messageBox.textContent = "Le mot de passe doit contenir au moins un chiffre.";
-        messageBox.className = 'message error';
-        return;
+        showError("Le mot de passe doit contenir au moins un chiffre."); return;
     }
     if (newPassword !== confirmPassword) {
-        messageBox.textContent = "Les mots de passe ne correspondent pas.";
-        messageBox.className = 'message error';
-        return;
+        showError("Les mots de passe ne correspondent pas."); return;
     }
 
-    // Envoi AJAX
     fetch('https://esportify.alwaysdata.net/backend/change_pass.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},// JSON
-        credentials: 'include', // pour envoyer cookies / session
-        body: JSON.stringify({ oldPassword, newPassword, confirmPassword })// JSON.stringify
-
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
+        body: JSON.stringify({ oldPassword, newPassword, confirmPassword })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            messageBox.textContent = data.message;
-            messageBox.className = 'message success';
-            setTimeout(() =>
-        modal.style.display = 'none', 2000);
+            showSuccess(data.message);
+            setTimeout(() => {
+                const modalEl = bootstrap.Modal.getInstance(document.getElementById('passwordModal'));
+                if(modalEl) modalEl.hide();
+            }, 1800);
         } else {
-        messageBox.textContent = data.message;
-        messageBox.className = 'message error';
+            showError(data.message);
         }
     })
     .catch(() => {
-        messageBox.textContent = "Erreur serveur, veuillez réessayer plus tard.";
-        messageBox.className = 'message error';
+        showError("Erreur serveur, veuillez réessayer plus tard.");
     });
+
+    function showError(msg) {
+        messageBox.textContent = msg;
+        messageBox.className = 'alert alert-danger';
+        messageBox.classList.remove('d-none');
+    }
+    function showSuccess(msg) {
+        messageBox.textContent = msg;
+        messageBox.className = 'alert alert-success';
+        messageBox.classList.remove('d-none');
+    }
 });
 </script>
-
-</body> </html>

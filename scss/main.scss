@@ -1,0 +1,206 @@
+@import "custom";
+/* Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amarante&family=Long+Cang&display=swap");
+
+/* Styles globaux et initialisation */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+section, main, .container, .row {
+  background: transparent;
+}
+
+body {
+  background: linear-gradient(120deg, #12082b 60%, #1a0738 100%);
+  background-size: cover;
+  min-height: 100vh;
+}
+
+/* Logo */
+.logo {
+  width: 100px;
+  z-index: 2;
+  position: relative;
+}
+.logo-container {
+  width: 120px;
+  height: 120px;
+  background: transparent;
+  border-radius: 50%;
+  z-index: 3;
+}
+
+/* Liens de navigation */
+.navbar-nav {
+  gap: 8rem;
+}
+
+.btn-accueil, .btn-contact {
+  background: linear-gradient(45deg, purple, blue);
+  color: white;
+  border: none;
+  transition: transform 0.2s;
+  font-weight: bold;
+}
+
+.btn-accueil:hover,.btn-contact:hover {
+  transform: scale(1.1);
+  background: linear-gradient(45deg, blue, purple);
+}
+
+.btn-connexion{
+  background: linear-gradient(90deg, #3700b3, #1de9b6);
+  border: none;
+  font-weight: bold;
+  transition: background 0.25s;
+}
+.btn-connexion:hover {
+  background: linear-gradient(90deg, #1a0738, #4fc3f7);
+  color: #fff;
+}
+
+
+/* Bouton hamburger */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+
+// Media queries//
+
+@media screen and (min-width: 768px) and (max-width: 1100px) {
+  .calendar {
+    margin-top: 5rem; // ou une valeur plus adaptée comme 6rem
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-nav {
+    gap: 1rem; /* Réduire encore plus l'espacement entre les liens */
+  }
+
+  .nav-link {
+    font-size: 0.875rem; /* Réduire encore plus la taille de la police */
+    padding: 0.3rem 0.6rem; /* Réduire le remplissage */
+  }
+  .calendar {
+    width: 100%;
+    height: auto;
+    padding-right: 7px;
+    margin: auto; /* Ajouter une marge supérieure pour éviter le chevauchement */
+    text-align: center;
+    font-size: 15px;
+  }
+
+  h1 {
+    margin-top: 10px; /* Ajuster la marge supérieure pour les écrans mobiles */
+    font-size: 45px;
+    margin-left: 0;
+  }
+
+  .textPresentation {
+    padding: 10px;
+    margin-top: 10px; /* Ajuster la marge supérieure pour les écrans mobiles */
+    font-size: 17px;
+  }
+  .slides_img {
+    height: auto; /* Ajuste selon la hauteur souhaitée */
+    object-fit: cover; /* Évite la déformation */
+    border-radius: 15%; /* Rend l'image ovale */
+  }
+}
+@media (min-width: 992px) {
+  .bloc-presentation {
+    max-width: 1200px; /* Augmente la largeur maximale sur les écrans larges */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .bloc-presentation {
+    max-width: 900px; /* Ajuste la largeur maximale sur les tablettes */
+  }
+}
+
+//footer//
+
+.footer {
+  background-color: #1a0738 !important;
+  opacity: 0.9;
+  padding: 1rem 0; /* Ajout de padding pour augmenter la hauteur du footer */
+}
+.footer-link {
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  color: black;
+  background-color: rgba(88, 0, 168, 1);
+  border: 2px solid rgba(255, 197, 254, 0.5);
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.footer-link:hover {
+  background-color: rgba(255, 197, 254, 0.5);
+}
+footer span {
+  font-family: "Inter", sans-serif;
+  color: wheat;
+}
+// Desktop : espacement standard
+@media screen and (min-width: 768px) {
+  .footer {
+    padding: 0.5rem 0;
+  }
+}
+
+// Mobile : ajustement pour écrans étroits (iPhone SE, etc.)
+@media screen and (max-width: 480px) {
+  .footer {
+    padding: 0.3rem 0;
+  }
+
+  .footer .row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-link {
+    font-size: 9px;
+    padding: 4px 6px;
+    margin: 3px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .footer ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-left: 0;
+    margin-top: 0.25rem;
+  }
+
+  .footer span {
+    font-size: 10px;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer img {
+    height: 16px;
+    margin-left: 4px;
+  }
+}

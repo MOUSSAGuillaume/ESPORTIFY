@@ -1,0 +1,84 @@
+@charset "UTF-8";
+body {
+  background: url("../img/image_ecf/fond1.jpg") no-repeat center/cover;
+  color: wheat;
+  min-height: 100vh;
+}
+
+.logo {
+  height: 4rem;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header, main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+main {
+  flex: 1;
+  padding-bottom: 20px;
+  line-height: 1.25;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+form button {
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+form button:hover {
+  background-color: #f5e6ff;
+}
+
+.modal-content {
+  background: rgb(26, 7, 56) !important;
+  color: wheat !important;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 32px 0 rgba(40, 0, 80, 0.18);
+}
+
+#avatarPreview, .rounded-circle {
+  border: 3px solid #eee;
+  background: rgba(255, 255, 255, 0.18);
+  margin-bottom: 0.5rem;
+  max-width: 90px;
+}
+
+/*
+#passwordModal {
+  ... tout ce block est supprimé ...
+}
+*/
+.alert {
+  margin-top: 10px;
+  font-weight: bold;
+}
+.alert.error {
+  color: red;
+}
+.alert.success {
+  color: green;
+}/*# sourceMappingURL=profile.css.map */

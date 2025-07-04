@@ -1,5 +1,5 @@
 <?php
-include_once("../db.php");
+include_once(__DIR__ . '/../db.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['inscription_id'], $_POST['action'])) {
     $id = intval($_POST['inscription_id']);

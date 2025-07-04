@@ -5,7 +5,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 // Connexion à la base de données
-require_once('../db.php');
+include_once(__DIR__ . '/../db.php');
 
 // Vérifie si un token est passé dans l'URL
 if (!isset($_GET['token']) || !ctype_xdigit($_GET['token'])) {
@@ -37,7 +37,7 @@ if ($result->num_rows === 1) {
 
     if ($stmt->execute()) {
         // Redirection après succès
-        $redirectUrl = $_ENV['BASE_URL'] . '/frontend/connexion.php?success=1';
+        $redirectUrl = $_ENV['BASE_URL'] . '/connexion?success=1';
         header("Location: $redirectUrl");
         exit;
     } else {

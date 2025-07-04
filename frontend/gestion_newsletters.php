@@ -1,9 +1,8 @@
 <?php
-include_once("../db.php");
-session_start();
+include_once(__DIR__ . '/../db.php');
 
 if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 1 && $_SESSION['user']['role'] !== 2)) {
-    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
+    header("Location: /connexion");
     exit;
 }
 
@@ -23,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt->bind_param("sss", $title, $subject, $message);
 
     if ($stmt->execute()) {
-        header("Location: https://esportify.alwaysdata.net/frontend/gestion_newsletters.php?success=Newsletter publiée avec succès.");
+        header("Location: /gestion_newsletters?success=Newsletter publiée avec succès.");
         exit;
     } else {
         echo "Erreur : " . $conn->error;
@@ -37,101 +36,89 @@ $newsletters = $conn->query("
     JOIN users u ON n.created_by = u.id
     ORDER BY n.created_at DESC
 ");
-
-
 ?>
 
+<link rel="stylesheet" href="../css/dashboard.css">
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestion des Newsletters</title>
-    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/dashboard.css">
-</head>
-<body>
-
-<header>
-    <nav class="custom-navbar">
-        <div class="logo-wrapper">
-        <a href="
-                <?php
-                if ($_SESSION['user']['role'] == 1) {
-                    echo "https://esportify.alwaysdata.net/frontend/admin_dashboard.php"; // Admin
-                } elseif ($_SESSION['user']['role'] == 2) {
-                    echo "https://esportify.alwaysdata.net/frontend/organisateur_dashboard.php"; // Organisateur
-                } else {
-                    echo "https://esportify.alwaysdata.net/frontend/connexion.php"; // Connexion si aucun rôle défini
-                }
-                ?> ">
-                <div class="logo-container">
-                    <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
-                </div>
-            </a>
-            <div class="semi-circle-outline"></div>
-        </div>
-    </nav>
-</header>
-
-<main>
-    <section class="dashboard">
-        <h1>Gestion des Newsletters</h1>
-
-
-        <!-- Formulaire de création de newsletter -->
-        <h3>Créer une nouvelle Newsletter</h3>
-        <form action="gestion_newsletters.php" method="POST">
-            <label for="title">Titre de la newsletter :</label>
-            <input type="text" name="title" id="title" required>
-
-            <label for="subject">Sujet de la newsletter :</label>
-            <input type="text" name="subject" id="subject" required>
-
-            <label for="content">Contenu de la newsletter :</label>
-            <textarea name="message" id="message" rows="10" required></textarea>
-
-            <button type="submit" name="action" value="create_newsletter">Publier</button>
-        </form>
-
-        <!-- Affichage des newsletters -->
-        <h3>Newsletters publiées</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Date</th>
-                    <th>Extrait</th>
-                    <th>Publié par</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($news = mysqli_fetch_assoc($newsletters)): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($news['title']) ?></td>
-                        <td><?= htmlspecialchars($news['created_at']) ?></td>
-                        <td><?= substr(htmlspecialchars($news['subject']), 0, 80) . '...' ?></td>
-                        <td><?= htmlspecialchars($news['author_name']) ?> (<?= $news['role'] == 1 ? 'Admin' : 'Organisateur' ?>)</td>
-                        <td>
-                            <a href="https://esportify.alwaysdata.net/frontend/newsletter_details.php?id=<?= $news['id'] ?>" class="button">Voir</a>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+<div class="container py-5">
+    <div class="mb-3">
+        <a href="<?php
+                    if ($_SESSION['user']['role'] == 1) {
+                        echo "/admin_dashboard";
+                    } elseif ($_SESSION['user']['role'] == 2) {
+                        echo "/organisateur_dashboard";
+                    } else {
+                        echo "/connexion";
+                    }
+                    ?>" class="btn btn-outline-info rounded-pill fw-bold">
+            Retour Dashboard
+        </a>
+    </div>
+    <section class="mb-4">
+        <h2 class="card-title mb-3">Gestion des Newsletters</h2>
     </section>
-</main>
 
-<footer>
-    <nav>
-        <span>Moussa Mehdi-Guillaume</span>
-        <img src="../img/copyrighlogo.jpg" alt="Copyright">
-        <ul>
-            <li><a href="#politique_confidentialite">Politique de confidentialité</a></li>
-            <li><a href="#mentions_legales">Mentions légales</a></li>
-        </ul>
-    </nav>
-</footer>
+    <div class="news-item shadow-lg mb-4">
+        <div class="card-body">
+            <!-- Formulaire création newsletter -->
+            <h4 class="mb-3">Créer une nouvelle Newsletter</h4>
+            <form action="/gestion_newsletters" method="POST" class="row g-3">
+                <div class="col-md-6">
+                    <label for="title" class="form-label">Titre de la newsletter :</label>
+                    <input type="text" name="title" id="title" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="subject" class="form-label">Sujet de la newsletter :</label>
+                    <input type="text" name="subject" id="subject" class="form-control" required>
+                </div>
+                <div class="col-12">
+                    <label for="message" class="form-label">Contenu de la newsletter :</label>
+                    <textarea name="message" id="message" rows="5" class="form-control" required></textarea>
+                </div>
+                <div class="col-12">
+                    <button type="submit" name="action" value="create_newsletter" class="btn btn-primary rounded-pill px-4">
+                        Publier
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-</body>
-</html>
+    <!-- Affichage des newsletters -->
+    <div class="news-item">
+        <div class="card-body">
+            <h4 class="card-title mb-3">Newsletters publiées</h4>
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover align-middle rounded-3 overflow-hidden">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Date</th>
+                            <th>Extrait</th>
+                            <th>Publié par</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($news = mysqli_fetch_assoc($newsletters)): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($news['title']) ?></td>
+                                <td><?= htmlspecialchars($news['created_at']) ?></td>
+                                <td><?= substr(htmlspecialchars($news['subject']), 0, 80) . '...' ?></td>
+                                <td>
+                                    <?= htmlspecialchars($news['author_name']) ?>
+                                    (<?= $news['role'] == 1 ? 'Admin' : 'Organisateur' ?>)
+                                </td>
+                                <td>
+                                    <a href="/newsletter_details?id=<?= $news['id'] ?>" class="btn btn-outline-info btn-sm rounded-pill">Voir</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,30 +1,31 @@
 <?php
-include_once('../db.php'); // Inclusion de la connexion à la base de données
+// Inclusion de la connexion à la base de données
+include_once(__DIR__ . '/../db.php');
 
-// Vérification si le token est fourni dans l'URL
+// Vérifie que le token est bien fourni dans l'URL
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
 
-    // Validation basique du format du token
+    // Vérifie que le token est bien un hexadécimal (sécurité)
     if (!ctype_xdigit($token)) {
         echo '⚠️ Le lien est invalide ou a expiré.';
         exit;
     }
 
-    // Vérification si le token existe dans la base de données
-    $sql = "SELECT id, email FROM users WHERE token = ?";
+    // Recherche l'utilisateur qui possède ce token ET un pending_email en attente
+    $sql = "SELECT id, pending_email FROM users WHERE token = ? AND pending_email IS NOT NULL";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $token);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Si le token existe dans la base de données
+    // Si le token existe et qu'un utilisateur est trouvé
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-        
-        // Mise à jour de l'email de l'utilisateur et nettoyage du token
-        $new_email = $user['email'];
-        $update_sql = "UPDATE users SET email = ?, token = NULL WHERE token = ?";
+        $new_email = $user['pending_email'];
+
+        // Mise à jour de l'adresse email, suppression du pending_email et du token
+        $update_sql = "UPDATE users SET email = ?, pending_email = NULL, token = NULL WHERE token = ?";
         $update_stmt = $conn->prepare($update_sql);
         $update_stmt->bind_param("ss", $new_email, $token);
 

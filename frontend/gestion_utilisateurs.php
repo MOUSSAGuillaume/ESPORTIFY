@@ -1,10 +1,9 @@
 <?php
-include_once("../db.php");
-session_start();
+include_once(__DIR__ . '/../db.php');
 
 // Vérification des privilèges admin
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 1) {
-    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php");
+    header('Location: /connexion');
     exit;
 }
 
@@ -40,7 +39,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         mysqli_query($conn, $sql);
     }
 
-    header("Location: https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
+    header("Location: /gestion_utilisateurs?success=" . urlencode($msg));
     exit;
 }
 
@@ -58,7 +57,7 @@ if (isset($_POST['update_user']) && isset($_POST['user_id'])) {
         $msg = "❌ Erreur lors de la mise à jour de l'utilisateur.";
     }
 
-    header("Location: https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php?success=" . urlencode($msg));
+    header("Location: /gestion_utilisateurs?success=" . urlencode($msg));
     exit;
 }
 
@@ -76,101 +75,83 @@ if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) 
 $result = mysqli_query($conn, "SELECT * FROM users ORDER BY username ASC");
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Gestion des Utilisateurs</title>
-  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/dashboard.css" />
-</head>
-<body>
+<link rel="stylesheet" href="../css/dashboard.css" />
 
-<main id="dashboard-content">
-  <header>
-    <nav class="custom-navbar">
-      <div class="logo-wrapper">
-        <a href="https://esportify.alwaysdata.net/frontend/admin_dashboard.php">
-          <div class="logo-container">
-            <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
-          </div>
-        </a>
-        <div class="semi-circle-outline"></div>
-      </div>
-    </nav>
-  </header>
-
-  <section class="dashboard">
-    <h1>Gestion des Utilisateurs</h1>
-    <div class="dashboard-links">
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
-            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+<main id="dashboard-content" class="container my-4">
+    <section class="dashboard mb-4">
+        <h1>Gestion des Utilisateurs</h1>
+        <div class="dashboard-links mb-3">
+            <a href="/admin_dashboard" class="btn btn-outline-info rounded-pill px-4 fw-bold">Dashboard</a>
+            <a href="/gestion_admin" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des Events</a>
+            <a href="/gestion_newsletters" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des newsletters</a>
         </div>
     </section>
 
     <?php if (isset($_GET['success'])): ?>
-      <div class="msg success"><?= htmlspecialchars($_GET['success']) ?></div>
+        <div class="alert alert-success"><?= htmlspecialchars($_GET['success']) ?></div>
     <?php endif; ?>
 
     <?php if ($editUser): ?>
-    <div class="form-wrapper">
-        <h2>Modifier l'utilisateur : <?= htmlspecialchars($editUser['username']) ?></h2>
-        <form method="POST">
-            <input type="hidden" name="user_id" value="<?= $editUser['id'] ?>">
-            <input type="text" name="username" value="<?= htmlspecialchars($editUser['username']) ?>" required>
-            <input type="email" name="email" value="<?= htmlspecialchars($editUser['email']) ?>" required>
-            <button type="submit" name="update_user" class="button">Enregistrer</button>
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="button delete">Annuler</a>
-        </form>
-    </div>
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                Modifier l'utilisateur : <?= htmlspecialchars($editUser['username']) ?>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="row g-3">
+                    <input type="hidden" name="user_id" value="<?= $editUser['id'] ?>">
+                    <div class="col-md-6">
+                        <label class="form-label">Pseudo</label>
+                        <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($editUser['username']) ?>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($editUser['email']) ?>" required>
+                    </div>
+                    <div class="col-12 d-flex gap-2 mt-3">
+                        <button type="submit" name="update_user" class="btn btn-success">Enregistrer</button>
+                        <a href="/gestion_utilisateurs" class="btn btn-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
     <?php endif; ?>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Pseudo</th>
-                <th>Email</th>
-                <th>Statut du compte</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php while ($user = mysqli_fetch_assoc($result)): ?>
-            <tr>
-                <td><?= htmlspecialchars($user['username']) ?></td>
-                <td><?= htmlspecialchars($user['email']) ?></td>
-                <td>
-                    <span class="status <?= $user['actif'] ? 'active' : 'inactive' ?>">
-                        <?= $user['actif'] ? 'Actif' : 'Inactif' ?>
-                    </span>
-                </td>
-                <td>
-                    <?php if ($user['actif']): ?>
-                        <a href="?id=<?= $user['id'] ?>&action=disable" class="button delete">Désactiver</a>
-                    <?php else: ?>
-                        <a href="?id=<?= $user['id'] ?>&action=enable" class="button">Réactiver</a>
-                    <?php endif; ?>
-                    <a href="?id=<?= $user['id'] ?>&action=edit" class="button">Modifier</a>
-                    <a href="?id=<?= $user['id'] ?>&action=delete" class="button delete" onclick="return confirm('Confirmer la suppression ?')">Supprimer</a>
-                </td>
-            </tr>
-        <?php endwhile; ?>
-        </tbody>
-    </table>
-  </section>
-
-  <footer>
-    <nav>
-      <span>Moussa Mehdi-Guillaume</span>
-      <img src="../img/copyrighlogo.jpg" alt="Copyright" />
-      <ul>
-        <li><a href="#politique_confidentialite">Politique de confidentialité</a></li>
-        <li><a href="#mentions_legales">Mentions légales</a></li>
-      </ul>
-    </nav>
-  </footer>
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle rounded-3 overflow-hidden">
+            <thead>
+                <tr>
+                    <th>Pseudo</th>
+                    <th>Email</th>
+                    <th>Statut du compte</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($user = mysqli_fetch_assoc($result)): ?>
+                    <tr>
+                        <td class="fw-bold"><?= htmlspecialchars($user['username']) ?></td>
+                        <td><?= htmlspecialchars($user['email']) ?></td>
+                        <td>
+                            <?php if ($user['actif']): ?>
+                                <span class="badge bg-success">Actif</span>
+                            <?php else: ?>
+                                <span class="badge bg-secondary">Inactif</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="d-flex flex-wrap gap-2">
+                            <?php if ($user['actif']): ?>
+                                <a href="?id=<?= $user['id'] ?>&action=disable" class="btn btn-outline-warning btn-sm">Désactiver</a>
+                            <?php else: ?>
+                                <a href="?id=<?= $user['id'] ?>&action=enable" class="btn btn-outline-success btn-sm">Réactiver</a>
+                            <?php endif; ?>
+                            <a href="?id=<?= $user['id'] ?>&action=edit" class="btn btn-outline-primary btn-sm">Modifier</a>
+                            <a href="?id=<?= $user['id'] ?>&action=delete" class="btn btn-outline-danger btn-sm"
+                                onclick="return confirm('Confirmer la suppression ?')">Supprimer</a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 </main>
-
-</body>
-</html>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

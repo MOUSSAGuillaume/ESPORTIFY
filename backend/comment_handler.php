@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once '../backend/fonctions.php'; // checkCsrf()
-include_once("../db.php");
+require_once(__DIR__ . '/fonctions.php'); // checkCsrf()
+include_once(__DIR__ . '/../db.php');
 
 if (!$conn) {
     die("Erreur de connexion à la base de données : " . mysqli_connect_error());

@@ -1,117 +1,85 @@
 <?php
 require_once __DIR__ . '/../db.php';
+$pageTitle = "Inscription | Esportify";
+$pageDescription = "Esportify est une plateforme web de gestion d’événements e-sport : création, organisation, inscription et interaction via newsletters";
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Page de création de compte - Permet de créer un compte.">
-  <title>Sportify - Inscription</title>
-  <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/create_account.css" />
-</head>
-<body>
+<link rel="stylesheet" href="../css/create_account.css">
 
-  <div class="console-overlay" id="console-overlay">
-    <div class="console-text" id="console-text"></div>
+<!-- Effet console au chargement -->
+<div class="console-overlay" id="console-overlay">
+  <div class="console-text" id="console-text"></div>
+</div>
+
+<div class="container-signup" id="signup-block" style="display:none;">
+  <div class="console-image-bg" style="position:relative; display:flex; justify-content:center;">
+    <img src="../img/image_ecf/img1.webp" alt="Console de jeu" class="console-real-img" style="max-width:100%; height:auto;" />
+
+    <!-- Formulaire positionné au centre de l’écran de la console -->
+    <form id="signup-form" class="signup-form-overlay" action="/signup.php" method="POST" autocomplete="off">
+      <h2 class="mb-4 text-center text-primary">Créer un compte</h2>
+      <div class="mb-3">
+        <label for="email" class="form-label">Adresse Email</label>
+        <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
+      </div>
+      <div class="mb-3">
+        <label for="pseudo" class="form-label">Pseudo</label>
+        <input type="text" class="form-control" id="pseudo" name="username" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Mot de passe</label>
+        <input type="password" class="form-control" id="password" name="mot_de_passe" required>
+        <div class="form-text password-rules">
+          * Au moins 8 caractères, 1 chiffre, 1 minuscule, 1 majuscule, 1 caractère spécial.
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="confirm-password" class="form-label">Confirmer le mot de passe</label>
+        <input type="password" class="form-control" id="confirm-password" name="confirmer_mot_de_passe" required>
+      </div>
+      <div id="form-error" class="text-danger fw-bold mb-3 text-center"></div>
+      <button type="submit" class="btn btn-primary w-100">Créer mon compte</button>
+    </form>
   </div>
+</div>
 
-  <header>
-    <nav class="custom-navbar">
-      <div class="logo-wrapper">
-        <a href="https://esportify.alwaysdata.net/frontend/accueil.php"> <!-- Lien vers la page d'accueil -->
-          <div class="logo-container">
-            <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
-          </div>
-        </a>
-        <div class="semi-circle-outline"></div>
-      </div>
-    </nav>
-  </header>
+<!-- POPUP confirmation -->
+<div id="confirmationPopup" class="confirmation-popup" style="display:none;">
+  <div class="popup-content">
+    <p>Un mail vous a été envoyé.<br>Merci de cliquer sur le lien pour valider votre compte.</p>
+    <button class="btn btn-outline-primary" onclick="closeConfirmation()">Fermer</button>
+  </div>
+</div>
 
-  <main>
-    <div class="container">
-      <div class="image-form">
-        <img src="../img/image_ecf/img1.webp" alt="Image de fond" class="background-image" />
+<script>
+  // --- Animation console ---
+  const consoleText = document.getElementById("console-text");
+  const overlay = document.getElementById("console-overlay");
+  const signupBlock = document.getElementById("signup-block");
+  const lines = [
+    "Initialisation du système...",
+    "Chargement des modules...",
+    "Connexion à Esportify établie ✔",
+    "Chargement de l'interface..."
+  ];
+  let index = 0;
 
-        <form id="signup-form" class="form-overlay" action="https://esportify.alwaysdata.net/backend/signup.php" method="POST">
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" placeholder="email" required />
-
-          <label for="pseudo">Pseudo:</label>
-         <input type="text" id="pseudo" name="username" placeholder="Pseudo" required />
-
-        <label for="password">Mot de passe:</label>
-        <input type="password" id="password" name="mot_de_passe" placeholder="mot de passe" required />
-        <p class="password-rules">
-          * Au moins 8 caractères avec 1 chiffre, 1 minuscule, 1 majuscule et un caractère spécial.
-        </p>
-
-         <label for="confirm-password">Confirmer mot de passe:</label>
-        <input type="password" id="confirm-password" name="confirmer_mot_de_passe" placeholder="Confirmer mot de passe" required />
-
-        <p id="form-error" style="color: red; text-align: center;"></p>
-          <button type="submit">Create</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- POPUP confirmation -->
-    <div id="confirmationPopup" class="confirmation-popup">
-      <div class="popup-content">
-        <p>Un mail vous a été envoyé.<br>Merci de cliquer sur le lien pour valider votre compte.</p>
-        <button onclick="closeConfirmation()">Fermer</button>
-      </div>
-    </div>
-  </main>
-
-  <footer>
-    <nav>
-      <span>Moussa Mehdi-Guillaume</span>
-      <img src="../img/copyrighlogo.jpg" alt="Illustration copyright" />
-      <ul>
-        <li><a href="#politique_confidentialite">Politique de confidentialité</a></li>
-        <li><a href="#mentions_legales">Mentions légales</a></li>
-      </ul>
-    </nav>
-  </footer>
-
-  <script>
-    // Simulation d'une console
-    const consoleText = document.getElementById("console-text");
-    const overlay = document.getElementById("console-overlay");
-    const lines = [
-      "Initialisation du système...",
-      "Chargement des modules...",
-      "Connexion à Sportify établie ✔",
-      "Chargement de l'interface..."
-    ];
-
-    let index = 0;
-
-    function typeLine() {
-      if (index < lines.length) {
-        consoleText.textContent += lines[index] + "\n";
-        index++;
-        setTimeout(typeLine, 600);
-      } else {
-        setTimeout(() => {
-          overlay.remove();
-          const flash = document.createElement("div");
-          flash.classList.add("screen-flash");
-          document.body.appendChild(flash);
-          setTimeout(() => {
-            flash.remove();
-            document.getElementById("signup-form").classList.add("show");
-          }, 600);
-        }, 1000);
-      }
+  function typeLine() {
+    if (index < lines.length) {
+      consoleText.textContent += lines[index] + "\n";
+      index++;
+      setTimeout(typeLine, 650);
+    } else {
+      setTimeout(() => {
+        overlay.style.display = "none";
+        signupBlock.style.display = "block";
+        signupBlock.style.opacity = 1;
+      }, 1000);
     }
+  }
+  typeLine();
 
-    typeLine();
-
-    // Gestion du formulaire
+  // --- Gestion du formulaire (valide et affiche confirmation) ---
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("signup-form");
     const confirmationPopup = document.getElementById("confirmationPopup");
@@ -139,40 +107,45 @@ require_once __DIR__ . '/../db.php';
       }
 
       try {
-        const response = await fetch("https://esportify.alwaysdata.net/backend/signup.php", {
+        const response = await fetch("/signup.php", {
           method: "POST",
           body: new URLSearchParams({
-          email,
-          username: pseudo,
-          mot_de_passe: password,
-          confirmer_mot_de_passe: confirmPassword
-        }),
-      });
+            email,
+            username: pseudo,
+            mot_de_passe: password,
+            confirmer_mot_de_passe: confirmPassword
+          }),
+        });
+        const result = await response.text();
 
-      const result = await response.text();
-
-      if (result.includes("success")) {
-        // ✅ Affiche la popup de confirmation
-        confirmationPopup.style.display = "block";
-      } else {
-        // ⚠️ Affiche le message d'erreur retourné
-        errorMsg.textContent = result;
+        if (result.includes("success")) {
+          confirmationPopup.style.display = "flex";
+        } else {
+          errorMsg.textContent = result;
+        }
+      } catch (err) {
+        errorMsg.textContent = "❌ Une erreur est survenue. Veuillez réessayer.";
+        console.error(err);
       }
-
-    } catch (err) {
-      errorMsg.textContent = "❌ Une erreur est survenue. Veuillez réessayer.";
-      console.error(err);
-    }
+    });
   });
-});
 
+  // --- Popup confirmation ---
+  function closeConfirmation() {
+    document.getElementById("confirmationPopup").style.display = "none";
+    window.location.href = "/index.php?page=accueil";
+  }
+</script>
 
-
-    function closeConfirmation() {
-      document.getElementById("confirmationPopup").style.display = "none";
-      window.location.href = "/frontend/accueil.php"; // Rediriger vers la page d'accueil après la confirmation
-    }
-  </script>
-
-</body>
-</html>
+<div id="rotate-message" class="rotate-message">
+  <div>
+    <svg width="70" height="70" fill="none" viewBox="0 0 70 70">
+      <rect x="10" y="22" width="50" height="26" rx="7" fill="#3b2d58"/>
+      <rect x="18" y="32" width="34" height="6" rx="3" fill="#7357ee"/>
+      <path d="M 35 10 L 35 18" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <path d="M 35 52 L 35 60" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <br>
+    <strong>Tournez votre téléphone<br>en mode paysage !</strong>
+  </div>
+</div>

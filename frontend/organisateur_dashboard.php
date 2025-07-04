@@ -1,17 +1,13 @@
 <?php
-
-include_once("../db.php");
-session_start();
+include_once(__DIR__ . '/../db.php');
 
 // Authentification
 if (!isset($_SESSION['user'])) {
-    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php
-");
+    header('Location: /connexion');
     exit;
 }
 if ($_SESSION['user']['role'] !== 2) {
-    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php
-");
+    header("Location: /accueil");
     exit;
 }
 
@@ -73,43 +69,24 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Esportify - Organisateur</title>
-        <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/dashboard.css"/>
-</head>
-<body>
+<link rel="stylesheet" href="../css/dashboard.css">
 
- <!-- Effet console -->
-    <div class="console-overlay" id="console-overlay">
+<!-- Effet console -->
+<div class="console-overlay" id="console-overlay">
     <div class="console-text" id="console-text"></div>
-    </div>
+</div>
 
-<main id="dashboard-content">
-    <header>
-        <nav class="custom-navbar">
-            <div class="logo-wrapper">
-                <a href="https://esportify.alwaysdata.net/frontend/organisateur_dashboard.php">
-                    <div class="logo-container">
-                        <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
-                    </div>
-                </a>
+<main id="dashboard-content" class="container my-4 d-none">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1>Bienvenue Organisateur, <?= htmlspecialchars($username) ?> 🛡️</h1>
+            <div class="dashboard-links">
+                <a href="/organisateur_gestion" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des Events</a>
+                <a href="/gestion_newsletters" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des newsletters</a>
+                <!--<a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>-->
             </div>
-        </nav>
-    </header>
-
-    <section class="dashboard">
-        <h1>Bienvenue Organisateur, <?= htmlspecialchars($username) ?> 🛡️</h1>
-        <div class="dashboard-links">
-            <a href="https://esportify.alwaysdata.net/frontend/profile.php" class="btn">Mon profil</a>
-            <a href="https://esportify.alwaysdata.net/frontend/organisateur_gestion.php" class="btn">Gestion des Events</a>
-            <!--<a href="/ESPORTIFY/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>-->
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
-            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
         </div>
-    </section>
+    </div>
 
     <section class="actualites-section">
         <h2>📰 Fil d'actualité</h2>
@@ -133,16 +110,16 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
                                                         FROM commentaires_newsletters cn
                                                         JOIN users u ON cn.id_user = u.id
                                                         WHERE cn.id_newsletter = $id_news
-                                                        ORDER BY cn.date_commentaire DESC");?>
+                                                        ORDER BY cn.date_commentaire DESC"); ?>
 
                         <div class="commentaires-section">
                             <h4>💬 Commentaires :</h4>
                             <form method="post" style="margin-top:10px;">
-                                            <input type="hidden" name="id_newsletter" value="<?= $n['id'] ?>">
-                                            <textarea name="commentaire" rows="2" required placeholder="Laissez un commentaire..."></textarea>
-                                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                            <button type="submit" name="poster_commentaire" class="btn btn-sm">Commenter</button>
-                                        </form>
+                                <input type="hidden" name="id_newsletter" value="<?= $n['id'] ?>">
+                                <textarea name="commentaire" rows="2" required placeholder="Laissez un commentaire..."></textarea>
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <button type="submit" name="poster_commentaire" class="btn btn-primary btn-sm">Commenter</button>
+                            </form>
                             <?php if (mysqli_num_rows($resCom) > 0): ?>
                                 <?php while ($com = mysqli_fetch_assoc($resCom)) : ?>
                                     <div class="commentaire">
@@ -150,13 +127,13 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
                                         <p><?= nl2br(htmlspecialchars($com['commentaire'])) ?></p>
                                         <small>🕒 <?= date("d/m/Y H:i", strtotime($com['date_commentaire'])) ?></small>
                                         <!-- Formulaire pour poster un commentaire -->
-                                        
+
 
 
                                         <!-- Réponses -->
                                         <?php
                                         $id_commentaire = $com['id'];
-                                        $repQuery = mysqli_query($conn,"SELECT rc.reponse, rc.date_reponse, u.username
+                                        $repQuery = mysqli_query($conn, "SELECT rc.reponse, rc.date_reponse, u.username
                                                                         FROM reponses_commentaires rc
                                                                         LEFT JOIN users u ON rc.id_joueur = u.id
                                                                         WHERE rc.id_commentaire = $id_commentaire
@@ -178,7 +155,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
                                         <form method="post" style="margin-top:10px;">
                                             <input type="hidden" name="id_commentaire" value="<?= $com['id'] ?>">
                                             <textarea name="reponse" rows="2" required placeholder="Votre réponse organisateur..."></textarea>
-                                            <button type="submit" class="btn btn-sm">Répondre</button>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">Répondre</button>
                                         </form>
                                     </div>
                                     <hr>
@@ -210,22 +187,9 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
             <p>Aucun tournoi prévu pour l’instant.</p>
         <?php endif; ?>
     </section>
-
-    <footer>
-        <nav>
-            <span>Moussa Mehdi-Guillaume</span>
-            <img src="../img/copyrighlogo.jpg" alt="Copyright" />
-            <ul>
-                <li><a href="#politique_confidentialite">Politique de confidentialité</a></li>
-                <li><a href="#mentions_legales">Mentions légales</a></li>
-            </ul>
-        </nav>
-    </footer>
+    
 </main>
-
-</body>
-</html>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const consoleText = document.getElementById("console-text");
     const overlay = document.getElementById("console-overlay");
@@ -241,6 +205,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     ];
 
     let index = 0;
+
     function typeLine() {
         if (index < lines.length) {
             consoleText.textContent += lines[index] + "\n";
@@ -254,13 +219,10 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
                 document.body.appendChild(flash);
                 setTimeout(() => {
                     flash.remove();
-                    dashboard.classList.remove("hidden");
+                    dashboard.classList.remove("d-none");
                 }, 600);
             }, 1000);
         }
     }
     typeLine();
 </script>
-
-</body>
-</html>

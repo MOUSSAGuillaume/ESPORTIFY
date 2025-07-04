@@ -1,5 +1,5 @@
 <?php
-require('../db.php');
+include_once(__DIR__ . '/../db.php');
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -18,13 +18,13 @@ if (session_status() === PHP_SESSION_NONE) {
 function redirectBasedOnRole($role) {
     switch ($role) {
         case 'admin':
-            header("Location: /backend/admin_dashboard.php");
+            header("Location: /admin_dashboard");
             break;
         case 'organisateur':
-            header("Location: /backend/organisateur_dashboard.php");
+            header("Location: /organisateur_dashboard");
             break;
         default:
-            header("Location: /frontend/profile.php");
+            header("Location: /profile");
             break;
     }
     exit;

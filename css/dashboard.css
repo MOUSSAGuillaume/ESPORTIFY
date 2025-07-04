@@ -1,0 +1,295 @@
+@charset "UTF-8";
+/* ================================
+   OVERLAY CONSOLE LOADING
+================================ */
+.console-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  color: #00ffcc;
+  font-family: "Fira Mono", "Courier New", monospace;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+.console-text {
+  white-space: pre-wrap;
+  border-right: 3px solid #00ffcc;
+  animation: blinkCursor 0.8s steps(2, start) infinite;
+}
+
+@keyframes blinkCursor {
+  from {
+    border-right-color: #00ffcc;
+  }
+  to {
+    border-right-color: transparent;
+  }
+}
+/* ================================
+   LAYOUT & LIENS DASHBOARD
+================================ */
+body {
+  min-height: 100vh;
+  color: #fff;
+  background: url("../img/center1.png") center/cover;
+}
+
+.dashboard-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-links .btn {
+  min-width: 150px;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .dashboard-links {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+}
+/* ================================
+   TABLE ÉVÉNEMENTS
+================================ */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.event-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+}
+
+.event-table th,
+.event-table td {
+  vertical-align: middle;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.event-table th {
+  background: #3700b3;
+  color: #fff;
+  font-weight: 600;
+}
+
+.event-table tr:hover {
+  background: linear-gradient(90deg, #3700b3, #1de9b6);
+  color: #fff;
+}
+
+@media (max-width: 991px) {
+  .event-table th,
+  .event-table td {
+    font-size: 0.97rem;
+    padding: 7px;
+  }
+}
+/* ================================
+   NEWS FEED & COMMENTAIRES
+================================ */
+.news-item {
+  background: #1c1142;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+@media (max-width: 991px) {
+  .news-item {
+    padding: 0.7rem 0.5rem;
+  }
+}
+@media (max-width: 480px) {
+  .news-item,
+  .commentaire {
+    padding: 0.5rem 0.3rem;
+  }
+}
+.commentaire,
+.reponse {
+  background: #22174d;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.8rem;
+  color: #c08c3f;
+}
+
+.reponse {
+  background: #302378;
+  margin-left: 1rem;
+}
+
+small {
+  font-size: 0.82em;
+  color: #979797;
+}
+
+.btn-sm {
+  color: #c08c3f;
+}
+
+.btn-sm:hover {
+  color: whitesmoke;
+  background: transparent;
+}
+
+/* ================================
+   MODALS (Bootstrap compatibles)
+================================ */
+.modal-content {
+  background: #24144b;
+  color: #fff;
+  border-radius: 1rem;
+}
+
+.modal-content .btn {
+  margin-top: 0.7rem;
+}
+
+.message-popup {
+  color: #1de9b6;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ================================
+   INPUTS & TEXTAREA
+================================ */
+textarea,
+input[type=text],
+input[type=date],
+input[type=email],
+input[type=password] {
+  background: #23203b;
+  color: #fff;
+  border: 1.5px solid #3b82f6;
+  border-radius: 7px;
+  font-size: 1rem;
+}
+
+textarea:focus,
+input:focus {
+  background: #fff;
+  color: #23203b;
+  border-color: #8e44ad;
+}
+
+/* ================================
+   SCROLLBAR CUSTOM
+================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(120deg, #4fc3f7 0%, #a259ff 100%);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2b183f;
+}
+
+/* ================================
+   Tableau Gestion events
+================================ */
+.custom-gradient-table {
+  background: linear-gradient(90deg, rgba(29, 233, 182, 0.94), rgba(55, 0, 179, 0.94));
+  /* 'cc' = 80% opacity */
+  /* Optionnel : pour que le texte reste lisible */
+  color: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  /* Ajoute un peu de shadow si tu veux */
+  box-shadow: 0 4px 24px rgba(20, 15, 60, 0.08);
+}
+
+.custom-gradient-table th,
+.custom-gradient-table td {
+  background: transparent !important;
+  /* pour ne pas écraser le gradient du parent */
+}
+
+/* ================================
+   AUTRES CLASSES/UTILITAIRES
+================================ */
+.status-green {
+  color: #38ef7d;
+}
+
+.status-red {
+  color: #ff4545;
+}
+
+.status-yellow {
+  color: #ffc107;
+}
+
+.screen-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 9999;
+  animation: flash 0.2s linear;
+  display: none;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .dashboard-links .btn {
+    min-width: 100px;
+    font-size: 0.97rem;
+  }
+  .event-table th,
+  .event-table td {
+    font-size: 0.95rem;
+  }
+  .news-item {
+    padding: 0.7rem 0.5rem;
+  }
+}
+@media (max-width: 480px) {
+  .news-item,
+  .commentaire {
+    padding: 0.5rem 0.3rem;
+  }
+  .dashboard-links {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+}/*# sourceMappingURL=dashboard.css.map */

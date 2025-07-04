@@ -6,7 +6,7 @@ ini_set('session.cookie_samesite', 'Strict');
 
 session_start();
 
-include_once('../db.php');
+include_once(__DIR__ . '/../db.php');
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
@@ -22,7 +22,7 @@ $password = $_POST['password'];
 
 // Vérification du reCAPTCHA
 if (empty($_POST['g-recaptcha-response'])) {
-    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=captcha");
+    header("Location: /index.php?page=connexion&error=captcha");
     exit();
 }
 
@@ -32,7 +32,7 @@ $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?s
 $responseKeys = json_decode($response, true);
 
 if (!$responseKeys["success"]) {
-    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=captcha");
+    header("Location: /index.php?page=connexion&error=captcha");
     exit();
 }
 
@@ -46,7 +46,8 @@ $result = $stmt->get_result();
 if ($user = $result->fetch_assoc()) {
     // Vérifie si le compte est activé
     if ($user['actif'] != 1) {
-        header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=2");
+        header("Location: /index.php?page=connexion&error=2");
+
         exit();
     }
 
@@ -63,28 +64,28 @@ if ($user = $result->fetch_assoc()) {
         // Redirige selon le rôle de l'utilisateur
         switch ($user['role_id']) {
             case 1:
-                header("Location: https://esportify.alwaysdata.net/frontend/admin_dashboard.php");
+                header("Location: /admin_dashboard");
                 break;
             case 2:
-                header("Location: https://esportify.alwaysdata.net/frontend/organisateur_dashboard.php");
+                header("Location: /organisateur_dashboard");
                 break;
             case 4:
-                header("Location: https://esportify.alwaysdata.net/frontend/joueur_dashboard.php");
+                header("Location: /joueur_dashboard");
                 break;
             default:
                 session_destroy();
-                header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=3");
+                header("Location: /index.php?page=connexion&error=3");
+
                 break;
         }
         exit();
     } else {
         // Mauvais mot de passe
-        header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=1");
+        header("Location: /index.php?page=connexion&error=1");
         exit();
     }
 } else {
     // Aucun utilisateur trouvé
-    header("Location: https://esportify.alwaysdata.net/frontend/connexion.php?error=1");
+    header("Location: /index.php?page=connexion&error=1");
     exit();
 }
-?>

@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once('../db.php'); // Connexion DB
+include_once(__DIR__ . '/../db.php'); // Connexion DB
 
 // Vérification utilisateur connecté
 if (!isset($_SESSION['user_id'])) {
-    header("Location: https://esportify.alwaysdata.net/backend/login.php");
+    header("Location: /login");
     exit();
 }
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "Profil mis à jour avec succès.";
     
     // Redirection vers le profil après succès
-    header("Location: https://esportify.alwaysdata.net/frontend/profile.php?success=1");
+    header("Location: /profile?success=1");
     exit();
 
 }

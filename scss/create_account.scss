@@ -1,0 +1,212 @@
+// IMPORTS BOOTSTRAP SI VOULU (optionnel)
+// @import "bootstrap"; // si tu customizes Bootstrap
+
+/*body.inscription-page {
+  background: linear-gradient(120deg, #1a0738 60%, #2b183f 100%);
+  min-height: 100vh;
+}*/
+
+.console-overlay {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  background: #000;
+  color: #00ffcc;
+  font-family: 'Fira Mono', 'Courier New', monospace;
+  z-index: 9000;
+  display: flex; justify-content: center; align-items: center;
+  font-size: 1.2rem;
+  letter-spacing: .5px;
+  z-index: 9999;
+}
+
+/* 3. Formulaire superposé sur l’image */
+.signup-form-overlay {
+  position: absolute;
+  top: 16%;      // ← ajuste ici pour bien centrer sur ton image !
+  left: 17%;     // ← idem, selon la taille de l'écran de ta console
+  width: 63%;
+  height: 70%;
+  background: rgb(20, 15, 44);
+  border-radius: 10px;
+  //box-shadow: 0 6px 30px #3d12a5d4;
+  padding: 2rem 1.2rem 1.2rem 1.2rem;
+  color: #fff;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.console-image-bg {
+  position: relative;
+  width: 900px;
+  max-width: 97vw;
+  margin: 0 auto;
+}
+.console-real-img {
+  width: 100%;
+  display: block;
+}
+
+.signup-form-overlay input,
+.signup-form-overlay button {
+  margin-bottom: 12px;
+}
+
+.console-text {
+  white-space: pre-wrap;
+  border-right: 3px solid #00ffcc;
+  animation: blinkCursor 0.8s steps(2, start) infinite;
+}
+@keyframes blinkCursor {
+  from { border-right-color: #00ffcc; }
+  to { border-right-color: transparent; }
+}
+
+#signup-block {
+  transition: opacity 0.5s;
+  margin-top: 40px;
+}
+
+.form-label, .form-control {
+  font-size: 1.07rem;
+}
+.form-control {
+  background: #24144b;
+  color: #fff;
+  border: 1.5px solid #3b82f6;
+}
+.form-control:focus {
+  background: #fff;
+  color: #12082b;
+  border-color: #8e44ad;
+}
+
+.password-rules {
+  font-size: 0.95rem;
+  color: #ffd700;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #3700b3, #1de9b6);
+  border: none;
+  font-weight: bold;
+  transition: background 0.25s;
+}
+.btn-primary:hover {
+  background: linear-gradient(90deg, #1a0738, #4fc3f7);
+  color: #fff;
+}
+
+.confirmation-popup {
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0; right: 0; bottom: 0;
+  display: flex; justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.7);
+}
+.popup-content {
+  background: #23203b;
+  color: #fff;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 6px 40px #0005;
+  text-align: center;
+}
+.popup-content button {
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  .console-image-bg { width: 98vw; }
+  .console-overlay { font-size: 1rem; padding: 0.5rem; }
+  .signup-form-overlay {
+    top: 11%;
+    left: 8%;
+    width: 84%;
+    height: 69%;
+    padding: 1.2rem 0.7rem;
+  }
+}
+@media (max-width: 700px) {
+  .signup-form-overlay {
+    top: 8%;
+    left: 4%;
+    width: 92%;
+    height: 80%;
+    padding: 1rem 0.7rem;
+  }
+}
+
+/* Webkit (Chrome, Edge, Opera, Safari) */
+body::-webkit-scrollbar {
+  width: 12px;
+  background: #2b183f;
+}
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(120deg, #4fc3f7 0%, #a259ff 100%);
+  border-radius: 8px;
+}
+body::-webkit-scrollbar-thumb:hover {
+  background: #3700b3;
+}
+
+/* Pour Firefox */
+body {
+  scrollbar-color: #a259ff #2b183f;
+  scrollbar-width: thin;
+}
+
+.rotate-message {
+  display: none; /* Masqué par défaut */
+  position: fixed;
+  z-index: 99999;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #1a0738;
+  color: #fff;
+  font-size: 1.35rem;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+  .rotate-message { display: flex; }
+  .container-signup, .footer, header, .console-overlay { display: none !important; }
+}
+
+/* Tablette ou téléphone paysage */
+@media (max-width: 900px) {
+  .signup-form-overlay {
+    top: 16%;
+    left: 17.5%;
+    width: 65%;
+    height: 70%;
+    padding: 0.5rem 0.7rem 0.5rem 0.7rem;
+  }
+}
+
+/* Petit mobile paysage (iPhone SE, 375px) */
+@media (max-width: 650px) {
+  .signup-form-overlay {
+    top: 9%;
+    left: 5%;
+    width: 90%;
+    height: 64%;
+    font-size: 0.97rem;
+    padding: 1.1rem 0.4rem 0.9rem 0.4rem;
+  }
+}
+
+/* Mini écran */
+@media (max-width: 450px) {
+  .signup-form-overlay {
+    top: 7%;
+    left: 2.5%;
+    width: 95%;
+    height: 67%;
+    font-size: 0.95rem;
+    padding: 0.7rem 0.2rem 0.7rem 0.2rem;
+  }
+}

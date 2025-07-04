@@ -1,15 +1,13 @@
 <?php
-
-include_once("../db.php");
-session_start();
+include_once(__DIR__ . '/../db.php');
 
 // Authentification
 if (!isset($_SESSION['user'])) {
-    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php");
+    header('Location: /connexion');
     exit;
 }
 if ($_SESSION['user']['role'] !== 1) {
-    header("Location: https://esportify.alwaysdata.net/frontend/accueil.php");
+    header("Location: /accueil");
     exit;
 }
 
@@ -71,42 +69,21 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Esportify - Admin</title>
-    <link rel="stylesheet" href="https://esportify.alwaysdata.net/style/dashboard.css">
-</head>
-<body>
+<link rel="stylesheet" href="../css/dashboard.css">
 
- <!-- Effet console -->
-    <div class="console-overlay" id="console-overlay">
+<!-- Effet console -->
+<div class="console-overlay" id="console-overlay">
     <div class="console-text" id="console-text"></div>
-    </div>
+</div>
 
 <main id="dashboard-content">
-    <header>
-        <nav class="custom-navbar">
-            <div class="logo-wrapper">
-                <a href="https://esportify.alwaysdata.net/frontend/admin_dashboard.php">
-                    <div class="logo-container">
-                        <img src="../img/logo.png" alt="Esportify Logo" class="logo" />
-                    </div>
-                </a>
-                <div class="semi-circle-outline"></div>
-            </div>
-        </nav>
-    </header>
 
     <section class="dashboard">
         <h1>Bienvenue Admin, <?= htmlspecialchars($username) ?> 🛡️</h1>
         <div class="dashboard-links">
-            <a href="https://esportify.alwaysdata.net/frontend/profile.php" class="btn">Mon profil</a>
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_admin.php" class="btn">Gestion des Events</a>
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_utilisateurs.php" class="btn">Gérer les utilisateurs</a>
-            <a href="https://esportify.alwaysdata.net/frontend/gestion_newsletters.php" class="btn">Gestion des newsletters</a>
-            <a href="https://esportify.alwaysdata.net/backend/logout.php" class="btn btn-danger">Déconnexion</a>
+            <a href="/gestion_admin" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des Events</a>
+            <a href="/gestion_utilisateurs" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gérer les utilisateurs</a>
+            <a href="/gestion_newsletters" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des newsletters</a>
         </div>
     </section>
 
@@ -132,7 +109,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
                                                         FROM commentaires_newsletters cn
                                                         JOIN users u ON cn.id_user = u.id
                                                         WHERE cn.id_newsletter = $id_news
-                                                        ORDER BY cn.date_commentaire DESC");?>
+                                                        ORDER BY cn.date_commentaire DESC"); ?>
 
                         <div class="commentaires-section">
                             <h4>💬 Commentaires :</h4>
@@ -153,7 +130,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
                                         <!-- Réponses -->
                                         <?php
                                         $id_commentaire = $com['id'];
-                                        $repQuery = mysqli_query($conn,"SELECT rc.reponse, rc.date_reponse, u.username
+                                        $repQuery = mysqli_query($conn, "SELECT rc.reponse, rc.date_reponse, u.username
                                                                         FROM reponses_commentaires rc
                                                                         LEFT JOIN users u ON rc.id_joueur = u.id
                                                                         WHERE rc.id_commentaire = $id_commentaire
@@ -207,22 +184,8 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
             <p>Aucun tournoi prévu pour l’instant.</p>
         <?php endif; ?>
     </section>
-
-    <footer>
-        <nav>
-            <span>Moussa Mehdi-Guillaume</span>
-            <img src="../img/copyrighlogo.jpg" alt="Copyright" />
-            <ul>
-                <li><a href="#politique_confidentialite">Politique de confidentialité</a></li>
-                <li><a href="#mentions_legales">Mentions légales</a></li>
-            </ul>
-        </nav>
-    </footer>
 </main>
-
-</body>
-</html>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const consoleText = document.getElementById("console-text");
     const overlay = document.getElementById("console-overlay");
@@ -238,6 +201,7 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     ];
 
     let index = 0;
+
     function typeLine() {
         if (index < lines.length) {
             consoleText.textContent += lines[index] + "\n";
@@ -258,6 +222,3 @@ while ($row = mysqli_fetch_assoc($tournoisQuery)) {
     }
     typeLine();
 </script>
-
-</body>
-</html>
