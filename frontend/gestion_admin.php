@@ -88,7 +88,7 @@ $events = $conn->query("SELECT e.*,
         <div class="dashboard-links mb-3">
             <a href="/admin_dashboard" class="btn btn-outline-info rounded-pill px-4 fw-bold">Dashboard</a>
             <a href="/gestion_utilisateurs" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gérer les utilisateurs</a>
-            <a href="/gestion_newsletter" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des newsletters</a>
+            <a href="/gestion_newsletters" class="btn btn-outline-info rounded-pill px-4 fw-bold">Gestion des newsletters</a>
         </div>
         <?= isset($_GET['success']) ? "<div class='alert alert-success'>" . htmlspecialchars($_GET['success']) . "</div>" : '' ?>
     </section>
