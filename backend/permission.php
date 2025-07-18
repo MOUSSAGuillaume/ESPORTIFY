@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Imaginons que tu as stocké l'utilisateur en session après login
+// l'utilisateur en session après login
 $role = $_SESSION['user']['role'];
 
 if ($role === 'admin') {

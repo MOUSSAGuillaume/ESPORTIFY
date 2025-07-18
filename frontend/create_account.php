@@ -16,7 +16,7 @@ $pageDescription = "Esportify est une plateforme web de gestion d’événements
     <img src="../img/image_ecf/img1.webp" alt="Console de jeu" class="console-real-img" style="max-width:100%; height:auto;" />
 
     <!-- Formulaire positionné au centre de l’écran de la console -->
-    <form id="signup-form" class="signup-form-overlay" action="/signup.php" method="POST" autocomplete="off">
+    <form id="signup-form" class="signup-form-overlay" action="/backend/signup.php" method="POST" autocomplete="off">
       <h2 class="mb-4 text-center text-primary">Créer un compte</h2>
       <div class="mb-3">
         <label for="email" class="form-label">Adresse Email</label>
@@ -107,7 +107,7 @@ $pageDescription = "Esportify est une plateforme web de gestion d’événements
       }
 
       try {
-        const response = await fetch("/signup.php", {
+        const response = await fetch("/backend/signup.php", {
           method: "POST",
           body: new URLSearchParams({
             email,
