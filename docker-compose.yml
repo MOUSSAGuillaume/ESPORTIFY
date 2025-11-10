@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+
+  web:
+    build: .
+    container_name: esportify_php
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+      - mongo
+
+  mysql:
+    image: mysql:8
+    container_name: esportify_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: esportify
+      MYSQL_USER: esportify_user
+      MYSQL_PASSWORD: esportify_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+  mongo:
+    image: mongo:6
+    container_name: esportify_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  db-data:
+  mongo-data:
