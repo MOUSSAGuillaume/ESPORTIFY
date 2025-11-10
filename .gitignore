@@ -1,7 +1,6 @@
 # Fichiers sensibles
 .env
 .htaccess
-docker-compose.yml
 # Dépendances et librairies
 /vendor/
 composer.lock
